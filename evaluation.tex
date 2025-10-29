@@ -1,6 +1,9 @@
 \chapter{Evaluation}
 
-% Example figure placeholder for evaluation results
+\section{Model Performance Comparison}
+
+In this section, we evaluate the performance of the different models based on three key metrics: overall model ranking, passed rates, and average scores. The following figures illustrate the comparative performance of the models in each of these areas.
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{images/overall_model_ranking}
@@ -8,12 +11,8 @@
     \label{fig:overall_model_ranking}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/passed_rates_comparison}
-    \caption{Passed rates comparison}
-    \label{fig:passed_rates_comparison}
-\end{figure}
+Figure \ref{fig:overall_model_ranking} presents the overall ranking of the models. This ranking is a overal score derived from multiple metrics as discussed before see \Ref{metrics}. As can be seen, Qwen3-8B achieves the highest rank, followed by Model GLM4-9B. This suggests that, in aggregate, Qwen3-8B Model demonstrates superior performance across the evaluated criteria.
+
 
 \begin{figure}[h]
     \centering
@@ -22,4 +21,18 @@
     \label{fig:average_scores_comparison}
 \end{figure}
 
+Figure \ref{fig:average_scores_comparison} shows comparision of  the average scores obtained by each model in all metrics. The score is a measure of the quality of the model's output, with higher scores indicating better performance. The results in this figure are consistent with the previous metrics, showing Model Qwen3-8B with the highest average score. This further supports the conclusion that Model Qwen3-8B is the most effective model in this evaluation. Its important to note that Qwen3-8B has better percentage in Allignment category than GLM4-9B but lower percentage in Completeness, which means that Qwen3-8B identifies ``Must-have'' requirements better but hillucinates more compare to GLM4-9B.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/passed_rates_comparison}
+    \caption{Passed rates comparison}
+    \label{fig:passed_rates_comparison}
+\end{figure}
+
+Figure \ref{fig:passed_rates_comparison} shows a comparison of the passed rates for each model in all metrics. G-Eval has the option to define a success rate which was set to 0.7 for all metrics, based on that the passed rate is defined as the percentage of test cases that the model successfully completes. The chart indicates that Model Qwen3-8B has the highest passed rate, reinforcing its strong performance. Models GLM4-9B and mistral-7B-instruct show have near the same percentage.
+
+
+\section{Summary of Evaluation}
+
+\section{Outlook}
