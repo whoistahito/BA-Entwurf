@@ -19,7 +19,8 @@ The data pipeline begins with raw HTML job postings, as shown in Figure \ref{fig
 A significant challenge in utilizing LLMs for information extraction is the non-deterministic nature of their output. To overcome this inconsistency and ensure all extracted data is machine-readable and standardized, a schema-guided generation approach is adopted. The outlines library \cite{willard2023outlines} is integrated into the system to force the LLM to generate responses that strictly adhere to a predefined JSON schema, which will be discussed further in the next chapter.  This method guarantees structural consistency across all processed job descriptions, which is crucial for the subsequent similarity search stage.
 
 \subsection{LLM Models}
-Following Models are selected to be benchmarked:
+The models selected for the benchmark evaluation represent state-of-the-art open-source models as of June 2025:
+
 \begin{table}[h]
 	\caption{Model Parameter Sizes}
 	\label{tab:model_params}
@@ -41,7 +42,7 @@ Following Models are selected to be benchmarked:
 \end{table}
 
 \subsection{Managing Input Data}
-This thesis employs a fixed-size chunking strategy. While semantic chunking represents a more sophisticated alternative designed to preserve contextual boundaries, recent research indicates that It's significant computational overhead does not justify the potential performance gains \cite{semantic-chunking}. Therefore, fixed-size chunking was selected for It's pragmatic balance of efficiency and effectiveness.
+This thesis employs a fixed-size chunking strategy. While semantic chunking represents a more sophisticated alternative designed to preserve contextual boundaries, recent research indicates that Its significant computational overhead does not justify the potential performance gains \cite{semantic-chunking}. Therefore, fixed-size chunking was selected for Its pragmatic balance of efficiency and effectiveness.
 \subsubsection{Fixed size chunking}
 This is the most common and straightforward approach to chunking. We simply decide the number of tokens in our chunk and, optionally, whether there should be any overlap between them. In general, we will want to keep some overlap between chunks to make sure that the semantic context doesn’t get lost between chunks. Fixed-sized chunking may be a reasonable path in many common cases. Compared to other forms of chunking, fixed-sized chunking is computationally cheap and simple to use since it doesn’t require the use of any specialized techniques or libraries. \cite{tamingllms}
 \subsubsection{Semantic Chunking}
@@ -52,7 +53,7 @@ semantic chunking is a type of Content-aware Chunking and leverages embeddings t
 A key challenge in evaluating the extracted requirements is the semantic variability inherent in LLM-generated text. A single requirement can be formulated in numerous, lexically distinct ways while remaining semantically correct. For instance, the requirement "Proven ability to manage projects simultaneously" could be correctly summarized as "Project management" or "Experience managing multiple projects." This variability renders evaluation against a fixed, manually annotated ground truth impractical, as it would unfairly penalize valid alternative phrasings.
 
 To address this challenge, this thesis adopts an automated and dynamic evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. Instead of relying on exact string matching, this approach uses a powerful LLM to assess the semantic faithfulness of the generated output against the source text. As Huyen, Chip mentions it `` AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}
- For this purpose, the DeepEval framework was employed \cite{deepeval}. DeepEval utilizes It's G-Eval \cite{G-eval} metric to prompt a judge model, which scores the quality of the extracted JSON object relative to the original job description. The specific metrics guiding this evaluation will be discussed in the following section.
+ For this purpose, the DeepEval framework was employed \cite{deepeval}. DeepEval utilizes Its G-Eval \cite{G-eval} metric to prompt a judge model, which scores the quality of the extracted JSON object relative to the original job description. The specific metrics guiding this evaluation will be discussed in the following section.
 
 \subsubsection{LLM-as-a-Judge}
 `` The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge.
@@ -79,4 +80,4 @@ Here, this metric is adapted to assess whether the extracted requirements are pr
 \end{description}
 
 \section{Embedding and Similarity Search}
-Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. Based on the findings of Kurek et al.\cite{kurek2024},the all-MiniLM-L6-v2 \cite{sentence-bert} sentence transformer model was selected for this task due to It's strong zero-shot retrieval performance in job matching. This process is designed to identify the top 10 most relevant job vacancies based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
+Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. Based on the findings of Kurek et al.\cite{kurek2024},the all-MiniLM-L6-v2 \cite{sentence-bert} sentence transformer model was selected for this task due to Its strong zero-shot retrieval performance in job matching. This process is designed to identify the top 10 most relevant job vacancies based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
