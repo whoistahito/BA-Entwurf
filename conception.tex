@@ -10,15 +10,14 @@ The architecture of the proposed system is illustrated in Figure \ref{fig:yourjo
     \label{fig:yourjobfinder_architecture}
 \end{figure}
 
-\section{Job Requirements Extraction and Evaluation}
-\subsection{Handling raw data}
+\section{Handling raw data}
 The data pipeline begins with raw HTML job postings, as shown in Figure \ref{fig:yourjobfinder_architecture}. To eliminate irrelevant data like scripts and style tags and create a clean input for the LLM, the raw HTML is converted to Markdown using the markdownify library \cite{python-markdownify}. This pre-processing step ensures that the model focuses solely on the semantic content of the job description for requirements extraction.
 
 
-\subsection{Schema based LLM Output}
+\section{Schema based LLM Output}
 A significant challenge in utilizing LLMs for information extraction is the non-deterministic nature of their output. To overcome this inconsistency and ensure all extracted data is machine-readable and standardized, a schema-guided generation approach is adopted. The outlines library \cite{willard2023outlines} is integrated into the system to force the LLM to generate responses that strictly adhere to a predefined JSON schema, which will be discussed further in the next chapter.  This method guarantees structural consistency across all processed job descriptions, which is crucial for the subsequent similarity search stage.
 
-\subsection{LLM Models}
+\section{LLM Models}
 The models selected for the benchmark evaluation represent state-of-the-art open-source models as of June 2025:
 
 \begin{table}[h]
@@ -41,43 +40,38 @@ The models selected for the benchmark evaluation represent state-of-the-art open
 	\end{tabular}
 \end{table}
 
-\subsection{Managing Input Data}
-This thesis employs a fixed-size chunking strategy. While semantic chunking represents a more sophisticated alternative designed to preserve contextual boundaries, recent research indicates that Its significant computational overhead does not justify the potential performance gains \cite{semantic-chunking}. Therefore, fixed-size chunking was selected for Its pragmatic balance of efficiency and effectiveness.
-\subsubsection{Fixed size chunking}
-This is the most common and straightforward approach to chunking. We simply decide the number of tokens in our chunk and, optionally, whether there should be any overlap between them. In general, we will want to keep some overlap between chunks to make sure that the semantic context doesn’t get lost between chunks. Fixed-sized chunking may be a reasonable path in many common cases. Compared to other forms of chunking, fixed-sized chunking is computationally cheap and simple to use since it doesn’t require the use of any specialized techniques or libraries. \cite{tamingllms}
-\subsubsection{Semantic Chunking}
-semantic chunking is a type of Content-aware Chunking and leverages embeddings to extract the semantic meaning present in your data, creating chunks that are made up of sentences that talk about the same theme or topic.\cite{tamingllms}
+\section{Managing Input Data}
+This thesis employs a fixed-size chunking strategy. While semantic chunking represents a more sophisticated alternative designed to preserve contextual boundaries, recent research indicates that its significant computational overhead does not justify the potential performance gains \cite{semantic-chunking}. Therefore, fixed-size chunking was selected for its pragmatic balance of efficiency and effectiveness.
+
+\subsection{Fixed-size chunking}
+The number of tokens in a chunk and, optionally, whether there should be any overlap between them, is determined based on a fixed rule. In general, some overlap is desirable to prevent loss of semantic context between chunks. Fixed-size chunking is computationally efficient and simple to implement since it does not require any specialized techniques or libraries \cite{tamingllms}.
 
 
-\subsection{LLM Output Evaluation}
-A key challenge in evaluating the extracted requirements is the semantic variability inherent in LLM-generated text. A single requirement can be formulated in numerous, lexically distinct ways while remaining semantically correct. For instance, the requirement "Proven ability to manage projects simultaneously" could be correctly summarized as "Project management" or "Experience managing multiple projects." This variability renders evaluation against a fixed, manually annotated ground truth impractical, as it would unfairly penalize valid alternative phrasings.
+\section{LLM Output Evaluation}
+A key challenge in evaluating the extracted requirements is the semantic variability inherent in LLM-generated text. A single requirement can be formulated in numerous, lexically distinct ways while remaining semantically correct. For instance, the requirement `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management' or `Experience managing multiple projects'. Consequently, relying on a fixed, manually annotated ground truth becomes unreliable, since semantically equivalent requirements expressed with different wording would be incorrectly treated as mismatches.
 
-To address this challenge, this thesis adopts an automated and dynamic evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. Instead of relying on exact string matching, this approach uses a powerful LLM to assess the semantic faithfulness of the generated output against the source text. As Huyen mentions, `` AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}
- For this purpose, the DeepEval framework was employed \cite{deepeval}. DeepEval utilizes its G-Eval \cite{G-eval} metric to prompt a judge model, which scores the quality of the extracted JSON object relative to the original job description. The specific metrics guiding this evaluation will be discussed in the following section.
+To address this challenge, this thesis adopts an automated and dynamic evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. Instead of relying on exact string matching, this approach uses a powerful LLM to assess the semantic faithfulness of the generated output against the source text. As Huyen mentions, ``AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}. For this purpose, the DeepEval framework was employed \cite{deepeval}. DeepEval utilizes its G-Eval metric to prompt a judge model, which scores the quality of the extracted JSON object relative to the original job description \cite{G-eval}. The specific metrics guiding this evaluation will be discussed in the following section.
 
-\subsubsection{LLM-as-a-Judge}
-`` The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge.
-'' \cite{ai-engineering-book}
-`` An emerging method for evaluating generated content involves using other LLMs as evaluators'' \cite{blackbox-llmasjudge} ``These evaluations can take various forms, including explanations, numeric values, or categorical rating'' \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM Judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
+\subsection{LLM-as-a-Judge}
+``The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge'' \cite{ai-engineering-book}.
+``An emerging method for evaluating generated content involves using other LLMs as evaluators'' \cite{blackbox-llmasjudge}. ``These evaluations can take various forms, including explanations, numeric values, or categorical rating'' \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM Judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
 
 
-\subsubsection{G-Eval}
+\subsection{G-Eval}
 ``G-EVAL is a prompt-based evaluator with three main components: 1) a prompt that contains the definition of the evaluation task and the desired evaluation criteria, 2) a chain-of-thoughts (CoT) that is a set of intermediate instructions generated by the LLM describing the detailed evaluation steps, and
 3) a scoring function that calls LLM and calculates the score based on the probabilities of the return tokens.'' \cite{G-eval}
 
-\subsubsection{Metrics} \label{metrics}
-The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the framework proposed by \cite{evaluation-mertric}. Each metric was specifically interpreted for the task of requirements extraction as follows:
-\begin{description}
-\item[Correctness] \hfil \\ ``This metric evaluates the accuracy of information presented in the target note. It identifies and penalizes hallucinations, misinterpretations, incorrect facts, and other inaccuracies in the target note.'' \cite{evaluation-mertric}. In the context of this thesis, this measure is used to evaluate whether the extracted job requirements are accurate and actually present in the input text.
+\subsection{Metrics} \label{metrics}
+The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the framework proposed by Dong Yuan et. al \cite{evaluation-mertric}. Each metric was specifically interpreted for the task of requirements extraction as follows:
 
-\item[Completeness] \hfil \\ ``This aspect measures the extent to which relevant information from the ground truth note is covered in the target note.'' \cite{evaluation-mertric}.
-For our purposes this metric is used to evaluate whether all mandatory job requirements from the input text were extracted.
+\paragraph{Correctness} In the context of this thesis, this measure is used to evaluate whether the extracted job requirements are accurate and actually present in the input text.
 
-\item[Alignment] \hfil \\``This criterion assesses how well the information in the target note aligns with that in the ground truth note'' \cite{evaluation-mertric}.Applied to this task, alignment evaluates whether the model correctly avoided extracting 'nice-to-have', 'preferred', or 'bonus' requirements.
+\paragraph{Completeness} this metric is used to evaluate whether all mandatory job requirements from the input text were extracted.
 
-\item[Readability] \hfil \\``This metric grades the target note on professional writing quality. It is penalized by awkward sentence flow, grammatical errors, inappropriate language, and spelling mistakes '' \cite{evaluation-mertric}
-Here, this metric is adapted to assess whether the extracted requirements are properly categorized as given into skills, experiences, and qualifications, and whether the output is well-structured, for instance, if it is free of syntax errors. This aspect will be explained deeper in implementation section.
-\end{description}
+\paragraph{Alignment} Applied to this task, alignment evaluates whether the model correctly avoided extracting `nice-to-have', `preferred', or `bonus' requirements.
+
+\paragraph{Readability} Here, this metric is adapted to assess whether the extracted requirements are properly categorized as given into skills, experiences, and qualifications, and whether the output is well-structured, for instance, if it is free of syntax errors. This aspect will be explained deeper in the implementation section.
+
 
 \section{Embedding and Similarity Search}
-Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. Based on the findings of Kurek et al.\cite{kurek2024},the all-MiniLM-L6-v2 \cite{sentence-bert} sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching. This process is designed to identify the top 10 most relevant job vacancies based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
+Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. Based on the findings of Kurek et al.\cite{kurek2024}, the all-MiniLM-L6-v2 sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching. This process is designed to identify the top 10 most relevant job job postings based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
