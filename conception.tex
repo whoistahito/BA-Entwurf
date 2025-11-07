@@ -54,7 +54,7 @@ To address this challenge, this thesis adopts an automated and dynamic evaluatio
 
 \subsection{LLM-as-a-Judge}
 ``The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge'' \cite{ai-engineering-book}.
-``An emerging method for evaluating generated content involves using other LLMs as evaluators'' \cite{blackbox-llmasjudge}. ``These evaluations can take various forms, including explanations, numeric values, or categorical rating'' \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM Judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
+``An emerging method for evaluating generated content involves using other LLMs as evaluators'' \cite{blackbox-llmasjudge}. ``These evaluations can take various forms, including explanations, numeric values, or categorical rating'' \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
 
 
 \subsection{G-Eval}
@@ -62,7 +62,7 @@ To address this challenge, this thesis adopts an automated and dynamic evaluatio
 3) a scoring function that calls LLM and calculates the score based on the probabilities of the return tokens.'' \cite{G-eval}
 
 \subsection{Metrics} \label{metrics}
-The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the framework proposed by Dong Yuan et. al \cite{evaluation-mertric}. Each metric was specifically interpreted for the task of requirements extraction as follows:
+The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the framework proposed by Dong Yuan et al. \cite{evaluation-mertric}. Each metric was specifically interpreted for the task of requirements extraction as follows:
 
 \paragraph{Correctness} In the context of this thesis, this measure is used to evaluate whether the extracted job requirements are accurate and actually present in the input text.
 
@@ -70,8 +70,8 @@ The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the f
 
 \paragraph{Alignment} Applied to this task, alignment evaluates whether the model correctly avoided extracting `nice-to-have', `preferred', or `bonus' requirements.
 
-\paragraph{Readability} Here, this metric is adapted to assess whether the extracted requirements are properly categorized as given into skills, experiences, and qualifications, and whether the output is well-structured, for instance, if it is free of syntax errors. This aspect will be explained deeper in the implementation section.
+\paragraph{Readability} Here, this metric is adapted to assess whether the extracted requirements are properly categorized as given and whether the output is well-structured, for instance, if it is free of syntax errors. This aspect will be explained in more detail in the implementation section.
 
 
 \section{Embedding and Similarity Search}
-Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. The all-MiniLM-L6-v2 sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching as mentioned in \Ref{introduction:similaritysearch}. This process is designed to identify the top 10 most relevant job job postings based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
+Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. The all-MiniLM-L6-v2 sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching as mentioned in \Ref{introduction:similaritysearch}. This process is designed to identify the top 10 most relevant job postings based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
