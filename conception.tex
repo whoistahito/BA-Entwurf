@@ -18,7 +18,7 @@ The data pipeline begins with raw HTML job postings, as shown in Figure \ref{fig
 A significant challenge in utilizing LLMs for information extraction is the non-deterministic nature of their output. To overcome this inconsistency and ensure all extracted data is machine-readable and standardized, a schema-guided generation approach is adopted. The outlines library \cite{willard2023outlines} is integrated into the system to force the LLM to generate responses that strictly adhere to a predefined JSON schema, which will be discussed further in the next chapter.  This method guarantees structural consistency across all processed job descriptions, which is crucial for the subsequent similarity search stage.
 
 \section{LLM Models}
-The models selected for the benchmark evaluation represent state-of-the-art open-source models as of June 2025:
+The models selected for the benchmark evaluation represent state-of-the-art open-source models as of October 2025:
 
 \begin{table}[h]
 	\caption{Model Parameter Sizes}
