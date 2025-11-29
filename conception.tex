@@ -75,3 +75,9 @@ The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the f
 
 \section{Embedding and Similarity Search}
 Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. The all-MiniLM-L6-v2 sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching as mentioned in \Ref{introduction:similaritysearch}. This process is designed to identify the top 10 most relevant job postings based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
+
+\subsection{Cross-Encoder}
+``A cross-encoder allows two sentences to be passed to the Transformer
+network simultaneously to predict the extent to which the two sentences are
+similar. It does so by adding a classification head to the original architecture
+that can output a similarity score'' \cite{handson-llms-2024}
