@@ -1,42 +1,44 @@
 \chapter{Implementation}
 \label{ch:implementation}
 
-This chapter details the technical realization of the concept presented in the previous chapter. It describes the development environment, the data processing pipeline, the implementation of the requirements extraction using Large Language Models, and the realization of the similarity search.
-
+This chapter details the technical realization of the concept presented in the previous chapter. It describes the development environment, the data processing pipeline, the implementation of the requirements extraction using LLMs, the evaluation methodology, and the realization of the similarity search algorithms.
 
 \section{Development Environment}
 The system was implemented using the Python programming language (Version 3.10), chosen for its extensive ecosystem of data science and machine learning libraries. The core dependencies include:
 \begin{itemize}
 	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
-	\item \textbf{Outlines}: To enforce structured JSON generation from the LLMs.
-	\item \textbf{FastApi}: For Inference
-	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries.
-	\item \textbf{DeepEval}: For the automated LLM-as-a-judge evaluation pipeline.
+	\item \textbf{Outlines}: To enforce structured JSON generation from the LLMs, ensuring deterministic output formats.
+	\item \textbf{FastAPI}: For serving the inference engine as a scalable web service.
+	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries using Bi-Encoders and Cross-Encoders.
+	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
 \end{itemize}
-All experiments and inference tasks were conducted on 2x 12GB NVIDIA 3080 GPU, ensuring consistent performance benchmarks across all tested models. Following sections explain how \ref{fig:system_architecture} is implemented.
+All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. Figure \ref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth,height=0.9\textwidth]{images/system-architecture2.pdf}
-	\caption{System architecture}
+	\caption{System Architecture}
 	\label{fig:system_architecture}
 \end{figure}
 
 
-\section{Data Prepreprocessing}
+\section{Data Preprocessing}
 As outlined in the conception, the raw data consists of HTML documents. The preprocessing pipeline transforms this unstructured input into clean, chunked text suitable for LLM processing.
 
 \subsection{HTML to Markdown Conversion}
-The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document (headings, lists, and paragraphs). This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
+The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document. Headings, lists, and paragraphs are retained, as these structural elements provide critical semantic cues for the extraction model. This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
 
-\subsection{Chunking Strategy}
-To preserve the semantic integrity of the job descriptions, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \texttt{r'(\#\{1,6\}\textbackslash s+.*? \textbackslash n)'}), ensuring that logical sections like 'Responsibilities' or 'Requirements' remain intact. If a section exceeds the maximum chunk size of 12,000 tokens, it is further divided based on character count. This approach minimizes context fragmentation compared to strict fixed-size chunking.
+\subsection{Hybrid Chunking Strategy}
+To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \texttt{r'(\#\{1,6\}\textbackslash s+.*? \textbackslash n)'}). This ensures that logical sections—such as 'Responsibilities' or 'Requirements'—remain intact within a single context window.
+
+A fallback mechanism is implemented for cases where a section exceeds the maximum token limit. If a semantic chunk exceeds the configured size (defaulting to approximately 12,000 tokens, estimated via character count), it is further divided based on a strict character limit to prevent memory overflows during inference.
 
 
 \section{Structured Requirements Extraction}
-The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process.
+The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process using Finite State Machine (FSM) logic.
 
 \subsection{JSON Schema Definition}
-As mentioned in the Conception chapter, a strict JSON schema is defined to standardize the output. The schema ensures that every processed job description yields a consistent data structure. The schema used is defined as follows:
+A strict Pydantic model defines the output schema. This ensures that every processed job description yields a consistent data structure, regardless of the underlying LLM used. The schema is defined as follows:
 \begin{center}
 	\begin{lstlisting}[language=python, caption={JSON Schema for Requirements Extraction}, label={lst:requirements_schema}]
 
@@ -58,7 +60,6 @@ class Requirements(BaseModel):
         description="List of qualifications/certifications"
     )
     \end{lstlisting}
-	\label{code:json-schema}
 \end{center}
 
 \subsection{Prompt Engineering}
@@ -71,12 +72,14 @@ The prompt provided to the LLM consists of a system instruction defining the per
 \end{figure}
 
 \section{Evaluation Framework Implementation}
-\subsection{Inference (Api)}
-FastApi is ensures Input and Result are type safe. the implementation is gerneric so that not for every model it needs a implemenation.
-\begin{center}
-	\begin{lstlisting}[language=python, caption={Api-implementation}, label={lst:requirements_schema}]
 
-	class LLMExtractor:
+\subsection{Inference Engine}
+The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama-3, Mistral, Qwen) by simply updating a configuration dictionary.
+
+The extractor initializes the model and tokenizer, and wraps them with the \texttt{outlines.Generator}. The generation process is constrained to strictly follow the \texttt{Requirements} schema defined above.
+\begin{center}
+	\begin{lstlisting}[language=python, caption={LLM Extractor Implementation}, label={code:api-implementation}]
+class LLMExtractor:
     def __init__(self, model_id, chunk_size, device_kwargs=None):
         self.model_id = model_id
         self.chunk_size = chunk_size
@@ -85,26 +88,21 @@ FastApi is ensures Input and Result are type safe. the implementation is gerneri
         self._load_model()
 
     def _load_model(self):
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, trust_remote_code=True)
+        # ... Memory management and cleanup ...
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_id,
             **self.device_kwargs,
             trust_remote_code=True,
         )
+        # Initialize Outlines generator with schema constraint
         outlines_model = from_transformers(self.model, self.tokenizer)
         self.generator = Generator(outlines_model, Requirements)
-
     \end{lstlisting}
-	\label{code:api-implementation}
 \end{center}
 so it makes adding a new model or removing the ones exisiting easier by add 5 lines as dict to code:
 \begin{center}
-	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:requirements_schema}]
+	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:llm-defintion}]
 {
   "qwen3-8b": {
     "model_id": "Qwen/Qwen3-8B",
@@ -115,16 +113,39 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
     }
   }
 }
-
     \end{lstlisting}
 	\label{code:llm-defintion}
 \end{center}
 
 \subsection{Outlines}
 making sure that LLM output matches the json schema \ref{code:json-schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
-\subsection{LLM-as-a-Judge Metrics}
+\subsection{Result Aggregation}
+Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experiences, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
+
+\section{Evaluation Framework Implementation}
+To rigorously assess the quality of the extracted requirements, an automated "LLM-as-a-judge" evaluation framework was implemented using the \texttt{DeepEval} library. This approach utilizes a highly capable model (NVIDIA's hosted \texttt{gpt-oss-120b}) to evaluate the outputs of smaller local models.
+
 
 \section{Embedding and Similarity Search}
-Once the requirements are extracted, they are converted into vector embeddings to facilitate semantic search.
-\subsection{Cross-Encoder for Similarity Scoring}
-Using cross-encoder to compare users profile and extracted job requirements.
+Once the requirements are extracted and structured, the system performs a similarity search against user profiles. Two distinct approaches were implemented to compare efficiency versus accuracy: a Bi-Encoder approach for retrieval and a Cross-Encoder approach for precise scoring.
+
+\subsection{Bi-Encoder (Cosine Similarity)}
+For the primary similarity calculation, the \texttt{sentence-transformers} library is used with the \texttt{all-MiniLM-L6-v2} model. This approach generates independent vector embeddings for the user's profile fields and the job's extracted requirements.
+
+The similarity score is calculated using Cosine Similarity between the corresponding vectors (e.g., User Skills Vector $\leftrightarrow$ Job Skills Vector). This method is computationally efficient as embeddings can be pre-computed and stored.
+
+\subsection{Cross-Encoder (Re-Ranking)}
+To validate the similarity scores, a Cross-Encoder implementation using \texttt{cross-encoder/ms-marco-MiniLM-L-6-v2} was developed. Unlike the Bi-Encoder, the Cross-Encoder processes the user profile and job requirements simultaneously as a single input pair.
+
+\begin{center}
+	\begin{lstlisting}[language=python, caption={Cross-Encoder Similarity Calculation}, label={code:cross-encoder}]
+def calculate_cross_encoder_similarity(user_text, job_text, cross_model):
+    if not user_text.strip() or not job_text.strip():
+        return 0.0
+    # Predicts score based on the pair (User, Job)
+    score = cross_model.predict([(user_text, job_text)])
+    return float(score[0])
+    \end{lstlisting}
+\end{center}
+
+While significantly more computationally intensive, the Cross-Encoder captures deeper semantic relationships and dependencies between the query and the document, serving as a benchmark to evaluate the performance of the faster Bi-Encoder approach.
