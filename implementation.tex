@@ -1,1 +1,130 @@
 \chapter{Implementation}
+\label{ch:implementation}
+
+This chapter details the technical realization of the concept presented in the previous chapter. It describes the development environment, the data processing pipeline, the implementation of the requirements extraction using Large Language Models, and the realization of the similarity search.
+
+
+\section{Development Environment}
+The system was implemented using the Python programming language (Version 3.10), chosen for its extensive ecosystem of data science and machine learning libraries. The core dependencies include:
+\begin{itemize}
+	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
+	\item \textbf{Outlines}: To enforce structured JSON generation from the LLMs.
+	\item \textbf{FastApi}: For Inference
+	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries.
+	\item \textbf{DeepEval}: For the automated LLM-as-a-judge evaluation pipeline.
+\end{itemize}
+All experiments and inference tasks were conducted on 2x 12GB NVIDIA 3080 GPU, ensuring consistent performance benchmarks across all tested models. Following sections explain how \ref{fig:system_architecture} is implemented.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.65\textwidth,height=0.9\textwidth]{images/system-architecture2.pdf}
+	\caption{System architecture}
+	\label{fig:system_architecture}
+\end{figure}
+
+
+\section{Data Prepreprocessing}
+As outlined in the conception, the raw data consists of HTML documents. The preprocessing pipeline transforms this unstructured input into clean, chunked text suitable for LLM processing.
+
+\subsection{HTML to Markdown Conversion}
+The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document (headings, lists, and paragraphs). This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
+
+\subsection{Chunking Strategy}
+To preserve the semantic integrity of the job descriptions, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \texttt{r'(\#\{1,6\}\textbackslash s+.*? \textbackslash n)'}), ensuring that logical sections like 'Responsibilities' or 'Requirements' remain intact. If a section exceeds the maximum chunk size of 12,000 tokens, it is further divided based on character count. This approach minimizes context fragmentation compared to strict fixed-size chunking.
+
+
+\section{Structured Requirements Extraction}
+The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process.
+
+\subsection{JSON Schema Definition}
+As mentioned in the Conception chapter, a strict JSON schema is defined to standardize the output. The schema ensures that every processed job description yields a consistent data structure. The schema used is defined as follows:
+\begin{center}
+	\begin{lstlisting}[language=python, caption={JSON Schema for Requirements Extraction}, label={lst:requirements_schema}]
+
+from typing import List
+from pydantic import BaseModel, Field
+
+class Requirements(BaseModel):
+    """Normalized requirements schema for job extraction outputs."""
+    skills: List[str] = Field(
+        default_factory=list,
+        description="List of required skills"
+    )
+    experiences: List[str] = Field(
+        default_factory=list,
+        description="List of experience requirements"
+    )
+    qualifications: List[str] = Field(
+        default_factory=list,
+        description="List of qualifications/certifications"
+    )
+    \end{lstlisting}
+	\label{code:json-schema}
+\end{center}
+
+\subsection{Prompt Engineering}
+The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. The system prompt used is:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/prompt}
+	\caption{System prompt used for requirements extraction}
+	\label{fig:prompt}
+\end{figure}
+
+\section{Evaluation Framework Implementation}
+\subsection{Inference (Api)}
+FastApi is ensures Input and Result are type safe. the implementation is gerneric so that not for every model it needs a implemenation.
+\begin{center}
+	\begin{lstlisting}[language=python, caption={Api-implementation}, label={lst:requirements_schema}]
+
+	class LLMExtractor:
+    def __init__(self, model_id, chunk_size, device_kwargs=None):
+        self.model_id = model_id
+        self.chunk_size = chunk_size
+        self.device_kwargs = device_kwargs or {}
+        self.generator = None
+        self._load_model()
+
+    def _load_model(self):
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, trust_remote_code=True)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_id,
+            **self.device_kwargs,
+            trust_remote_code=True,
+        )
+        outlines_model = from_transformers(self.model, self.tokenizer)
+        self.generator = Generator(outlines_model, Requirements)
+
+    \end{lstlisting}
+	\label{code:api-implementation}
+\end{center}
+so it makes adding a new model or removing the ones exisiting easier by add 5 lines as dict to code:
+\begin{center}
+	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:requirements_schema}]
+{
+  "qwen3-8b": {
+    "model_id": "Qwen/Qwen3-8B",
+    "chunk_size": 12000,
+    "device_kwargs": {
+      "device_map": "auto",
+      "dtype": "torch.bfloat16"
+    }
+  }
+}
+
+    \end{lstlisting}
+	\label{code:llm-defintion}
+\end{center}
+
+\subsection{Outlines}
+making sure that LLM output matches the json schema \ref{code:json-schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
+\subsection{LLM-as-a-Judge Metrics}
+
+\section{Embedding and Similarity Search}
+Once the requirements are extracted, they are converted into vector embeddings to facilitate semantic search.
+\subsection{Cross-Encoder for Similarity Scoring}
+Using cross-encoder to compare users profile and extracted job requirements.
