@@ -1,24 +1,129 @@
-
 \chapter{State of the Art}
-The field of automated job matching has undergone a substantial transformation, shifting from conventional keyword-based approaches to advanced semantic and  AI-driven systems. This evolution commenced with the adoption of semantic similarity approaches, which addressed numerous limitations of keyword-based matching. Research by Ajjam and Al-Raweshidy \cite{ajjam_ai-driven_2025} demonstrated that semantic models outperform keyword-based methods, achieving significantly higher similarity scores and enabling a more nuanced interpretation of the conceptual relevance between resumes and job descriptions.
 
-This semantic understanding was further enhanced by the introduction of transformer models, particularly BERT-based architectures \cite{sentence-bert}. The development of domain-specific models represented a pivotal advancement in this field. For instance, Rosenberger et al. proposed CareerBERT, a novel approach that leverages the power of unstructured textual data sources, that uses jobGBERT \cite{gbert} to embed resumes and job categories derived from the standardized European Skills, Competences, and Occupations (ESCO) taxonomy \cite{careerbert}. By pre-training on specialized career data, such models create a shared embedding space that more accurately captures the intricacies of professional qualifications. Their approach demonstrated comparable, though more reliable, performance to that of GPT-4 while exhibiting significantly superior computational efficiency \cite{careerbert}.
+The limitations of current job-matching systems, as outlined in the introduction, have led researchers to explore more sophisticated approaches capable of capturing the semantic relationships between job descriptions, requirements, and user profiles. Over the past years, the field has evolved from simple keyword-based methods toward advanced semantic, transformer-based, and large-scale industrial systems. This chapter provides an overview of these developments, focusing on those techniques that inform the design of the system proposed in this thesis.
 
-As these technologies advanced, large-scale industrial platforms began to integrate them into their systems. CareerBuilder, for instance, developed an embedding-based recommender system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. The two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality. LinkedIn's LinkSAGE framework represents a significant advancement in the field of network analysis, incorporating Graph Neural Networks (GNNs) to model the intricate and interwoven relationships within its professional network \cite{linksage}. By conceptualizing members, employment opportunities, and competencies as nodes in a comprehensive graph, LinkSAGE captures implicit signals and enhances relevance, underscoring the efficacy of graph-based methodologies in contemporary recommender systems. While this approach is highly effective within a closed ecosystem, its architecture presents significant barriers to broader adoption. The framework's dependency on a massive, proprietary database of user and job data makes it unsuitable for systems designed to aggregate job postings from multiple platforms. Furthermore, the extensive infrastructure required to deploy and maintain such a large-scale graph network is prohibitively expensive for many applications. Despite these scalability and cost limitations, the success of LinkSAGE underscores a critical insight: the importance of modeling the detailed relationships between applicant skills and required job competencies, a principle that informs the methodology of this thesis.
 
-Alongside these architectural advancements, recent research has focused on overcoming persistent data challenges, such as the sparsity of interaction labels in recruitment datasets. CONFIT V2 \cite{confitv2} presents a pioneering approach by leveraging LLMs to generate hypothetical reference resumes, thus enriching the training data. This technique is combined with a novel strategy called Runner-Up Hard-Negative Mining, which identifies highly similar but incorrect resume-job pairs to train the model. These examples teach the model to discern subtle differences between suitable and unsuitable candidates, significantly improving performance and demonstrating the potential of generative AI to enhance contrastive learning frameworks.
+\section{Semantic and Transformer-Based Job Matching}
 
-Despite this progress, a research gap remains for a system that is both powerful and accessible. Industrial solutions such as LinkSAGE depend on substantial proprietary datasets and intricate infrastructure, while advanced academic models necessitate considerable computational resources for data augmentation. This thesis aims to address this gap by proposing a novel system that utilizes small open-source LLMs for automated requirements extraction and token-embedding-driven similarity search, offering a scalable, transparent, and cost-effective solution.
+Early improvements over keyword matching emerged through semantic similarity models, which aimed to interpret the conceptual relevance between resumes and job descriptions. Research by Ajjam and Al-Raweshidy \cite{ajjam_ai-driven_2025} demonstrated that these approaches outperform keyword-based methods, achieving significantly higher similarity scores and enabling a more nuanced interpretation of the conceptual relevance between resumes and job descriptions.
+
+The adoption of transformer models marked a major shift in this domain. Architectures such as BERT and its derivatives \cite{sentence-bert} enabled richer contextual understanding and improved generalization across career‑related tasks. The development of domain-specific models represented a pivotal advancement in this field. For instance, Rosenberger et al. proposed CareerBERT, a novel approach that leverages the power of unstructured textual data sources, that uses jobGBERT \cite{gbert} to embed resumes and job categories derived from the standardized European Skills, Competences, and Occupations (ESCO) taxonomy \cite{careerbert}. By pre-training on specialized career data, such models create a shared embedding space that more accurately captures the intricacies of professional qualifications. Their approach demonstrated comparable, though more reliable, performance to that of GPT-4 while exhibiting significantly superior computational efficiency \cite{careerbert}.
+
+These developments highlight the steady shift toward embedding-based architectures capable of encoding job content beyond surface-level keywords. However, most domain-specific transformer models rely heavily on curated data sources or custom pretraining pipelines, which limits accessibility.
+
+
+\section{Industrial-Scale Recommender Architectures}
+
+Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level recommender systems. CareerBuilder, for example, developed an embedding-based recommender system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
+LinkedIn's LinkSAGE framework represents a significant advancement in the field of network analysis, incorporating Graph Neural Networks (GNN) to model the intricate and interwoven relationships within its professional network \cite{linksage}. LinkSAGE is using GraphSAGE architecture, which is  "a general inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data" \cite{graphsage}. By conceptualizing members, employment opportunities, and competencies as nodes in a comprehensive graph, LinkSAGE is able to capture implicit signals and deliver highly relevant recommendations. Despite its effectiveness, this architecture poses significant barriers for broader adoption: it depends on massive proprietary datasets and requires extensive computational infrastructure, making it unsuitable for open, platform-aggregating systems such as the one developed in this thesis.
+Nevertheless, LinkSAGE demonstrates a key insight for the field: effective job matching requires modeling the detailed relationships between applicant skills and job requirements. This principle directly informs the methodology of the approach proposed in this thesis.
+
+
+\section{Addressing Data Challenges: Augmentation and Hard-Negative Mining}
+
+As semantic models grew more advanced, researchers increasingly focused on addressing data sparsity and imbalance—persistent challenges in recruitment datasets. The CONFIT V2 framework \cite{confitv2} introduces a novel strategy to enrich training data by using LLMs to generate hypothetical reference resumes. These synthetic examples are combined with Runner-Up Hard-Negative Mining, a technique that selects job–resume pairs which appear similar but are incorrect, forcing the model to learn subtle distinctions between suitable and unsuitable matches. This method significantly improves model robustness and highlights the growing role of generative AI in enhancing contrastive learning processes.
+
+Although such methods push performance forward, they require substantial computational resources and specialized training pipelines. This dependency limits their applicability in lightweight, low-budget, or open-source contexts.
+
 
 \section{Related Work}
-Following the general advancements in job matching systems, this section now examines prior research specifically focused on the two core techniques employed in this thesis: the use of LLMs for requirement extraction and the application of embedding models for similarity search.
+Following the broader developments in job matching, this section examines research directly related to the two core techniques used in this thesis: (1) LLM‑driven requirements extraction and (2) embedding-based similarity search.
 
 \subsubsection{Requirements Extraction using LLMs}
-LLMs have shown promising results in transforming unstructured job descriptions into structured formats. Howison et al. \cite{howison2024} demonstrated the use of generative AI to extract structured labor market data, such as education requirements and job types, from real-world job ads with statistically reliable results. Similarly, Herandi et al. \cite{herandiskilllm} proposed Skill-LLM, a fine-tuned LLM optimized for skill extraction, significantly outperforming standard Named Entity Recognition (NER) baselines in identifying hard skills. While Skill-LLM demonstrates the effectiveness of fine-tuned models for skill extraction, the approach of this thesis leverages general-purpose LLMs to avoid the need for task-specific fine-tuning, thus increasing accessibility. Nguyen et al. \cite{nguyen2024rethinkingskillextractionjob} explore few-shot prompt-based extraction using general-purpose LLMs, showing that LLMs, despite not being on par with traditional supervised models in terms of performance, can better handle syntactically complex skill mentions in skill extraction tasks.
+Large Language Models have demonstrated strong capabilities in transforming unstructured job descriptions into structured information. Howison et al. \cite{howison2024} demonstrated the use of generative AI to extract structured labor market data, such as education requirements and job types, from real-world job ads with statistically reliable results. Similarly, Herandi et al. \cite{herandiskilllm} proposed Skill-LLM, a fine-tuned LLM optimized for skill extraction, significantly outperforming standard Named Entity Recognition (NER) baselines in identifying hard skills.
+While fine-tuned models achieve strong performance, they require task-specific annotations and training. In contrast, methods such as those explored by Nguyen et al. demonstrate that general-purpose LLMs can achieve competitive results through few-shot prompting, particularly when dealing with syntactically complex skill mentions \cite{nguyen2024rethinkingskillextractionjob}. This reinforces the choice of this thesis to rely on general-purpose, open-source LLMs without any fine-tuning, thereby increasing accessibility and adaptability.
 
-\subsubsection{Embedding and Similarity Search in Job Matching}
+\subsection{Embedding and Similarity Search in Job Matching}
 \label{introduction:similaritysearch}
-To enable dynamic and scalable job recommendations, recent systems increasingly embed user and job data into vector spaces and perform fast similarity searches. While domain-specific models like CareerBERT show reliable performance by leveraging standardized taxonomies \cite{careerbert}, Kurek et al. evaluated state-of-the-art embedding models like sentence-transformers all-MiniLM-L6-v2, demonstrating strong retrieval performance in job matching without task-specific tuning \cite{kurek2024}. For tasks demanding higher accuracy, cross-encoder models are often superior as Singh notes in his work, ``Extensive comparative studies have demonstrated the superior performance of cross-encoder models compared to traditional ranking methods'' \cite{cross-encoder-metric}.
+
+Embedding-based similarity search has become a cornerstone of modern job recommendation systems. Domain-specific models such as CareerBERT \cite{careerbert} achieve strong performance by leveraging structured taxonomies. However, general-purpose models such as sentence-transformers (e.g., all-MiniLM-L6-v2) have also shown excellent retrieval performance without task‑specific training, as demonstrated by Kurek et al. \cite{kurek2024}.
+For tasks requiring higher precision in ranking, cross-encoder architectures are often preferred. As Singh notes, extensive evaluations show the superior performance of cross-encoders compared to traditional ranking methods \cite{cross-encoder-metric}. In line with these findings, this thesis employs a cross-encoder to jointly process job titles and extracted requirements, enabling more accurate and contextually aware similarity judgments.
 This thesis therefore focuses on leveraging the high accuracy of a cross-encoder architecture for its core matching task,
 by jointly processing the job title and its requirements so that the model can more effectively capture the relationships between them.
+
+
+\section{Research Gap}
+
+
+The literature reviewed in this chapter demonstrates considerable
+progress in semantic job matching, domain‑specific transformer models,
+graph‑based recommender architectures, and data‑augmentation techniques.
+ Despite these advancements, several limitations persist:
+
+\begin{itemize}
+    \item Domain‑specific models frequently depend on extensive
+preprocessing pipelines or proprietary datasets, which restricts their
+accessibility and reproducibility.
+    \item Industrial‑scale recommender systems require significant
+computational infrastructure and rely on large, platform‑specific
+datasets, making them unsuitable for deployment by smaller organizations
+ or independent aggregators.
+    \item Recent training methodologies often incorporate large‑scale
+data augmentation strategies and hard‑negative mining, both of which
+demand substantial computational resources and specialized model
+development workflows.
+\end{itemize}
+
+To make these differences more explicit,
+Table~\ref{tab:model_comparison} contrasts commercial job portals,
+representative academic approaches, and the method proposed in this
+thesis. The comparison highlights how this work distinguishes itself
+through a combination of semantic capabilities, open‑source components,
+and the absence of fine‑tuning requirements.
+
+
+
+\begin{table}[h]
+    \caption{Systematic Comparison of Job Matching Approaches}
+    \label{tab:model_comparison}
+    \centering
+    \begin{tabular*}{\textwidth}{| l@{\extracolsep\fill} r || c | c | c |}
+        \hline
+
+        Tools &
+        \rotatebox{90}{characteristics} &
+        \rotatebox{90}{Uses LLMs} &
+        \rotatebox{90}{Open-Source} &
+        \rotatebox{90}{Fine-Tuning Required} \\
+
+        \hline
+        \hline
+
+        \multicolumn{2}{|l||}{LinkSage} &
+        \xmark  &
+        \xmark  &
+        \xmark \\
+        \hline
+
+        \multicolumn{2}{|l||}{CareerBuilder} &
+        \cmark &
+        \xmark &
+        \cmark \\
+        \hline
+
+        \multicolumn{2}{|l||}{ConfitV2} &
+        \cmark &
+        \cmark &
+        \cmark \\
+
+        \hline
+        \multicolumn{2}{|l||}{Approach of this thesis} &
+        \cmark &
+        \cmark &
+        \xmark \\
+
+        \hline
+
+    \end{tabular*}
+\end{table}
+
+
+
+
+
+In summary, although existing systems achieve strong performance in specific settings, there remains no approach that is both semantically robust and deployable using lightweight, fully open‑source components.
+This thesis addresses this gap by proposing a job‑matching system that
+employs small open‑source LLMs for automated requirements extraction
+together with embedding‑based similarity search, thereby offering an
+accessible, scalable, and computationally efficient alternative.
 

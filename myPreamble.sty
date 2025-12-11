@@ -13,6 +13,9 @@
 	
 	% ok-zeichen usw
   \usepackage{amsfonts} 
+  \usepackage{pifont}
+  \newcommand{\cmark}{\ding{51}}
+  \newcommand{\xmark}{\ding{55}}
 
   % Die folgenden drei Pakete ersetzen das veraltete palatino-Paket.
 	% Für die Begründung siehe 'Das Latex2-Sündenregister' von Mart Trettin
@@ -25,6 +28,7 @@
 	% (generiert für PDF auch gleich 
 	% ein Inhaltsverzeichnis und Links)
   \usepackage[
+  pifont,
   	pdfstartview=FitH,   
   	pdffitwindow=true,
   	colorlinks,
