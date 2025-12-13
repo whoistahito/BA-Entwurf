@@ -1,5 +1,4 @@
 \chapter{Conception}
-TODO: rename chapters like Chapter~2
 This chapter presents the conceptual design of the proposed job‑matching system, which addresses the limitations identified in the previous chapters. Building on the research gap outlined in \ref{sota:research_gap}, the goal of the conception is to translate the methodological requirements into a coherent system architecture that enables reliable requirements extraction and semantically informed similarity search. The system operates as a processing layer on top of the YourJobFinder platform, which serves as the data acquisition component by aggregating raw, unstructured job descriptions based on a user’s initial query.
 
 Figure~\ref{fig:yourjobfinder_architecture} illustrates the overall workflow. The YourJobFinder crawler provides raw HTML content, after which the job matching system developed in this thesis is applied. This system consists of two central components:
@@ -33,7 +32,7 @@ These structured representations are encoded in a common JSON schema for both jo
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/data-sctructure-001}
+    \includegraphics[width=0.9\textwidth]{images/data-sctructure}
     \caption{Data structure mapping between job requirements and user profile for semantic matching.}
     \label{fig:data_structure}
 \end{figure}
