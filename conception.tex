@@ -1,25 +1,37 @@
 \chapter{Conception}
-Building on the identified research gap for an accessible yet powerful job matching framework, this chapter details the conception of the proposed filtering and matching system. It addresses the challenges and objectives outlined in the introduction. The system functions as a processing layer that builds upon the data acquisition capabilities of the YourJobFinder platform. The technical scope of this work begins after YourJobFinder has aggregated the raw, unstructured job descriptions based on an initial user query.
+TODO: rename chapters like Chapter~2
+This chapter presents the conceptual design of the proposed job‑matching system, which addresses the limitations identified in the previous chapters. Building on the research gap outlined in \ref{sota:research_gap}, the goal of the conception is to translate the methodological requirements into a coherent system architecture that enables reliable requirements extraction and semantically informed similarity search. The system operates as a processing layer on top of the YourJobFinder platform, which serves as the data acquisition component by aggregating raw, unstructured job descriptions based on a user’s initial query.
 
-The architecture of the proposed system is illustrated in Figure \ref{fig:yourjobfinder_architecture}. The process is initiated when the web crawler provides raw HTML text to the backend. The work presented in this thesis focuses on the subsequent stages, which include a multi-stage pipeline designed to preprocess the data, extract structured requirements using a LLM, and perform a similarity search to identify relevant job postings. This chapter describes the two primary components of this framework: the requirements extraction process and the embedding-driven similarity search.
+Figure~\ref{fig:yourjobfinder_architecture} illustrates the overall workflow. The YourJobFinder crawler provides raw HTML content, after which the job matching system developed in this thesis is applied. This system consists of two central components:
+
+\begin{itemize}
+    \item a requirements extraction module based on open‑source LLMs,
+and
+    \item an embedding‑driven similarity search module that identifies semantically relevant job postings.
+\end{itemize}
+
+Together, these components form a lightweight, fully open‑source alternative to more resource‑intensive industrial systems, while still enabling meaningful semantic matching.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1\textwidth]{images/DDD-Miro-7-11-bold}
-    \caption{Diagram of the proposed system architecture}
+    \caption{System architecture integrating YourJobFinder with the proposed job‑matching system.}
     \label{fig:yourjobfinder_architecture}
 \end{figure}
 
 \section{Handling raw data}
-The data pipeline begins with raw HTML job postings, as shown in Figure \ref{fig:yourjobfinder_architecture}. To eliminate irrelevant data like scripts and style tags and create a clean input for the LLM, the raw HTML is converted to Markdown using the markdownify library \cite{python-markdownify}. This pre-processing step ensures that the model focuses solely on the semantic content of the job description for requirements extraction.
+The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
 
 \section{Schema based LLM Output}
-A significant challenge in utilizing LLMs for information extraction is the non-deterministic nature of their output. To overcome this inconsistency and ensure all extracted data is machine-readable and standardized, a schema-guided generation approach is adopted. The outlines library \cite{willard2023outlines} is integrated into the system to force the LLM to generate responses that strictly adhere to a predefined JSON schema, which will be discussed further in the next chapter.  This method guarantees structural consistency across all processed job descriptions, which is crucial for the subsequent similarity search stage.
+TODO: explanation about probabilistic function of outlines
+A fundamental challenge when employing LLMs for requirements extraction is the inherent variability of their output. Even when provided with identical prompts, models may produce syntactically inconsistent or structurally divergent responses. To ensure that the extracted requirements are machine‑readable and uniform across all documents, this work employs a schema‑guided generation approach.
+
+The \textit{outlines} library \cite{willard2023outlines} is integrated to enforce adherence to a predefined JSON schema, described in detail in \ref{lst:requirements_schema}. This guarantees that the LLM outputs a standardized structure containing the required fields (e.g., skills, qualifications, experience). Such structural consistency is essential, as it forms the
+basis for downstream processing, evaluation, and similarity search.
 
 \section{LLM Models}
-The models selected for the benchmark evaluation represent state-of-the-art open-source models as of October 2025:
-
+The thesis evaluates several state‑of‑the‑art open‑source LLMs available as of October 2025. These models were selected based on their parameter size, availability, and suitability for constrained inference environments:
 \begin{table}[h]
 	\caption{Model Parameter Sizes}
 	\label{tab:model_params}
@@ -48,36 +60,61 @@ The number of tokens in a chunk and, optionally, whether there should be any ove
 
 
 \section{LLM Output Evaluation}
-A key challenge in evaluating the extracted requirements is the semantic variability inherent in LLM-generated text. A single requirement can be formulated in numerous, lexically distinct ways while remaining semantically correct. For instance, the requirement `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management' or `Experience managing multiple projects'. Consequently, relying on a fixed, manually annotated ground truth becomes unreliable, since semantically equivalent requirements expressed with different wording would be incorrectly treated as mismatches.
+Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example, `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management' .even though the wording differs significantly.
+Relying on exact string matching would thus penalize valid extractions.
 
-To address this challenge, this thesis adopts an automated and dynamic evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. Instead of relying on exact string matching, this approach uses a powerful LLM to assess the semantic faithfulness of the generated output against the source text. As Huyen mentions, ``AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}. For this purpose, the DeepEval framework was employed \cite{deepeval}. DeepEval utilizes its G-Eval metric to prompt a judge model, which scores the quality of the extracted JSON object relative to the original job description \cite{G-eval}. The specific metrics guiding this evaluation will be discussed in the following section.
+To address this, the system employs an automated evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
+description. As Huyen mentions, ``AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}. The evaluation framework used in this thesis is implemented with DeepEval \cite{deepeval}.
 
 \subsection{LLM-as-a-Judge}
 ``The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge'' \cite{ai-engineering-book}.
-``An emerging method for evaluating generated content involves using other LLMs as evaluators'' \cite{blackbox-llmasjudge}. ``These evaluations can take various forms, including explanations, numeric values, or categorical rating'' \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
+Evaluations may produce numeric scores or qualitative assessments \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
 
 
 \subsection{G-Eval}
-``G-EVAL is a prompt-based evaluator with three main components: 1) a prompt that contains the definition of the evaluation task and the desired evaluation criteria, 2) a chain-of-thoughts (CoT) that is a set of intermediate instructions generated by the LLM describing the detailed evaluation steps, and
-3) a scoring function that calls LLM and calculates the score based on the probabilities of the return tokens.'' \cite{G-eval}
+The evaluation relies on the G‑Eval metric, a prompt‑based
+ scoring method with three components: (1) task definition and criteria,
+ (2) a chain‑of‑thought reasoning process used internally by the judge
+model, and (3) a probabilistic scoring function \cite{G-eval}. This mechanism enables
+controlled and interpretable evaluation of structured JSON outputs.
 
 \subsection{Metrics} \label{metrics}
-The LLM-as-a-judge evaluation was guided by four key metrics, adapted from the framework proposed by Dong Yuan et al. \cite{evaluation-mertric}. Each metric was specifically interpreted for the task of requirements extraction as follows:
+Four criteria adapted from Dong Yuan et al. \cite{evaluation-mertric}
+guide the evaluation:
 
-\paragraph{Correctness} In the context of this thesis, this measure is used to evaluate whether the extracted job requirements are accurate and actually present in the input text.
 
-\paragraph{Completeness} this metric is used to evaluate whether all mandatory job requirements from the input text were extracted.
-
-\paragraph{Alignment} Applied to this task, alignment evaluates whether the model correctly avoided extracting `nice-to-have', `preferred', or `bonus' requirements.
-
-\paragraph{Readability} Here, this metric is adapted to assess whether the extracted requirements are properly categorized as given and whether the output is well-structured, for instance, if it is free of syntax errors. This aspect will be explained in more detail in the implementation section.
-
+\begin{itemize}
+    \item \textbf{Correctness} — assesses whether extracted requirements
+ are accurate and present in the input text.
+    \item \textbf{Completeness} — evaluates whether all mandatory
+requirements have been captured.
+    \item \textbf{Alignment} — measures whether the model avoids
+including `preferred', `bonus', or non‑mandatory requirements.
+    \item \textbf{Readability} — examines whether the output adheres to
+the defined schema and is syntactically valid.
+\end{itemize}
+These metrics collectively ensure that extraction quality is judged not
+only by semantic fidelity but also by structural reliability.
 
 \section{Embedding and Similarity Search}
-Subsequent to the extraction and structuring of job requirements,the system proceeds to the second stage, which addresses the objective of dynamic job matching. To accomplish this, the structured job data and user query are encoded into vector representations. The all-MiniLM-L6-v2 sentence transformer model was selected for this task due to its strong zero-shot retrieval performance in job matching as mentioned in \Ref{introduction:similaritysearch}. This process is designed to identify the top 10 most relevant job postings based on semantic similarity, thereby providing a more accurate matching system than title-based filtering.
+TODO: explain how embedding works
+Once the job requirements have been extracted and validated, the second
+component of the system performs semantic similarity matching. Both the
+structured job postings and the user query are encoded as vector
+representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer
+ model. As discussed in Section~\ref{introduction:similaritysearch},
+this model offers strong zero‑shot performance for retrieval‑based tasks
+ in job matching.
+
+The similarity search retrieves the ten most relevant job postings based
+ on cosine similarity in the embedding space, thereby enabling a more
+semantically precise ranking than simple title‑matching methods.
 
 \subsection{Cross-Encoder}
 ``A cross-encoder allows two sentences to be passed to the Transformer
 network simultaneously to predict the extent to which the two sentences are
 similar. It does so by adding a classification head to the original architecture
 that can output a similarity score'' \cite{handson-llms-2024}
+Although more computationally expensive, this
+architecture captures deeper contextual interactions and therefore
+improves match quality.
