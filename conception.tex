@@ -19,6 +19,25 @@ Together, these components form a lightweight, fully open‑source alternative t
     \label{fig:yourjobfinder_architecture}
 \end{figure}
 
+\section{Data Structure for Job Matching}
+
+The core of the proposed system relies on a structured comparison between job requirements and user profiles. Figure~\ref{fig:data_structure} illustrates the fundamental data model that enables semantic matching. Both job postings and user profiles are decomposed into three key dimensions:
+
+\begin{itemize}
+    \item \textbf{Skills} — technical and professional competencies
+    \item \textbf{Experience} — work history and domain expertise
+    \item \textbf{Education or Certificates} — formal qualifications and certifications
+\end{itemize}
+
+These structured representations are encoded in a common JSON schema for both job descriptions and user profiles. The requirements extraction module converts unstructured job descriptions into this schema so that they share the same structure as user profiles. With this common schema, the system can compare skills, experience, and education in a consistent way, forming the basis for the LLM extraction step and the subsequent embedding-based similarity search.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/data-sctructure-001}
+    \caption{Data structure mapping between job requirements and user profile for semantic matching.}
+    \label{fig:data_structure}
+\end{figure}
+
 \section{Handling raw data}
 The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
