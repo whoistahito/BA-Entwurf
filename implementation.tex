@@ -118,7 +118,7 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
 \end{center}
 
 \subsection{Outlines}
-making sure that LLM output matches the json schema \ref{code:json-schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
+making sure that LLM output matches the json schema \ref{lst:requirements_schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experiences, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
 
@@ -129,11 +129,6 @@ To rigorously assess the quality of the extracted requirements, an automated "LL
 \section{Embedding and Similarity Search}
 Once the requirements are extracted and structured, the system performs a similarity search against user profiles. Two distinct approaches were implemented to compare efficiency versus accuracy: a Bi-Encoder approach for retrieval and a Cross-Encoder approach for precise scoring.
 
-\subsection{Bi-Encoder (Cosine Similarity)}
-For the primary similarity calculation, the \texttt{sentence-transformers} library is used with the \texttt{all-MiniLM-L6-v2} model. This approach generates independent vector embeddings for the user's profile fields and the job's extracted requirements.
-
-The similarity score is calculated using Cosine Similarity between the corresponding vectors (e.g., User Skills Vector $\leftrightarrow$ Job Skills Vector). This method is computationally efficient as embeddings can be pre-computed and stored.
-
 \subsection{Cross-Encoder (Re-Ranking)}
 To validate the similarity scores, a Cross-Encoder implementation using \texttt{cross-encoder/ms-marco-MiniLM-L-6-v2} was developed. Unlike the Bi-Encoder, the Cross-Encoder processes the user profile and job requirements simultaneously as a single input pair.
 
@@ -142,7 +137,7 @@ To validate the similarity scores, a Cross-Encoder implementation using \texttt{
 def calculate_cross_encoder_similarity(user_text, job_text, cross_model):
     if not user_text.strip() or not job_text.strip():
         return 0.0
-    # Predicts score based on the pair (User, Job)
+    # Predicts score based on the pair (User-profile, Job-requirements)
     score = cross_model.predict([(user_text, job_text)])
     return float(score[0])
     \end{lstlisting}
