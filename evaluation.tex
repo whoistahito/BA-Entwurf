@@ -2,8 +2,41 @@
 This chapter presents a quantitative evaluation of the selected open-source Large Language Models to determine their effectiveness in extracting structured job requirements from unstructured text. This analysis directly addresses the second research question (RQ2) by assessing which model demonstrates the best performance in terms of correctness, completeness, readability, and alignment. The performance of each model is measured across three dimensions: (i) an overall model ranking derived from aggregated scores, (ii) a detailed comparison of average scores for each of the four evaluation metrics, and (iii) an analysis of task completion pass rates. The presented results provide the foundation for the subsequent summary of findings and the discussion of future research directions in the Outlook.
 
 
+\section{Dataset}
+the data contained 209 job descriptions. Links to these job descriptions were aquired from yourjobfinder database. Using web scraping the Raw html content of the job postings were extracted first then converted to markdown using markdownify library.
+below shows sources of the job postings:
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_source}
+    \caption{Job Descriptions categorized by source}
+    \label{fig:jd_by_source}
+\end{figure}
+It is observable that in \autoref{fig:jd_by_source} about 95\% of the job postings are from job platfroms like indeed and linkedin, which most of them are from indeed. The rest of the job postings are from career page of regulrar companies.
+Figure \autoref{fig:jd_by_industry} below shows the distribution of job postings across various industries.
+\begin{figure}[hb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_industry}
+    \caption{Job Descriptions categorized by industry}
+    \label{fig:jd_by_industry}
+\end{figure}
+It is observable that around a third of the job posting are from tech companies. Health care, Business, and Engineering also represented too in same amount.
+
+Figure below shows number of characters in the jobs posting overall.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/char}
+    \caption{Job Descriptions categorized by industry}
+\end{figure}
+
+as we can see there are XX numbers of job postings that have fewer than XX characters, these are job postings without any job description and a good way to test hallucination behavior of LLMs.
+
+
+\section{Evaluation Framework Implementation}
+To rigorously assess the quality of the extracted requirements, an automated "LLM-as-a-judge" evaluation framework was implemented using the \texttt{DeepEval} library. This approach utilizes a highly capable model (NVIDIA's hosted \texttt{gpt-oss-120b}) to evaluate the outputs of smaller local models.
+
+
 \section{Model Performance Comparison}
-In this section, we evaluate the performance of the different models based on three key metrics: overall model ranking, passed rates, and average scores. The following figures illustrate the comparative performance of the models in each of these areas.
+This section evaluates the models based on a principal metrics derived from the G-Eval framework: the aggregated overall ranking. These results allow for an initial comparison of model behavior across the evaluation dataset.
 
 \begin{figure}[h]
     \centering
@@ -12,29 +45,55 @@ In this section, we evaluate the performance of the different models based on th
     \label{fig:overall_model_ranking}
 \end{figure}
 
-Figure \ref{fig:overall_model_ranking} presents the overall ranking of the models. This ranking is an overall score derived from multiple metrics as discussed before see \Ref{metrics}. As can be seen, Qwen3-8B achieves the highest rank, followed by GLM-4. This suggests that, in aggregate, Qwen3-8B demonstrates superior performance across the evaluated criteria.
 
+\section{Quantitative Performance Analysis}
+A comparative analysis was conducted across four open‑weights models: Qwen 3 8B, GLM 4 9B, Mistral 7B Instruct, and Llama 3.1 8B Instruct. Table~\ref{tab:model_performance} summarizes the results across five evaluation dimensions. The values represent mean G‑Eval scores across the test corpus, where a score of 1.0 would indicate perfect alignment with the evaluation criteria.
 
-\begin{figure}[h]
+\begin{table}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/average_scores_comparison}
-    \caption{Overall average performance score of the evaluated LLM models across all four metrics}
-    \label{fig:average_scores_comparison}
-\end{figure}
+    \caption{Comparative Performance Metrics (G-Eval Scores)}
+    \label{tab:model_performance}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Model}   & \textbf{Overall Score} & \textbf{Structure} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Precision} \\
+        \midrule
+        \textbf{Qwen 3 8B} & \textbf{0.50}          & \textbf{0.61}      & 0.45                  & \textbf{0.45}        & \textbf{0.50}      \\
+        GLM 4 9B           & 0.48                   & 0.58               & \textbf{0.48}         & 0.43                 & 0.43               \\
+        Mistral 7B         & 0.46                   & 0.55               & 0.40                  & 0.44                 & 0.46               \\
+        Llama 3.1 8B       & 0.41                   & 0.49               & 0.37                  & 0.38                 & 0.39               \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.2cm}
+    \small{\\ \textit{Note: Scores represent mean G-Eval metrics across the evaluation corpus.}}
+\end{table}
 
-Figure \ref{fig:average_scores_comparison} shows comparison of  the average scores obtained by each model in all metrics. The score is a measure of the quality of the model's output, with higher scores indicating better performance. The results in this figure are consistent with the previous metrics, showing Model Qwen3-8B with the highest average score. This further supports the conclusion that Model Qwen3-8B is the most effective model in this evaluation. It is important to note that Qwen3-8B has better percentage in Alignment category than GLM-4 but lower percentage in Completeness, which means that Qwen3-8B identifies 'must-have' requirements better but hallucinates more compared to GLM-4.
+Across all metrics, Qwen3‑8B achieves the best overall performance, followed by GLM‑4, Mistral‑7B, and Llama‑3.1‑8B. The relative ordering aligns with the qualitative observations discussed in the next section.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/passed_rates_comparison}
-    \caption{Passed rates comparison}
-    \label{fig:passed_rates_comparison}
-\end{figure}
 
-Figure \ref{fig:passed_rates_comparison} shows a comparison of the passed rates for each model in all metrics. G-Eval has the option to define a success threshold, which was set to 0.7 for all metrics. Based on that the passed rate is defined as the percentage of test cases that the model successfully completes. The chart indicates that Model Qwen3-8B has the highest passed rate, reinforcing its strong performance. Models GLM-4 and mistral-7B-instruct have nearly the same passed rate
+\section{Qualitative Error Analysis}
+Beyond the quantitative metrics, a qualitative analysis of the model outputs reveals distinct failure modes that explain the performance differences.
 
+\subsection{Hallucination of Generic Requirements}
+A recurring issue, particularly with the Llama-3 family, is the hallucination of "standard" job requirements. For example, in several test cases, Llama-3.1 inserted requirements for a "Bachelor's degree in Computer Science" or "PMP Certification" even when the job description made no mention of formal education. This behavior likely stems from the model's training data bias, where such requirements frequently appear in job postings. For a matching system, this is a critical error, as it could lead to the exclusion of qualified candidates who lack these unstated credentials.
+
+\subsection{The Precision-Recall Trade-off}
+The comparison between Qwen3-8B and GLM-4 highlights a distinct trade-off. Qwen3-8B demonstrates a "conservative" extraction strategy, achieving the highest \textit{Precision} score (0.496). It rarely includes non-mandatory items but occasionally misses implicit requirements. In contrast, GLM-4 adopts a "liberal" strategy, achieving the highest \textit{Completeness} score (0.479). It captures almost all requirements but frequently includes "nice-to-have" skills as mandatory, which lowers its precision. For a filtering system, Qwen's conservative approach is generally preferred to avoid false negatives (rejecting suitable candidates).
+
+\subsection{Prompt Overfitting}
+TODO:When there is a markdown without any job description, LLM in this case llama3.1-instruct and Qwen3 hilucinated PMP Certification and Bachelors in CS. Alternative: Both models hallucinated the exact same specific qualifications (`Bachelor's in CS', `PMP certification') for a job posting that did not contain them. This strongly suggests Prompt Leakage: the models likely memorized examples provided in the few-shot prompt and regurgitated them instead of extracting from the source text. This highlights a critical risk in using few-shot prompting for extraction tasks: models may prioritize the *content* of the examples over the instruction to extract only new data. Prompt leakage is defined as ``as the act of misaligning the original goal of a prompt to a new goal of
+printing part of or the whole original prompt instead'' \cite{prompt-leakage}
 
 
 \section{Summary of Evaluation}
+The evaluation yields three major findings regarding the state of open-source LLMs for requirements extraction:
+
+\begin{enumerate}
+    \item \textbf{Rapid Evolution of Capabilities}: The comparison between Llama-3-8B (Overall Score: 0.17) and Llama-3.1-8B (Overall Score: 0.41) reveals a massive leap in performance. A mere version update resulted in a greater than 100\% improvement in structured data extraction capabilities, suggesting that the gap between open-source and proprietary models is closing rapidly.
+
+    \item \textbf{Architecture over Size}: Despite being the oldest and smallest model in the benchmark, Mistral-7B (Overall Score: 0.46) outperformed the newer Llama-3.1-8B. This indicates that for specific information extraction tasks, model architecture and training data quality may be more decisive than raw parameter count or release date.
+
+    \item \textbf{Readiness for Automation}: While Qwen3-8B achieved the top rank, the absolute scores (hovering around 0.5-0.6) and low pass rates (<30\% for strict correctness) indicate that 8B-parameter models are not yet fully reliable for fully autonomous, unsupervised extraction. They require either human-in-the-loop verification or further fine-tuning to reach production-grade reliability.
+\end{enumerate}
+
 
 \section{Outlook}
