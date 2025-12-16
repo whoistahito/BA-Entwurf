@@ -42,7 +42,7 @@ The pipeline begins with raw HTML job postings retrieved by the YourJobFinder cr
 
 
 \section{Schema based LLM Output}
-TODO: explanation about probabilistic function of outlines
+TODO: explain outlines framework and how it works / forcing LLM to output structured using finite atomate
 A fundamental challenge when employing LLMs for requirements extraction is the inherent variability of their output. Even when provided with identical prompts, models may produce syntactically inconsistent or structurally divergent responses. To ensure that the extracted requirements are machine‑readable and uniform across all documents, this work employs a schema‑guided generation approach.
 
 The \textit{outlines} library \cite{willard2023outlines} is integrated to enforce adherence to a predefined JSON schema, described in detail in \ref{lst:requirements_schema}. This guarantees that the LLM outputs a standardized structure containing the required fields (e.g., skills, qualifications, experience). Such structural consistency is essential, as it forms the
@@ -123,16 +123,10 @@ representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer
  model. As discussed in Section~\ref{introduction:similaritysearch},
 this model offers strong zero‑shot performance for retrieval‑based tasks
  in job matching.
+The skills fields are weighted more because as studies show skills are more important in job application, for example a study by Bone et al. , that analysed online job vacanies from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for A I roles.'' \cite{skills-or-degree}
 
 The similarity search retrieves the ten most relevant job postings based
  on cosine similarity in the embedding space, thereby enabling a more
 semantically precise ranking than simple title‑matching methods.
-
-\subsection{Cross-Encoder}
-``A cross-encoder allows two sentences to be passed to the Transformer
-network simultaneously to predict the extent to which the two sentences are
-similar. It does so by adding a classification head to the original architecture
-that can output a similarity score'' \cite{handson-llms-2024}
-Although more computationally expensive, this
-architecture captures deeper contextual interactions and therefore
-improves match quality.
+\subsection{Vector Embedding}
+\subsection{MaxSim}
