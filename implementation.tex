@@ -71,7 +71,6 @@ The prompt provided to the LLM consists of a system instruction defining the per
 	\label{fig:prompt}
 \end{figure}
 
-\section{Evaluation Framework Implementation}
 
 \subsection{Inference Engine}
 The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama-3, Mistral, Qwen) by simply updating a configuration dictionary.
@@ -121,10 +120,6 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
 making sure that LLM output matches the json schema \ref{lst:requirements_schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experiences, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
-
-\section{Evaluation Framework Implementation}
-To rigorously assess the quality of the extracted requirements, an automated "LLM-as-a-judge" evaluation framework was implemented using the \texttt{DeepEval} library. This approach utilizes a highly capable model (NVIDIA's hosted \texttt{gpt-oss-120b}) to evaluate the outputs of smaller local models.
-
 
 \section{Embedding and Similarity Search}
 Once the requirements are extracted and structured, the system performs a similarity search against user profiles. Two distinct approaches were implemented to compare efficiency versus accuracy: a Bi-Encoder approach for retrieval and a Cross-Encoder approach for precise scoring.
