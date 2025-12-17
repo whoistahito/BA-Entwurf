@@ -3,8 +3,7 @@ This chapter presents a quantitative evaluation of the selected open-source Larg
 
 
 \section{Dataset}
-the data contained 209 job descriptions. Links to these job descriptions were aquired from yourjobfinder database. Using web scraping the Raw html content of the job postings were extracted first then converted to markdown using markdownify library.
-below shows sources of the job postings:
+The dataset contained 209 job descriptions. Links to these job descriptions were aquired from yourjobfinder database. Using web scraping the Raw html content of the job postings were extracted first then converted to markdown using markdownify library. \\
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_source}
@@ -12,24 +11,35 @@ below shows sources of the job postings:
     \label{fig:jd_by_source}
 \end{figure}
 It is observable that in \autoref{fig:jd_by_source} about 95\% of the job postings are from job platfroms like indeed and linkedin, which most of them are from indeed. The rest of the job postings are from career page of regulrar companies.
-Figure \autoref{fig:jd_by_industry} below shows the distribution of job postings across various industries.
+Figure \autoref{fig:jd_by_industry} below shows the distribution of job postings across various industries.\\
 \begin{figure}[hb]
     \centering
     \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_industry}
     \caption{Job Descriptions categorized by industry}
     \label{fig:jd_by_industry}
 \end{figure}
-It is observable that around a third of the job posting are from tech companies. Health care, Business, and Engineering also represented too in same amount.
+It is observable that around a third of the job posting are from tech companies. Health care, Business, and Engineering also represented too in same amount. The Other Industry represent the one job posting without any job description\\
 
-Figure below shows number of characters in the jobs posting overall.
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/char}
-    \caption{Job Descriptions categorized by industry}
+In that aspect, it is interesting to see how long the job description of each job posting was:\\
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/distribution_job_description_lengths}
+  \captionof{figure}{Distribution of job description lengths}
+  \label{fig:jd_distribution_characters}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/character_count_by_source_violin}
+  \captionof{figure}{Character count by source}
+  \label{fig:jd_character_count_by_source}
+\end{minipage}
+    \label{fig:jd_character_comparasion}
 \end{figure}
 
-as we can see there are XX numbers of job postings that have fewer than XX characters, these are job postings without any job description and a good way to test hallucination behavior of LLMs.
-
+as it shown in \autoref{fig:jd_character_comparasion} the \autoref{fig:jd_distribution_characters} shows job postings have normally between 6000 to 8000 characters. \autoref{fig:jd_character_count_by_source} shows on other hand that the length of the job description is dependent on source too. For example it shows that LinkedIn postings are longer than other sources for example 2x longer than indeed postings. Indeed job descriptions are the shortest with median of 6,053 characters. Interesting thing is that the job posting without job description is one the longest job descriptions with about 18000 characters.\\
 
 \section{Evaluation Framework Implementation}
 To rigorously assess the quality of the extracted requirements, an automated "LLM-as-a-judge" evaluation framework was implemented using the \texttt{DeepEval} library. This approach utilizes a highly capable model (NVIDIA's hosted \texttt{gpt-oss-120b}) to evaluate the outputs of smaller local models.
