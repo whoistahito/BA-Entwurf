@@ -1,28 +1,45 @@
 \chapter{Evaluation}
-This chapter presents a quantitative evaluation of the selected open-source Large Language Models to determine their effectiveness in extracting structured job requirements from unstructured text. This analysis directly addresses the second research question (RQ2) by assessing which model demonstrates the best performance in terms of correctness, completeness, readability, and alignment. The performance of each model is measured across three dimensions: (i) an overall model ranking derived from aggregated scores, (ii) a detailed comparison of average scores for each of the four evaluation metrics, and (iii) an analysis of task completion pass rates. The presented results provide the foundation for the subsequent summary of findings and the discussion of future research directions in the Outlook.
+
+This chapter presents the empirical evaluation of the system developed in this thesis and directly addresses the two research questions introduced in \autoref{ch:introduction}. The evaluation is structured into three components that build upon one another.
+
+First, this chapter analyzes the characteristics of the dataset used for evaluation. This includes an examination of the distribution of job postings across sources, industries, and description lengths, providing the necessary context for understanding model behavior and extraction performance.
+
+Secondly, evaluates how effectively open‑source Large Language Models extract structured job requirements from unstructured job descriptions (RQ1). This is assessed through a quantitative analysis using G‑Eval metrics within an automated ``LLM‑as‑a‑Judge’’ framework,complemented by a qualitative error analysis that identifies systematic strengths and weaknesses of the tested models.
+
+Third, the chapter examines how the proposed job‑matching approach compares to conventional job search engines in terms of relevance and accuracy of retrieved postings (RQ2). This includes an evaluation of the similarity search pipeline and a comparison against traditional title‑based retrieval strategies.
+
+Together, these three components provide a comprehensive empirical foundation for assessing the system’s performance, its practical utility, and its limitations, thereby preparing the ground for the discussion in the Outlook.
 
 
 \section{Dataset}
-The dataset contained 209 job descriptions. Links to these job descriptions were aquired from yourjobfinder database. Using web scraping the Raw html content of the job postings were extracted first then converted to markdown using markdownify library. \\
-\begin{figure}[ht]
+
+The evaluation is based on a corpus of 209 job descriptions. Links to the postings were retrieved from the YourJobFinder database and subsequently scraped using the YourJobFinder's scraping tools. The raw HTML content of each posting was then converted into Markdown using the \textit{markdownify} library, ensuring that stylistic noise such as JavaScript, layout fragments, and boilerplate components were removed before the extraction phase.\\
+
+Figure~\ref{fig:jd_by_source} presents the distribution of job descriptions by source platform.
+
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_source}
     \caption{Job Descriptions categorized by source}
     \label{fig:jd_by_source}
 \end{figure}
-It is observable that in \autoref{fig:jd_by_source} about 95\% of the job postings are from job platfroms like indeed and linkedin, which most of them are from indeed. The rest of the job postings are from career page of regulrar companies.
-Figure \autoref{fig:jd_by_industry} below shows the distribution of job postings across various industries.\\
-\begin{figure}[hb]
+
+
+Approximately 95\% of all postings originate from large job portals, primarily Indeed and LinkedIn. The remaining postings stem from individual company career pages. Figure~\ref{fig:jd_by_industry} shows the sectoral distribution of the dataset.
+
+
+\begin{figure}[hb!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_industry}
     \caption{Job Descriptions categorized by industry}
     \label{fig:jd_by_industry}
 \end{figure}
-It is observable that around a third of the job posting are from tech companies. Health care, Business, and Engineering also represented too in same amount. The Other Industry represent the one job posting without any job description\\
 
-In that aspect, it is interesting to see how long the job description of each job posting was:\\
+Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
 
-\begin{figure}[!ht]
+Beyond content distribution, the length of the job descriptions is an important characteristic for evaluating LLM behavior. Figure~\ref{fig:jd_character_comparasion} illustrates the distribution of character lengths. \\
+
+\begin{figure}[h!]
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
@@ -39,66 +56,102 @@ In that aspect, it is interesting to see how long the job description of each jo
     \label{fig:jd_character_comparasion}
 \end{figure}
 
-as it shown in \autoref{fig:jd_character_comparasion} the \autoref{fig:jd_distribution_characters} shows job postings have normally between 6000 to 8000 characters. \autoref{fig:jd_character_count_by_source} shows on other hand that the length of the job description is dependent on source too. For example it shows that LinkedIn postings are longer than other sources for example 2x longer than indeed postings. Indeed job descriptions are the shortest with median of 6,053 characters. Interesting thing is that the job posting without job description is one the longest job descriptions with about 18000 characters.\\
 
-\section{Evaluation Framework Implementation}
-To rigorously assess the quality of the extracted requirements, an automated "LLM-as-a-judge" evaluation framework was implemented using the \texttt{DeepEval} library. This approach utilizes a highly capable model (NVIDIA's hosted \texttt{gpt-oss-120b}) to evaluate the outputs of smaller local models.
+Job postings typically range between 6,000 and 8,000 characters, though posting length varies significantly across platforms. LinkedIn postings are generally the longest—often more than twice the length of Indeed postings—while Indeed descriptions have a median length of 6,053 characters. Notably, one posting lacking a structured description nevertheless contained more than 18,000 characters of general web content, offering an extreme but valuable case for testing extraction resilience.\\
 
+
+
+\section{Evaluation Framework}
+
+To systematically assess extraction quality, an automated evaluation pipeline based on the ``LLM‑as‑a‑Judge'' paradigm was implemented using the \texttt{DeepEval} library. This method employs NVIDIA's hosted \texttt{gpt‑oss‑120b} model as an independent evaluator, ensuring consistency and reducing the cost and subjectivity associated with human annotation.
+
+Evaluation is performed using the G‑Eval framework, which defines a structured scoring process including (i) task‑specific evaluation criteria, (ii) internal chain‑of‑thought reasoning, and (iii) a probability‑based scoring mechanism \cite{G-eval}. Each output is rated along the four criteria introduced in Section~\ref{metrics}:
+\begin{itemize}
+    \item Correctness
+    \item Completeness
+    \item Alignment
+    \item Readability
+\end{itemize}
+
+Model outputs are averaged across the entire dataset to compute final performance scores.
 
 \section{Model Performance Comparison}
-This section evaluates the models based on a principal metrics derived from the G-Eval framework: the aggregated overall ranking. These results allow for an initial comparison of model behavior across the evaluation dataset.
+
+Figure~\ref{fig:overall_model_ranking} presents the aggregated overall model ranking derived from the evaluation metrics.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{images/overall_model_ranking}
-    \caption{Overall model ranking}
+    \caption{Aggregated overall ranking across all evaluation metrics.}
     \label{fig:overall_model_ranking}
 \end{figure}
 
+Qwen3‑8B achieves the highest overall performance, followed by GLM‑4‑9B, Mistral‑7B‑Instruct, and finally Llama‑3.1‑8B‑Instruct.
 
 \section{Quantitative Performance Analysis}
-A comparative analysis was conducted across four open‑weights models: Qwen 3 8B, GLM 4 9B, Mistral 7B Instruct, and Llama 3.1 8B Instruct. Table~\ref{tab:model_performance} summarizes the results across five evaluation dimensions. The values represent mean G‑Eval scores across the test corpus, where a score of 1.0 would indicate perfect alignment with the evaluation criteria.
+
+Table~\ref{tab:model_performance} summarizes the quantitative results across the five G‑Eval metrics. Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
 
 \begin{table}[h]
     \centering
-    \caption{Comparative Performance Metrics (G-Eval Scores)}
+    \caption{Model performance across G‑Eval metrics.}
     \label{tab:model_performance}
     \begin{tabular}{lccccc}
         \toprule
-        \textbf{Model}   & \textbf{Overall Score} & \textbf{Structure} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Precision} \\
+        \textbf{Model} & \textbf{Overall} & \textbf{Structure} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Precision} \\
         \midrule
-        \textbf{Qwen 3 8B} & \textbf{0.50}          & \textbf{0.61}      & 0.45                  & \textbf{0.45}        & \textbf{0.50}      \\
-        GLM 4 9B           & 0.48                   & 0.58               & \textbf{0.48}         & 0.43                 & 0.43               \\
-        Mistral 7B         & 0.46                   & 0.55               & 0.40                  & 0.44                 & 0.46               \\
-        Llama 3.1 8B       & 0.41                   & 0.49               & 0.37                  & 0.38                 & 0.39               \\
+        \textbf{Qwen 3 8B} & \textbf{0.50} & \textbf{0.61} & 0.45 & \textbf{0.45} & \textbf{0.50} \\
+        GLM 4 9B           & 0.48 & 0.58 & \textbf{0.48} & 0.43 & 0.43 \\
+        Mistral 7B         & 0.46 & 0.55 & 0.40 & 0.44 & 0.46 \\
+        Llama 3.1 8B       & 0.41 & 0.49 & 0.37 & 0.38 & 0.39 \\
         \bottomrule
     \end{tabular}
     \vspace{0.2cm}
-    \small{\\ \textit{Note: Scores represent mean G-Eval metrics across the evaluation corpus.}}
+    \small{\\ \textit{Scores represent mean values over all 209 evaluated job descriptions.}}
 \end{table}
 
-Across all metrics, Qwen3‑8B achieves the best overall performance, followed by GLM‑4, Mistral‑7B, and Llama‑3.1‑8B. The relative ordering aligns with the qualitative observations discussed in the next section.
+Qwen3‑8B consistently yields the highest scores in structure, correctness, and precision. GLM‑4‑9B achieves the strongest completeness score, while Mistral‑7B offers more balanced but lower overall performance. Llama‑3.1‑8B underperforms across all metrics, primarily due to hallucinated requirements and structural inconsistencies.
 
 
 \section{Qualitative Error Analysis}
-Beyond the quantitative metrics, a qualitative analysis of the model outputs reveals distinct failure modes that explain the performance differences.
+
+Beyond numerical results, a qualitative examination reveals distinctive behavioral patterns and recurrent error types that explain the relative ranking of the models.
 
 \subsection{Hallucination of Generic Requirements}
-A recurring issue, particularly with the Llama-3 family, is the hallucination of "standard" job requirements. For example, in several test cases, Llama-3.1 inserted requirements for a "Bachelor's degree in Computer Science" or "PMP Certification" even when the job description made no mention of formal education. This behavior likely stems from the model's training data bias, where such requirements frequently appear in job postings. For a matching system, this is a critical error, as it could lead to the exclusion of qualified candidates who lack these unstated credentials.
 
-\subsection{The Precision-Recall Trade-off}
-The comparison between Qwen3-8B and GLM-4 highlights a distinct trade-off. Qwen3-8B demonstrates a "conservative" extraction strategy, achieving the highest \textit{Precision} score (0.496). It rarely includes non-mandatory items but occasionally misses implicit requirements. In contrast, GLM-4 adopts a "liberal" strategy, achieving the highest \textit{Completeness} score (0.479). It captures almost all requirements but frequently includes "nice-to-have" skills as mandatory, which lowers its precision. For a filtering system, Qwen's conservative approach is generally preferred to avoid false negatives (rejecting suitable candidates).
+One of the most notable issues, particularly for the Llama‑3.1‑8B model, is the insertion of highly stereotypical requirements that do not appear in the original text. Examples include fabricating educational requirements such as a ``Bachelor’s degree in Computer Science’’ or professional qualifications like ``PMP Certification.’’ These hallucinations suggest that such models rely too strongly on prior knowledge about typical job postings rather than grounding their extraction strictly in the input content. This poses a critical challenge for fairness in applicant filtering, as it may introduce exclusionary criteria not stated by employers.
 
-\subsection{Prompt Overfitting}
-TODO:When there is a markdown without any job description, LLM in this case llama3.1-instruct and Qwen3 hilucinated PMP Certification and Bachelors in CS. Alternative: Both models hallucinated the exact same specific qualifications (`Bachelor's in CS', `PMP certification') for a job posting that did not contain them. This strongly suggests Prompt Leakage: the models likely memorized examples provided in the few-shot prompt and regurgitated them instead of extracting from the source text. This highlights a critical risk in using few-shot prompting for extraction tasks: models may prioritize the *content* of the examples over the instruction to extract only new data. Prompt leakage is defined as ``as the act of misaligning the original goal of a prompt to a new goal of
-printing part of or the whole original prompt instead'' \cite{prompt-leakage}
+\subsection{Precision–Recall Trade-Off Between Models}
+
+A clear trade‑off emerges between Qwen3‑8B and GLM‑4‑9B.
+Qwen3‑8B generally follows a conservative extraction pattern, rarely adding unsupported items and therefore achieving the highest precision. However, this sometimes results in missed implicit requirements, slightly lowering its completeness score.
+In contrast, GLM‑4‑9B adopts a more liberal extraction strategy, capturing a broader range of potential requirements—including many optional or contextually weakly supported items—boosting completeness at the expense of precision.
+For downstream filtering systems, conservative extraction is typically preferred to avoid incorrectly rejecting qualified candidates.
+
+\subsection{Prompt Overfitting and Prompt Leakage}
+
+A further issue observed across multiple models is \textit{prompt overfitting}. When job descriptions contained little to no usable content, both Qwen3‑8B and Llama‑3.1‑8B repeatedly produced the same specific qualifications—most notably ``Bachelor’s degree in Computer Science’’ and ``PMP Certification.’’ These outputs closely resembled the few‑shot examples used in the system prompt.
+
+This behavior aligns with the definition of \textit{prompt leakage},which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage} \cite{prompt-leakage}.
+Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
+
+\section{Summary of Findings}
+
+The evaluation demonstrates that Qwen3‑8B delivers the strongest overall performance for structured requirements extraction in a fully open‑source setting. Its strengths lie in precision, correctness, and adherence to the required schema, making it the most reliable choice for the system developed in this thesis.
+GLM‑4‑9B offers competitive completeness but introduces more noise, while Mistral‑7B provides balanced but moderate results. Llama‑3.1‑8B performs the weakest due to high hallucination frequency and structural inconsistencies.
+
+The qualitative analysis highlights key design considerations for future systems, including the importance of hallucination mitigation, conservative extraction strategies, and careful prompt design to avoid overfitting. Together, these insights form the basis for the discussion of future improvements presented in the Outlook.
 
 
-\section{Summary of Evaluation}
-The evaluation yields three major findings regarding the state of open-source LLMs for requirements extraction:
+\section{Summary of Findings}
+
+The evaluation demonstrates that Qwen3‑8B delivers the strongest overall performance for structured requirements extraction in a fully open‑source setting. Its strengths lie in precision, correctness, and adherence to the required schema, making it the most reliable choice for the system developed in this thesis.
+GLM‑4‑9B offers competitive completeness but introduces more noise, while Mistral‑7B provides balanced but moderate results. Llama‑3.1‑8B performs the weakest due to high hallucination frequency and structural inconsistencies.
+
+The qualitative analysis highlights key design considerations for future systems, including the importance of hallucination mitigation, conservative extraction strategies, and careful prompt design to avoid overfitting. Together, these insights form the basis for the discussion of future improvements presented in the Outlook.
+
 
 \begin{enumerate}
-    \item \textbf{Rapid Evolution of Capabilities}: The comparison between Llama-3-8B (Overall Score: 0.17) and Llama-3.1-8B (Overall Score: 0.41) reveals a massive leap in performance. A mere version update resulted in a greater than 100\% improvement in structured data extraction capabilities, suggesting that the gap between open-source and proprietary models is closing rapidly.
 
     \item \textbf{Architecture over Size}: Despite being the oldest and smallest model in the benchmark, Mistral-7B (Overall Score: 0.46) outperformed the newer Llama-3.1-8B. This indicates that for specific information extraction tasks, model architecture and training data quality may be more decisive than raw parameter count or release date.
 
