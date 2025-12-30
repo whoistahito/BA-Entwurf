@@ -134,7 +134,7 @@ A further issue observed across multiple models is \textit{prompt overfitting}. 
 
 This behavior aligns with the definition of \textit{prompt leakage},which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage} \cite{prompt-leakage}.
 Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
-
+TODO: rewrite the summary
 \section{Summary of Findings}
 
 The evaluation demonstrates that Qwen3‑8B delivers the strongest overall performance for structured requirements extraction in a fully open‑source setting. Its strengths lie in precision, correctness, and adherence to the required schema, making it the most reliable choice for the system developed in this thesis.
