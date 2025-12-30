@@ -134,22 +134,6 @@ A further issue observed across multiple models is \textit{prompt overfitting}. 
 
 This behavior aligns with the definition of \textit{prompt leakage},which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage} \cite{prompt-leakage}.
 Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
-TODO: rewrite the summary
-\section{Summary of Findings}
-
-The evaluation demonstrates that Qwen3‑8B delivers the strongest overall performance for structured requirements extraction in a fully open‑source setting. Its strengths lie in precision, correctness, and adherence to the required schema, making it the most reliable choice for the system developed in this thesis.
-GLM‑4‑9B offers competitive completeness but introduces more noise, while Mistral‑7B provides balanced but moderate results. Llama‑3.1‑8B performs the weakest due to high hallucination frequency and structural inconsistencies.
-
-The qualitative analysis highlights key design considerations for future systems, including the importance of hallucination mitigation, conservative extraction strategies, and careful prompt design to avoid overfitting. Together, these insights form the basis for the discussion of future improvements presented in the Outlook.
-
-
-\section{Summary of Findings}
-
-The evaluation demonstrates that Qwen3‑8B delivers the strongest overall performance for structured requirements extraction in a fully open‑source setting. Its strengths lie in precision, correctness, and adherence to the required schema, making it the most reliable choice for the system developed in this thesis.
-GLM‑4‑9B offers competitive completeness but introduces more noise, while Mistral‑7B provides balanced but moderate results. Llama‑3.1‑8B performs the weakest due to high hallucination frequency and structural inconsistencies.
-
-The qualitative analysis highlights key design considerations for future systems, including the importance of hallucination mitigation, conservative extraction strategies, and careful prompt design to avoid overfitting. Together, these insights form the basis for the discussion of future improvements presented in the Outlook.
-
 
 \begin{enumerate}
 
@@ -158,44 +142,48 @@ The qualitative analysis highlights key design considerations for future systems
     \item \textbf{Readiness for Automation}: While Qwen3-8B achieved the top rank, the absolute scores (hovering around 0.5-0.6) and low pass rates (<30\% for strict correctness) indicate that 8B-parameter models are not yet fully reliable for fully autonomous, unsupervised extraction. They require either human-in-the-loop verification or further fine-tuning to reach production-grade reliability.
 \end{enumerate}
 
-\section{Novel Approach vs Linkedin}
-for answering RQ2 \autoref{itm:rq2} there has been an linkedin account created with following profile:
-Skills:
-Machine Learning
-Domain-Driven Design (DDD)
-Data Science
-Spring Boot
-Java
-Python
-Hibernate
-PostgreSQL
-R (Programming Language)
-Project Management
+\section{Comparison with LinkedIn Job Recommendations}
+To address RQ2 (\autoref{itm:rq2}), the proposed semantic matching pipeline was compared against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on the information available in a user's profile (e.g., skills, experience, and inferred seniority).
 
-Qualifications:
-Domain Driven Design
-Bsc. Wirtschaftsinformatik
+\subsection{Baseline Profile Definition}
+A dedicated LinkedIn account was created to approximate a recent graduate seeking a full-time position after completing a bachelor's degree. The profile contained the following information:
+\begin{itemize}
+    \item \textbf{Skills:} Machine Learning, Domain-Driven Design (DDD), Data Science, Spring Boot, Java, Python, Hibernate, PostgreSQL, R, Project Management
+    \item \textbf{Qualifications:} Domain Driven Design, B.Sc. Wirtschaftsinformatik
+    \item \textbf{Experience:} 4 years of software development
+\end{itemize}
 
-Experience:
-4 Years of Software development
-
-then the jobs that LinkedIn suggested were taken and compared with what job matching system of this approach. We assume user has ended their bachelor and were looking for a fulltime job. Linkedin has a feature that suggessts job based on the skills and experience and title in the profile like shown in \autoref{fig:linkedin_screenshot}
+LinkedIn's recommended jobs for this profile are illustrated in \autoref{fig:linkedin_screenshot}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/Linkedin-screenshot}
-    \caption{Similarity score distribution}
+    \caption{Example of LinkedIn job recommendations for the baseline profile.}
     \label{fig:linkedin_screenshot}
 \end{figure}
 
-first 23 jobs that linkedin suggested to the user were taken. First what this imaginary user would find suitable as job posting were marked then used job matching system in this approach to see if this system would rate the jobs same as how the user would prefer them. \autoref{fig:simlarity_score_distribtution} is the distribution in bucket of similrity rating using qwen3-8B.
+\subsection{Comparison Procedure}
+The comparison followed three steps:
+\begin{enumerate}
+    \item The first 23 job recommendations returned by LinkedIn were collected.
+    \item Each job posting was manually marked as \textit{suitable} or \textit{not suitable} for the baseline profile, reflecting the preference of the hypothetical user.
+    \item The same job descriptions were processed by the system developed in this thesis (requirements extraction + embedding-based similarity search), and similarity scores were computed against the user profile.
+\end{enumerate}
 
+\subsection{Similarity Score Distribution}
+\autoref{fig:simlarity_score_distribtution} shows the bucketed similarity score distribution for the 23 LinkedIn-recommended jobs when using Qwen3-8B as the extraction model.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/bucketed_similarity_scores_qwen3-8b}
-    \caption{Similarity score distribution}
+    \caption{Bucketed similarity score distribution for LinkedIn-recommended jobs (Qwen3-8B).}
     \label{fig:simlarity_score_distribtution}
 \end{figure}
 
-\section{Outlook}
+The distribution in \autoref{fig:simlarity_score_distribtution} is strongly left-skewed: 9 out of 23 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\). This indicates that, under the proposed semantic matching pipeline, the majority of LinkedIn recommendations constitute weak matches for the baseline profile, whereas only a small subset aligns strongly.
 
-Thinking models are not considered, Data Processing was not perfect (data imbalance), bigger models,
+This behavior is consistent with the implemented scoring function: similarity is computed as a weighted MaxSim across extracted \textit{skills}, \textit{experiences}, and \textit{qualifications} (weights 0.5/0.3/0.2). For each field, the system computes cosine similarities between sentence-transformer embeddings (\texttt{all-MiniLM-L6-v2}), takes the maximum similarity for each job-side item, and averages these maxima; consequently, postings with many requirements that only partially overlap with the profile are penalized even if a few key skills match.
+
+Finally, the 0.0--0.1 bucket may also include cases where requirements extraction fails: if the LLM output cannot be parsed into the schema, an empty Requirements object is returned, which yields a similarity score close to zero. Therefore, low scores in this bucket reflect a mixture of genuine mismatch and occasional extraction/formatting failures.
+
+From the 23 LinkedIn-recommended jobs, the hypothetical user marked only 3 postings as preferred. Among these three, only a single posting obtained a comparatively high similarity score: \texttt{job21} with a score of 0.38.
+
+This has direct implications for using a fixed acceptance threshold as a filtering mechanism. If a high threshold (e.g., 0.7) is applied, none of the user-preferred postings would pass, which is undesirable for a recommender/filtering system. Even when lowering the threshold to include \texttt{job21}, the remaining two user-preferred postings remain below the cutoff and therefore constitute false negatives.
