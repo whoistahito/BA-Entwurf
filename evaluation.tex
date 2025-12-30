@@ -158,5 +158,44 @@ The qualitative analysis highlights key design considerations for future systems
     \item \textbf{Readiness for Automation}: While Qwen3-8B achieved the top rank, the absolute scores (hovering around 0.5-0.6) and low pass rates (<30\% for strict correctness) indicate that 8B-parameter models are not yet fully reliable for fully autonomous, unsupervised extraction. They require either human-in-the-loop verification or further fine-tuning to reach production-grade reliability.
 \end{enumerate}
 
+\section{Novel Approach vs Linkedin}
+for answering RQ2 \autoref{itm:rq2} there has been an linkedin account created with following profile:
+Skills:
+Machine Learning
+Domain-Driven Design (DDD)
+Data Science
+Spring Boot
+Java
+Python
+Hibernate
+PostgreSQL
+R (Programming Language)
+Project Management
+
+Qualifications:
+Domain Driven Design
+Bsc. Wirtschaftsinformatik
+
+Experience:
+4 Years of Software development
+
+then the jobs that LinkedIn suggested were taken and compared with what job matching system of this approach. We assume user has ended their bachelor and were looking for a fulltime job. Linkedin has a feature that suggessts job based on the skills and experience and title in the profile like shown in \autoref{fig:linkedin_screenshot}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/Linkedin-screenshot}
+    \caption{Similarity score distribution}
+    \label{fig:linkedin_screenshot}
+\end{figure}
+
+first 23 jobs that linkedin suggested to the user were taken. First what this imaginary user would find suitable as job posting were marked then used job matching system in this approach to see if this system would rate the jobs same as how the user would prefer them. \autoref{fig:simlarity_score_distribtution} is the distribution in bucket of similrity rating using qwen3-8B.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/bucketed_similarity_scores_qwen3-8b}
+    \caption{Similarity score distribution}
+    \label{fig:simlarity_score_distribtution}
+\end{figure}
 
 \section{Outlook}
+
+Thinking models are not considered, Data Processing was not perfect (data imbalance), bigger models,
