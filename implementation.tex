@@ -120,6 +120,38 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
 making sure that LLM output matches the json schema \ref{lst:requirements_schema}. although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experiences, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
+\subsection{G-Eval Metrics}
+To integrate the evaluation strategy described in \autoref{conception:g-eval}, this work implements four metrics defined in \autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7.
+
+The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Using DeepEval's \texttt{evaluate} function together with an external judge model, these metrics are executed asynchronously over all test cases, and the resulting scores, rationales are collected. A separate utility then aggregates the raw results by computing summary statistics per metric (average, minimum, maximum, and number of passes) and stores both per-file results and the aggregated overview in a JSON report. The example below \autoref{code:geval-metrics} shows the implementation of a G-Eval metric.
+
+\begin{center}
+    \begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics}]
+from deepeval.metrics import GEval
+
+def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
+    correctness_metric = GEval(
+        name="Correctness",
+        criteria=(
+            "Evaluate whether the extracted job requirements are accurate and "
+            "actually present in the input text."
+        ),
+        evaluation_steps=[
+            "Read the input job description carefully",
+            "Compare each extracted requirement with the input text",
+            # further evaluation steps ...
+        ],
+        evaluation_params=[
+            LLMTestCaseParams.INPUT,
+            LLMTestCaseParams.ACTUAL_OUTPUT,
+        ],
+        model=model,
+        threshold=0.7,
+    )
+    # additional metrics: Completeness, Precision, Structure Quality
+    return [correctness_metric, ...]
+    \end{lstlisting}
+\end{center}
 
 \section{Embedding and Similarity Search}
 
