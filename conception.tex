@@ -106,10 +106,28 @@ These metrics collectively ensure that extraction quality is judged not only by 
 \section{Embedding and Similarity Search}
 Once the job requirements have been extracted and validated, the second component of the system performs semantic similarity matching. Both the structured job postings and the user query are encoded as vector
 representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer model. As discussed in Section~\ref{introduction:similaritysearch},this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
-The skills fields are weighted more because as studies show skills are more important in job application, for example a study by Bone et al. , that analysed online job vacanies from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for A I roles.'' \cite{skills-or-degree}
+The skills fields are weighted more because as studies show skills are more important in job application, for example a study by Bone et al. , that analysed online job vacanies from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles.'' \cite{skills-or-degree}.
 
-The similarity search retrieves the ten most relevant job postings based on cosine similarity in the embedding space, thereby enabling a more semantically precise ranking than simple title‑matching methods.
+Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure and comapring them using maxsim approach.
+
 \subsection{Vector Embedding}
-TODO: summary of how embedding works based on \cite{handson-llms-2024}
+An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. Figure~\ref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/embeddings-process}
+    \caption{the process of converting raw data into a three-dimensional numerical vector (Source: \cite{llm-from-scratch}).}
+    \label{fig:embeddings-process}
+\end{figure}
+
+Embeddings are fixed in size, with their values representing various properties that collectively capture the meaning of a word in a way that is interpretable by a computer \cite{handson-llms-2024}. A key advantage of using embeddings is the ability to measure semantic similarity. By calculating distance metrics in the vector space, it is possible to determine how closely related two words are; words sharing similar meanings tend to be clustered closer together \cite{handson-llms-2024}, \autoref{fig:embeddings-distances} illustrates how words with similar meaning tend to be closer to each other, if it was possible to compress the embeddings into a two-dimensional representation \cite{handson-llms-2024}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/embeddings-distances}
+    \caption{Embeddings of words that are similar will be close to each other in dimensional space (Source: \cite{handson-llms-2024}).}
+    \label{fig:embeddings-distances}
+\end{figure}
+
 \subsection{MaxSim}
 TODO: summary of how maxsim works based  on \cite{maxsim}
