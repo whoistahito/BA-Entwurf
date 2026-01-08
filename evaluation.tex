@@ -135,13 +135,6 @@ A further issue observed across multiple models is \textit{prompt overfitting}. 
 This behavior aligns with the definition of \textit{prompt leakage},which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage}.
 Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
 
-\begin{enumerate}
-
-    \item \textbf{Architecture over Size}: Despite being the oldest and smallest model in the benchmark, Mistral-7B (Overall Score: 0.46) outperformed the newer Llama-3.1-8B. This indicates that for specific information extraction tasks, model architecture and training data quality may be more decisive than raw parameter count or release date.
-
-    \item \textbf{Readiness for Automation}: While Qwen3-8B achieved the top rank, the absolute scores (hovering around 0.5-0.6) and low pass rates (<30\% for strict correctness) indicate that 8B-parameter models are not yet fully reliable for fully autonomous, unsupervised extraction. They require either human-in-the-loop verification or further fine-tuning to reach production-grade reliability.
-\end{enumerate}
-
 \section{Case Study}
 To address RQ2 (\autoref{itm:rq2}), the proposed semantic matching pipeline was compared against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on the information available in a user's profile (e.g., skills, experience, and inferred seniority). \\
 A dedicated LinkedIn account was created to approximate a recent graduate seeking a full-time position after completing a bachelor's degree. The profile contained the following information:
