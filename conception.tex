@@ -130,4 +130,23 @@ Embeddings are fixed in size, with their values representing various properties 
 \end{figure}
 
 \subsection{MaxSim}
-TODO: summary of how maxsim works based  on \cite{maxsim}
+
+Computing a meaningful similarity score between the extracted job requirements and a user profile is not trivial. A naive pairwise comparison (for example, comparing the first skill in the job list with the first skill in the user profile) fails for several reasons:
+
+\begin{itemize}
+    \item the two lists often differ in length,
+    \item items may appear in different orders,
+    \item some elements may be repeated,
+    \item and, crucially, missing elements in the user profile should
+reduce the similarity score in a principled way.
+\end{itemize}
+
+To address these challenges, this thesis employs the MaxSim metric, an approach originally introduced in the context of machine translation evaluation \cite{maxsim}. MaxSim treats the comparison between two sets of embeddings as a maximum‑weight bipartite matching problem. Instead of aligning items by position, each element in the job requirement set is matched to the most semantically similar element in the user profile. This ensures that:
+
+\begin{itemize}
+    \item each requirement is paired with its best possible counterpart,
+    \item semantically unrelated pairs do not artificially inflate the score,
+    \item missing qualifications or skills in the user profile directly lower the overall similarity.
+\end{itemize}
+
+By selecting the maximum similarity for each requirement and aggregating these values, MaxSim produces a robust and interpretable similarity score. This makes it well suited for job‑matching scenarios, where the alignment between requirements and candidate attributes is inherently asymmetric and semantically nuanced.
