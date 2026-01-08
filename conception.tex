@@ -150,3 +150,28 @@ To address these challenges, this thesis employs the MaxSim metric, an approach 
 \end{itemize}
 
 By selecting the maximum similarity for each requirement and aggregating these values, MaxSim produces a robust and interpretable similarity score. This makes it well suited for job‑matching scenarios, where the alignment between requirements and candidate attributes is inherently asymmetric and semantically nuanced.
+
+Let $J = \{j_1, j_2, \dots, j_n\}$ be the set of extracted job requirements and $U = \{u_1, u_2, \dots, u_m\}$ be the set of items in the user profile. The algorithm proceeds in the following steps:
+
+\begin{enumerate}
+    \item \textbf{Embedding:} Both the job requirements and user attributes are mapped to a high-dimensional vector space using a sentence transformer model.
+    \item \textbf{Similarity Matrix:} A similarity matrix $C$ is computed, where each entry $C_{ik}$ represents the cosine similarity between the $i$-th job requirement and the $k$-th user item.
+    \item \textbf{Max-Over-Rows Aggregation:} For every specific job requirement $j_i$, the system identifies the maximum similarity score found across all user items $U$. This value represents the best evidence the user can provide for that specific requirement.
+\end{enumerate}
+
+The similarity score for a specific data field (e.g., Skills) is defined as the mean of these maximum satisfaction scores:
+
+\begin{equation} \label{eq:maxsim_coverage}
+    Score_{field} = \frac{1}{|J|} \sum_{i=1}^{|J|} \max_{k} (C_{ik})
+\end{equation}
+
+This approach ensures that every job requirement is evaluated against the user's best matching attribute, effectively measuring how much of the job description is ``covered'' by the user's profile.
+
+\subsection{Weighted Field Aggregation}
+Recognizing that not all data categories hold equal value in recruitment, the system segments the comparison into three dimensions: \textit{Skills}, \textit{Experiences}, and \textit{Qualifications}. The final semantic match score is a weighted linear combination of these field scores:
+
+\begin{equation}
+    Score_{total} = w_{skills} \cdot Score_{skills} + w_{exp} \cdot Score_{exp} + w_{qual} \cdot Score_{qual}
+\end{equation}
+
+By assigning higher weights to skills, the model aligns with recent findings on the increasing importance of skills-based hiring as explained above.
