@@ -42,7 +42,7 @@ The pipeline begins with raw HTML job postings retrieved by the YourJobFinder cr
 
 
 \section{Schema based LLM Output}
-TODO: explain outlines framework and how it works / forcing LLM to output structured using finite atomate
+TODO: explain outlines framework and how it works / forcing LLM to output structured using finite atomate \\
 A fundamental challenge when employing LLMs for requirements extraction is the inherent variability of their output. Even when provided with identical prompts, models may produce syntactically inconsistent or structurally divergent responses. To ensure that the extracted requirements are machine‑readable and uniform across all documents, this work employs a schema‑guided generation approach.
 
 The \textit{outlines} library \cite{willard2023outlines} is integrated to enforce adherence to a predefined JSON schema, described in detail in \ref{lst:requirements_schema}. This guarantees that the LLM outputs a standardized structure containing the required fields (e.g., skills, qualifications, experience). Such structural consistency is essential, as it forms the
@@ -115,7 +115,6 @@ These metrics collectively ensure that extraction quality is judged not
 only by semantic fidelity but also by structural reliability.
 
 \section{Embedding and Similarity Search}
-TODO: explain how embedding works
 Once the job requirements have been extracted and validated, the second
 component of the system performs semantic similarity matching. Both the
 structured job postings and the user query are encoded as vector
@@ -129,4 +128,6 @@ The similarity search retrieves the ten most relevant job postings based
  on cosine similarity in the embedding space, thereby enabling a more
 semantically precise ranking than simple title‑matching methods.
 \subsection{Vector Embedding}
+TODO: summary of how embedding works based on \cite{handson-llms-2024}
 \subsection{MaxSim}
+TODO: summary of how maxsim works based  on \cite{maxsim}
