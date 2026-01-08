@@ -79,6 +79,13 @@
   % Listingsformatierung (Quelltexte)
   \definecolor{lightgrey}{rgb}{0.90,0.90,0.90}
   \lstloadlanguages{XML}
+  \lstdefinelanguage{json}{
+    basicstyle=\small\ttfamily,
+    string=[s]{"}{"},
+    stringstyle=\color{black},
+    comment=[l]{:},
+    commentstyle=\color{black},
+  }
   \lstset{
     tabsize=2,
     escapeinside={(*@}{@*)},
