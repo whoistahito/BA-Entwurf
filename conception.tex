@@ -106,9 +106,9 @@ These metrics collectively ensure that extraction quality is judged not only by 
 \section{Embedding and Similarity Search}
 Once the job requirements have been extracted and validated, the second component of the system performs semantic similarity matching. Both the structured job postings and the user query are encoded as vector
 representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer model. As discussed in Section~\ref{introduction:similaritysearch},this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
-The skills fields are weighted more because as studies show skills are more important in job application, for example a study by Bone et al. , that analysed online job vacanies from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles.'' \cite{skills-or-degree}.
+The skills fields are weighted more because as studies show skills are more important in job application, for example a study by Bone et al. , that analysed online job postings from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles.'' \cite{skills-or-degree}.
 
-Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure and comapring them using maxsim approach.
+Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure and comparing them using maxsim approach.
 
 \subsection{Vector Embedding}
 An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. Figure~\ref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
