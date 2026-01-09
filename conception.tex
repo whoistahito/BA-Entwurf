@@ -78,7 +78,7 @@ The number of tokens in a chunk and, optionally, whether there should be any ove
 
 
 \section{LLM Output Evaluation}
-Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example, `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management' .even though the wording differs significantly.
+Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example, `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management' . Even though the wording differs significantly.
 Relying on exact string matching would thus penalize valid extractions.
 
 To address this, the system employs an automated evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
