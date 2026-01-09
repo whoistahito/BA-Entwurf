@@ -131,41 +131,16 @@ Embeddings are fixed in size, with their values representing various properties 
 
 \subsection{MaxSim}
 
-Computing a meaningful similarity score between the extracted job requirements and a user profile is not trivial. A naive pairwise comparison (for example, comparing the first skill in the job list with the first skill in the user profile) fails for several reasons:
+Computing a meaningful similarity score between extracted job requirements and a user profile is non-trivial. A naive pairwise comparison fails because lists often differ in length and items may appear in different orders. To address this, this thesis adopts a matching strategy \textbf{inspired by the MaxSim framework} originally introduced by Chan and Ng \cite{maxsim} for machine translation evaluation.
 
-\begin{itemize}
-    \item the two lists often differ in length,
-    \item items may appear in different orders,
-    \item some elements may be repeated,
-    \item and, crucially, missing elements in the user profile should
-reduce the similarity score in a principled way.
-\end{itemize}
+In the original MaxSim paper, the authors utilize the Kuhn-Munkres algorithm to find a maximum weight matching in a bipartite graph, ensuring a strict 1-to-1 alignment between items. In contrast, this thesis employs a \textbf{row-wise maximum aggregation} over the similarity matrix. This modification is a deliberate design choice: in job matching, the number of requirements often exceeds the number of profile items, and a single broad competency in a user profile may semantically satisfy multiple specific job requirements.
 
-To address these challenges, this thesis employs the MaxSim metric, an approach originally introduced in the context of machine translation evaluation \cite{maxsim}. MaxSim treats the comparison between two sets of embeddings as a maximum‑weight bipartite matching problem. Instead of aligning items by position, each element in the job requirement set is matched to the most semantically similar element in the user profile. This ensures that:
-
-\begin{itemize}
-    \item each requirement is paired with its best possible counterpart,
-    \item semantically unrelated pairs do not artificially inflate the score,
-    \item missing qualifications or skills in the user profile directly lower the overall similarity.
-\end{itemize}
-
-By selecting the maximum similarity for each requirement and aggregating these values, MaxSim produces a robust and interpretable similarity score. This makes it well suited for job‑matching scenarios, where the alignment between requirements and candidate attributes is inherently asymmetric and semantically nuanced.
-
-Let $J = \{j_1, j_2, \dots, j_n\}$ be the set of extracted job requirements and $U = \{u_1, u_2, \dots, u_m\}$ be the set of items in the user profile. The algorithm proceeds in the following steps:
-
+The algorithm proceeds in the following steps:
 \begin{enumerate}
-    \item \textbf{Embedding:} Both the job requirements and user attributes are mapped to a high-dimensional vector space using a sentence transformer model.
+    \item \textbf{Embedding:} Both the job requirements $J = \{j_1, \dots, j_n\}$ and user attributes $U = \{u_1, \dots, u_m\}$ are mapped to a high-dimensional vector space.
     \item \textbf{Similarity Matrix:} A similarity matrix $C$ is computed, where each entry $C_{ik}$ represents the cosine similarity between the $i$-th job requirement and the $k$-th user item.
-    \item \textbf{Max-Over-Rows Aggregation:} For every specific job requirement $j_i$, the system identifies the maximum similarity score found across all user items $U$. This value represents the best evidence the user can provide for that specific requirement.
+    \item \textbf{Max-Over-Rows Aggregation:} For every specific job requirement $j_i$, the system identifies the maximum similarity score found across all user items $U$:
 \end{enumerate}
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/maxsim-matrix}
-    \caption{Visualization of the similarity matrix. The system identifies strong semantic alignment (green cells) between user skills and job requirements, even when exact wording differs.}
-    \label{fig:maxsim_matrix}
-\end{figure}
-
 
 The similarity score for a specific data field (e.g., Skills) is defined as the mean of these maximum satisfaction scores:
 
@@ -173,6 +148,12 @@ The similarity score for a specific data field (e.g., Skills) is defined as the 
     Score_{field} = \frac{1}{|J|} \sum_{i=1}^{|J|} \max_{k} (C_{ik})
 \end{equation}
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/maxsim-matrix}
+    \caption{Visualization of the similarity matrix. The system identifies strong semantic alignment (green cells) between user skills and job requirements, even when exact wording differs.}
+    \label{fig:maxsim_matrix}
+\end{figure}
 
 In the context of Figure \ref{fig:maxsim_matrix}, the calculation would proceed as follows:
 \begin{itemize}
