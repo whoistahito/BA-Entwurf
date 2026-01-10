@@ -169,7 +169,8 @@ The comparison followed three steps:
     \label{fig:simlarity_score_distribtution}
 \end{figure}
 
-The distribution in \autoref{fig:simlarity_score_distribtution} is strongly left-skewed: 9 out of 23 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\). This indicates that, under the proposed semantic matching pipeline, the majority of LinkedIn recommendations constitute weak matches for the baseline profile, whereas only a small subset aligns strongly.
+The distribution in \autoref{fig:simlarity_score_distribtution} is strongly left-skewed: 9 out of 23 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\). This indicates that, under the proposed semantic matching pipeline, the majority of LinkedIn recommendations constitute weak matches for the baseline profile, whereas only a small subset aligns strongly. However, some of the low similarity scores may also result from failures in the requirements extraction process, as discussed in \autoref{subsec:exception_handling}.
+
 
 This behavior is consistent with the implemented scoring function: similarity is computed as a weighted MaxSim across extracted \textit{skills}, \textit{experiences}, and \textit{qualifications} (weights 0.5/0.3/0.2). For each field, the system computes cosine similarities between sentence-transformer embeddings (\texttt{all-MiniLM-L6-v2}), takes the maximum similarity for each job-side item, and averages these maxima; consequently, postings with many requirements that only partially overlap with the profile are penalized even if a few key skills match.
 
