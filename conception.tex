@@ -19,6 +19,7 @@ Together, these components form a lightweight, fully open‑source alternative t
 \end{figure}
 
 \section{Data Structure for Job Matching}
+\label{sec:data_structure}
 
 The core of the proposed system relies on a structured comparison between job requirements and user profiles. Figure~\ref{fig:data_structure} illustrates the fundamental data model that enables semantic matching. Both job postings and user profiles are decomposed into three key dimensions:
 
@@ -41,12 +42,45 @@ These structured representations are encoded in a common JSON schema for both jo
 The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
 
-\section{Schema based LLM Output}
-TODO: explain outlines framework and how it works / forcing LLM to output structured using finite atomate \\
-A fundamental challenge when employing LLMs for requirements extraction is the inherent variability of their output. Even when provided with identical prompts, models may produce syntactically inconsistent or structurally divergent responses. To ensure that the extracted requirements are machine‑readable and uniform across all documents, this work employs a schema‑guided generation approach.
+\section{Schema-Guided LLM Output}
+\label{sec:schema-guided}
 
-The \textit{outlines} library \cite{willard2023outlines} is integrated to enforce adherence to a predefined JSON schema, described in detail in \ref{lst:requirements_schema}. This guarantees that the LLM outputs a standardized structure containing the required fields (e.g., skills, qualifications, experience). Such structural consistency is essential, as it forms the
-basis for downstream processing, evaluation, and similarity search.
+The requirements extraction module must produce output that conforms to the predefined JSON schema described in \autoref{sec:data_structure}. However, LLMs may produce syntactically malformed JSON, ignore required fields, or include extraneous content that violates the schema \cite{llm-not-good-json}. To address this challenge, the system employs guided generation, a technique that constrains the LLM's output at inference time to ensure conformance with a formal specification.
+
+The theoretical foundation for this approach is provided by Willard and Louf \cite{willard2023outlines}, who reformulate the problem of constrained text generation in terms of finite-state machines (FSMs). Their insight is that regular expressions and context-free grammars (CFGs) can be used to construct an index over the language model's vocabulary, enabling efficient determination of valid next tokens at each generation step.
+
+\subsection{Finite-State Machine Formulation}
+The approach relies on fundamental concepts from automata theory. A finite automaton (FA) is formally defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta: Q \times \Sigma \to Q$ is the transition function, $q_0 \in Q$ is the start state, and $F \subseteq Q$ is the set of accept states \cite{sipser}. Regular expressions, which describe patterns such as digit sequences or identifiers, can be converted into equivalent finite automata that recognize exactly the strings matching the pattern \cite{willard2023outlines}.
+
+In standard LLM inference, the model produces a probability distribution over the entire vocabulary for each token position. Guided generation modifies this process by applying a boolean mask $m$ that restricts the support of the distribution to only those tokens that are valid according to the constraints:
+
+\begin{align*}
+  \boldsymbol{\alpha} &= \operatorname{LLM}(S_t, \boldsymbol{\theta})\\
+  \tilde{\boldsymbol{\alpha}} &= m(S_t) \odot \boldsymbol{\alpha}\\
+  \tilde{s}_{t+1} &\sim \operatorname{Categorical}(\tilde{\boldsymbol{\alpha}})
+\end{align*}
+
+where $\boldsymbol{\alpha}$ represents the logits produced by the LLM, $m$ is the mask function, and $\odot$ denotes element-wise multiplication. The resulting masked distribution $\tilde{\boldsymbol{\alpha}}$ assigns zero probability to invalid tokens while preserving the relative probabilities of valid continuations \cite{willard2023outlines}.
+
+The efficiency of this approach stems from pre-computing an index $\sigma: Q \to \mathcal{P}(\mathcal{V})$ that maps each FSM state $q \in Q$ to the subset of vocabulary tokens that would be accepted in that state. This index is constructed once per schema and reused across all generation calls, reducing the per-token computational cost from $\mathcal{O}(N)$ to $\mathcal{O}(1)$ on average, where $N$ is the vocabulary size \cite{willard2023outlines}.
+
+Figure~\ref{fig:fsm_masking} illustrates this process of sampling token for regular expression \texttt{[0-9]:[0-9]}, that can show for example a match score. Let's assume the Volcabulary $(\mathcal{V})$ contains only the set of Strings $\{\text{"2"}, \text{"14"}\,\text{"7"}\,\text{"T"}\,\textbackslash,\text{":"}\,\text{"="}\,\text{"i"}\}$. In the Beginning, the FSM is in state $q_0$ and only tokens valid, that represent a one-digit number, therefore $\text{"14"}$ and $\text{"T"}$ are masked and as the result their logits are set to zero. After sampling a valid digit, the FSM transitions to state $q_1$, where only the colon token is valid. Finally, after sampling the colon, the FSM reaches state $q_2$, where again only digit tokens are valid.
+ At each generation step, the current FSM state determines which vocabulary tokens are valid continuations. Invalid tokens receive a mask value of zero, effectively removing them from consideration during sampling.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{images/outline-logits}
+    \caption{FSM-guided token generation for the regular expression \texttt{[0-9]:[0-9]}. }
+    \label{fig:fsm_masking}
+\end{figure}
+
+
+\subsection{Extension to Context-Free Grammars}
+While finite automata suffice for regular languages, structured data formats such as JSON require the expressive power of context-free grammars (CFGs). CFGs can describe nested structures with arbitrary depth, such as arrays containing objects that themselves contain arrays. To recognize such languages, Willard and Louf extend their approach using pushdown automata (PDAs).
+
+A pushdown automaton extends a finite automaton with a stack, enabling it to recognize context-free languages. Formally, a PDA is defined as a 6-tuple $(Q, \Sigma, \Gamma, \delta, q_0, F)$, where $\Gamma$ is the stack alphabet and the transition function $\delta: Q \times \Sigma_\epsilon \times \Gamma_\epsilon \to \mathcal{P}(Q \times \Gamma_\epsilon)$ additionally reads from and writes to the stack \cite{sipser}. The stack allows the automaton to remember an unbounded amount of information, which is essential for matching nested brackets and enforcing hierarchical structure. \\
+
+In the context of this thesis, this mechanism guarantees that the extracted job requirements strictly adhere to the schema defined in Listing~\ref{lst:requirements_schema}. By maintaining the stack configuration of the PDA, the system ensures that keys (e.g., ``experience'') are followed by valid values (e.g., arrays or strings) and that all braces and quotes are correctly closed. This eliminates the need for error-correction logic and ensures the extracted data is immediately machine-readable.
 
 \section{LLM Models}
 TODO: change this thesis  to (explain why multiple models are selected and they will be evaluated)
