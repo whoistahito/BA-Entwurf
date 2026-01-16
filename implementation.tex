@@ -121,12 +121,10 @@ Outlines library makes sure that LLM output matches the json schema \ref{lst:req
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experience, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
 \subsection{G-Eval Metrics}
-To integrate the evaluation strategy described in \autoref{conception:g-eval}, this work implements four metrics defined in \autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7.
-
-The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Using DeepEval's \texttt{evaluate} function together with an external judge model, these metrics are executed asynchronously over all test cases, and the resulting scores, rationales are collected. A separate utility then aggregates the raw results by computing summary statistics per metric (average, minimum, maximum, and number of passes) and stores both per-file results and the aggregated overview in a JSON report. The example below \autoref{code:geval-metrics} shows the implementation of a G-Eval metric.
+To integrate the evaluation strategy described in \autoref{conception:g-eval}, this work implements four metrics defined in \autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7. \autoref{code:geval-metrics} shows an example metric definition.
 
 \begin{center}
-	\begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics},float=h]
+	\begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics}]
 from deepeval.metrics import GEval
 
 def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
@@ -153,6 +151,7 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
     \end{lstlisting}
 \end{center}
 
+The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Using DeepEval's \texttt{evaluate} function together with an external judge model, these metrics are executed asynchronously over all test cases, and the resulting scores, rationales are collected.
 \section{Embedding and Similarity Search}
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
