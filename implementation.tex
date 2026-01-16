@@ -12,7 +12,7 @@ The system was implemented using the Python programming language (Version 3.10),
 	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries using Bi-Encoders and Cross-Encoders.
 	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
 \end{itemize}
-All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. Figure \ref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
+All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. \autoref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
 
 \begin{figure}[h]
 	\centering
@@ -101,7 +101,7 @@ class LLMExtractor:
 \end{center}
 so it makes adding a new model or removing the ones exisiting easier by add 5 lines as dict to code:
 \begin{center}
-	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:llm-defintion}]
+	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:llm-defintion},float=h]
 {
   "qwen3-8b": {
     "model_id": "Qwen/Qwen3-8B",
@@ -126,15 +126,15 @@ To integrate the evaluation strategy described in \autoref{conception:g-eval}, t
 The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Using DeepEval's \texttt{evaluate} function together with an external judge model, these metrics are executed asynchronously over all test cases, and the resulting scores, rationales are collected. A separate utility then aggregates the raw results by computing summary statistics per metric (average, minimum, maximum, and number of passes) and stores both per-file results and the aggregated overview in a JSON report. The example below \autoref{code:geval-metrics} shows the implementation of a G-Eval metric.
 
 \begin{center}
-    \begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics}]
+	\begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics},float=h]
 from deepeval.metrics import GEval
 
 def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
     correctness_metric = GEval(
         name="Correctness",
         criteria=(
-            "Evaluate whether the extracted job requirements are accurate and "
-            "actually present in the input text."
+        "Evaluate whether the extracted job requirements are"
+        "accurate and actually present in the input text."
         ),
         evaluation_steps=[
             "Read the input job description carefully",
@@ -154,8 +154,63 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
 \end{center}
 
 \section{Embedding and Similarity Search}
+This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
 \subsection{Vector Embedding}
-To validate the similarity scores,
-\subsection{Maxsim}
-TODO: code of  Maxsim part
+The embedding functionality is implemented using the \texttt{sentence-transformers} library, which provides pre-trained transformer models optimized for semantic similarity tasks.\cite{sentence-bert} The model \textit{all-MiniLM-L6-v2} is loaded once as a singleton to avoid repeated initialization overhead during inference.
+
+\subsection{MaxSim}
+The MaxSim algorithm described in \autoref{subsec:maxsim} is implemented in the \texttt{compute\_maxsim} function. The implementation directly follows the conceptual formulation: for each job requirement, find the maximum similarity to any user profile item, then average these maximum scores.
+\begin{center}
+    \begin{lstlisting}[language=python, caption={Implementation of MaxSim Logic}, label={code:compute_maxsim},float=h]
+def compute_maxsim(user_items: List[str],
+                   job_items: List[str],
+                   model: SentenceTransformer) -> float:
+    if not user_items or not job_items:
+        return 0.0
+
+    # 1. Encoding
+    user_embeddings = model.encode(user_items, convert_to_tensor=True)
+    job_embeddings = model.encode(job_items, convert_to_tensor=True)
+
+    # 2. Similarity Matrix
+    cosine_scores = util.cos_sim(job_embeddings, user_embeddings)
+
+    # 3. Max-Over-Rows (dim=1)
+    max_scores, _ = torch.max(cosine_scores, dim=1)
+
+    # 4. Aggregation
+    return max_scores.mean().item()
+    \end{lstlisting}
+\end{center}
+The \texttt{util.cos\_sim} function from \texttt{sentence-transformers} computes the full similarity matrix $C$ between all job and user embeddings. The \texttt{torch.max} operation along dimension 1 extracts the maximum similarity for each job requirement (row), and \texttt{mean()} computes the final field score as defined in \autoref{eq:maxsim_coverage}.
+
+\subsection{Weighted Aggregation}
+The final similarity score combines the MaxSim scores from all three fields using configurable weights. By default, skills receive a weight of 0.5, experiences 0.3, and qualifications 0.2, reflecting the prioritization of skills-based matching discussed in the conception.
+
+\begin{center}
+	\begin{lstlisting}[language=python, caption={Weighted score aggregation}, label={lst:weighted-agg}]
+def compute_similarity(user_profile, extracted_requirements,
+                       weights=None) -> SimilarityScore:
+    if weights is None:
+        weights = {"skills": 0.5, "experiences": 0.3,
+                   "qualifications": 0.2}
+
+    model = get_model()
+    overall_scores = {}
+
+    for field in ['skills', 'experiences', 'qualifications']:
+        user_items = getattr(user_profile, field, [])
+        job_items = getattr(extracted_requirements, field, [])
+        overall_scores[field] = compute_maxsim(user_items,
+                                                job_items, model)
+
+    weighted_score = sum(
+        overall_scores[field] * weights.get(field, 0.0)
+        for field in overall_scores
+    )
+    return SimilarityScore(score=weighted_score)
+    \end{lstlisting}
+\end{center}
+
+This design allows the weights to be adjusted via the API without modifying the codebase, enabling experimentation with different prioritization strategies.
