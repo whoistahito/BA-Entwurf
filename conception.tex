@@ -26,15 +26,15 @@ The core of the proposed system relies on a structured comparison between job re
 \begin{itemize}
     \item \textbf{Skills} — technical and professional competencies
     \item \textbf{Experience} — work history and domain expertise
-    \item \textbf{Education or Certificates} — formal qualifications and certifications
+    \item \textbf{Education and Certificates} — formal qualifications and certifications
 \end{itemize}
 
 These structured representations are encoded in a common JSON schema for both job descriptions and user profiles. The requirements extraction module converts unstructured job descriptions into this schema so that they share the same structure as user profiles. With this common schema, the system can compare skills, experience, and education in a consistent way, forming the basis for the LLM extraction step and the subsequent embedding-based similarity search.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/data-sctructure}
-    \caption{TODO:(add json array to each box and json to frame )Data structure mapping between job requirements and user profile for semantic matching.}
+    \includegraphics[width=0.9\textwidth]{images/requirement-user-profile-schema}
+    \caption{Data structure mapping between job requirements and user profile for semantic matching.}
     \label{fig:data_structure}
 \end{figure}
 
