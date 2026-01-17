@@ -7,7 +7,7 @@ This chapter details the technical realization of the concept presented in the p
 The system was implemented using the Python programming language (Version 3.10), chosen for its extensive ecosystem of data science and machine learning libraries. The core dependencies include:
 \begin{itemize}
 	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
-	\item \textbf{Outlines}: To enforce structured JSON generation from the LLMs, ensuring deterministic output formats.
+	\item \textbf{Outlines}: To enforce structured JSON / Pydantic Object generation from the LLMs, ensuring deterministic output formats.
 	\item \textbf{FastAPI}: For serving the inference engine as a scalable web service.
 	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries using Bi-Encoders and Cross-Encoders.
 	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
@@ -37,10 +37,10 @@ A fallback mechanism is implemented for cases where a section exceeds the maximu
 \section{Structured Requirements Extraction}
 The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process using Finite State Machine (FSM) logic.
 
-\subsection{JSON Schema Definition}
+\subsection{Output Structur Definition}
 A strict Pydantic model defines the output schema. This ensures that every processed job description yields a consistent data structure, regardless of the underlying LLM used. The schema is defined as follows:
 \begin{center}
-	\begin{lstlisting}[language=python, caption={JSON Schema for Requirements Extraction}, label={lst:requirements_schema}]
+	\begin{lstlisting}[language=python, caption={Pydantic Schema for Requirements Extraction}, label={lst:requirements_schema}]
 
 from typing import List
 from pydantic import BaseModel, Field

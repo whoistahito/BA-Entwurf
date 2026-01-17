@@ -29,7 +29,7 @@ The core of the proposed system relies on a structured comparison between job re
     \item \textbf{Education and Certificates} — formal qualifications and certifications
 \end{itemize}
 
-These structured representations are encoded in a common JSON schema for both job descriptions and user profiles. The requirements extraction module converts unstructured job descriptions into this schema so that they share the same structure as user profiles. With this common schema, the system can compare skills, experience, and education in a consistent way, forming the basis for the LLM extraction step and the subsequent embedding-based similarity search.
+These structured representations are encoded in a common Pydantic Object for both job descriptions and user profiles. The requirements extraction module converts unstructured job descriptions into this schema so that they share the same structure as user profiles. With this common schema, the system can compare skills, experience, and education in a consistent way, forming the basis for the LLM extraction step and the subsequent embedding-based similarity search.
 
 \begin{figure}[h!]
     \centering
@@ -45,7 +45,7 @@ The pipeline begins with raw HTML job postings retrieved by the YourJobFinder cr
 \section{Schema-Guided LLM Output}
 \label{sec:schema-guided}
 
-The requirements extraction module must produce output that conforms to the predefined JSON schema described in \autoref{sec:data_structure}. However, LLMs may produce syntactically malformed JSON, ignore required fields, or include extraneous content that violates the schema \cite{llm-not-good-json}. To address this challenge, the system employs guided generation, a technique that constrains the LLM's output at inference time to ensure conformance with a formal specification.
+The requirements extraction module must produce output that conforms to the predefined Pydantic schema described in \autoref{sec:data_structure}. However, LLMs may produce syntactically malformed JSON, ignore required fields, or include extraneous content that violates the schema \cite{llm-not-good-json}. To address this challenge, the system employs guided generation, a technique that constrains the LLM's output at inference time to ensure conformance with a formal specification.
 
 The theoretical foundation for this approach is provided by Willard and Louf \cite{willard2023outlines}, who reformulate the problem of constrained text generation in terms of finite-state machines (FSMs). Their insight is that regular expressions and context-free grammars (CFGs) can be used to construct an index over the language model's vocabulary, enabling efficient determination of valid next tokens at each generation step.
 
