@@ -25,8 +25,9 @@ Figure~\ref{fig:jd_by_source} presents the distribution of job descriptions by s
 \end{figure}
 
 
-Approximately 95\% of all postings originate from large job portals, primarily Indeed and LinkedIn. The remaining postings stem from individual company career pages. Figure~\ref{fig:jd_by_industry} shows the sectoral distribution of the dataset.
+Approximately 95\% of all postings originate from large job portals, primarily Indeed and LinkedIn. The remaining postings stem from individual company career pages. \\
 
+Figure~\ref{fig:jd_by_industry} shows the sectoral distribution of the dataset. Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
 
 \begin{figure}[hb!]
     \centering
@@ -34,8 +35,6 @@ Approximately 95\% of all postings originate from large job portals, primarily I
     \caption{Job Descriptions categorized by industry}
     \label{fig:jd_by_industry}
 \end{figure}
-
-Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
 
 Beyond content distribution, the length of the job descriptions is an important characteristic for evaluating LLM behavior. Figure~\ref{fig:jd_character_comparasion} illustrates the distribution of character lengths. \\
 
@@ -63,21 +62,12 @@ Job postings typically range between 6,000 and 8,000 characters, though posting 
 
 \section{Evaluation Framework}
 
-To systematically assess extraction quality, an automated evaluation pipeline based on the ``LLM‑as‑a‑Judge'' paradigm was implemented using the \texttt{DeepEval} library. This method employs NVIDIA's hosted \texttt{gpt‑oss‑120b} model as an independent evaluator, ensuring consistency and reducing the cost and subjectivity associated with human annotation.
+To systematically assess extraction quality as described in \autoref{conception:g-eval} using the \texttt{DeepEval} library, NVIDIA's hosted \texttt{gpt‑oss‑120b} model as an independent evaluator was employed.
+Each output is rated along the four criteria introduced in \autoref{metrics}, then model outputs are averaged across the entire dataset to compute final performance scores.
 
-Evaluation is performed using the G‑Eval framework, which defines a structured scoring process including (i) task‑specific evaluation criteria, (ii) internal chain‑of‑thought reasoning, and (iii) a probability‑based scoring mechanism \cite{G-eval}. Each output is rated along the four criteria introduced in Section~\ref{metrics}:
-\begin{itemize}
-    \item Correctness
-    \item Completeness
-    \item Alignment
-    \item Readability
-\end{itemize}
+\section{Performance Overview}
 
-Model outputs are averaged across the entire dataset to compute final performance scores.
-
-\section{Model Performance Comparison}
-
-Figure~\ref{fig:overall_model_ranking} presents the aggregated overall model ranking derived from the evaluation metrics.
+\autoref{fig:overall_model_ranking} presents the aggregated overall model ranking derived from the evaluation metrics.
 
 \begin{figure}[h]
     \centering
@@ -87,11 +77,10 @@ Figure~\ref{fig:overall_model_ranking} presents the aggregated overall model ran
 \end{figure}
 
 Qwen3‑8B achieves the highest overall performance, followed by GLM‑4‑9B, Mistral‑7B‑Instruct, and finally Llama‑3.1‑8B‑Instruct.
-
-\section{Quantitative Performance Analysis}
+Qwen3‑8B also yields the highest scores in structure, correctness, and precision as can be seen in \autoref{tab:model_performance}.
 TODO: explain why the results for "Readability" look so high (or low) in your tables.
-Table~\ref{tab:model_performance} summarizes the quantitative results across the five G‑Eval metrics. Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
-
+Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
+TODO: rename Structure and Precision based on code and conception
 \begin{table}[h]
     \centering
     \caption{Model performance across G‑Eval metrics.}
@@ -110,16 +99,11 @@ Table~\ref{tab:model_performance} summarizes the quantitative results across the
     \small{\\ \textit{Scores represent mean values over all 209 evaluated job descriptions.}}
 \end{table}
 
-Qwen3‑8B consistently yields the highest scores in structure, correctness, and precision. GLM‑4‑9B achieves the strongest completeness score, while Mistral‑7B offers more balanced but lower overall performance. Llama‑3.1‑8B underperforms across all metrics, primarily due to hallucinated requirements and structural inconsistencies.
-
-
-\section{Qualitative Error Analysis}
+GLM‑4‑9B achieves the strongest completeness score, while Mistral‑7B offers more balanced but lower overall performance. Llama‑3.1‑8B underperforms across all metrics, primarily due to hallucinated requirements and structural inconsistencies. \\
 
 Beyond numerical results, a qualitative examination reveals distinctive behavioral patterns and recurrent error types that explain the relative ranking of the models.
 
 \subsection{Hallucination of Generic Requirements}
-
-One of the most notable issues, particularly for the Llama‑3.1‑8B model, is the insertion of highly stereotypical requirements that do not appear in the original text. Examples include fabricating educational requirements such as a ``Bachelor’s degree in Computer Science’’ or professional qualifications like ``PMP Certification.’’ These hallucinations suggest that such models rely too strongly on prior knowledge about typical job postings rather than grounding their extraction strictly in the input content. This poses a critical challenge for fairness in applicant filtering, as it may introduce exclusionary criteria not stated by employers.
 
 \subsection{Precision–Recall Trade-Off Between Models}
 
