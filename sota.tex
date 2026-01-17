@@ -41,7 +41,6 @@ For tasks requiring higher precision in ranking, cross-encoder architectures are
 This thesis therefore focuses on leveraging the high accuracy of a cross-encoder architecture for its core matching task,
 by jointly processing the job title and its requirements so that the model can more effectively capture the relationships between them.
 
-TODO: review the adjectives like scalable and limitations items, if they are all needed and repeating themselves. consider light wight as adjective.
 \section{Research Gap} \label{sota:research_gap}
 
 
@@ -58,10 +57,8 @@ accessibility and reproducibility.
 computational infrastructure and rely on large, platform‑specific
 datasets, making them unsuitable for deployment by smaller organizations
  or independent aggregators.
-    \item Recent training methodologies often incorporate large‑scale
-data augmentation strategies and hard‑negative mining, both of which
-demand substantial computational resources and specialized model
-development workflows.
+    \item Most of the state-of-the-art approaches rely on end-to-end embedding models that function as ``black boxes.'' While effective, these systems often obscure the specific rationale behind a match (e.g., whether a score is driven by skills, experience, or education), making it difficult to verify or explain recommendations.
+
 \end{itemize}
 
 To make these differences more explicit,
@@ -71,20 +68,20 @@ thesis. The comparison highlights how this work distinguishes itself
 through a combination of semantic capabilities, open‑source components,
 and the absence of fine‑tuning requirements.
 
-TODO: add explainability as a characteristic, light weight and interchangeable components
 
 \begin{table}[h]
     \caption{Systematic Comparison of Job Matching Approaches}
     \label{tab:model_comparison}
     \centering
-    \begin{tabular*}{\textwidth}{| l@{\extracolsep\fill} r || c | c | c |}
+    \begin{tabular*}{\textwidth}{| l@{\extracolsep\fill} r || c | c | c | c |} % Added extra column
         \hline
 
         Tools &
-        \rotatebox{90}{characteristics} &
+        \rotatebox{90}{Characteristics} &
         \rotatebox{90}{Uses LLMs} &
         \rotatebox{90}{Open-Source} &
-        \rotatebox{90}{Fine-Tuning Required} \\
+        \rotatebox{90}{Training Required} &
+        \rotatebox{90}{Interpretability} \\
 
         \hline
         \hline
@@ -92,25 +89,29 @@ TODO: add explainability as a characteristic, light weight and interchangeable c
         \multicolumn{2}{|l||}{LinkSage} &
         \xmark  &
         \xmark  &
+        \cmark &
         \xmark \\
         \hline
 
         \multicolumn{2}{|l||}{CareerBuilder} &
-        \cmark &
         \xmark &
-        \cmark \\
+        \xmark &
+        \cmark &
+        \xmark \\
         \hline
 
         \multicolumn{2}{|l||}{ConfitV2} &
         \cmark &
         \cmark &
-        \cmark \\
+        \cmark &
+        \xmark \\
 
         \hline
         \multicolumn{2}{|l||}{Approach of this thesis} &
         \cmark &
         \cmark &
-        \xmark \\
+        \xmark &
+        \cmark \\
 
         \hline
 
@@ -118,12 +119,4 @@ TODO: add explainability as a characteristic, light weight and interchangeable c
 \end{table}
 
 
-
-
-
-In summary, although existing systems achieve strong performance in specific settings, there remains no approach that is both semantically robust and deployable using lightweight, fully open‑source components.
-This thesis addresses this gap by proposing a job‑matching system that
-employs small open‑source LLMs for automated requirements extraction
-together with embedding‑based similarity search, thereby offering an
-accessible, and computationally efficient alternative.
-
+In summary, although existing systems achieve strong performance in specific settings, there remains no approach that is semantically robust, deployable using lightweight, fully open‑source components, and architecturally transparent. This thesis addresses this gap by proposing a job‑matching system that employs small open‑source LLMs for structured requirements extraction together with embedding‑based similarity search, thereby offering an accessible, computationally efficient, and interpretable-by-design alternative.
