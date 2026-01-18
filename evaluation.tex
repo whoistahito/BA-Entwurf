@@ -15,7 +15,7 @@ Together, these three components provide a comprehensive empirical foundation fo
 
 The evaluation is based on a corpus of 209 job descriptions. Links to the postings were retrieved from the YourJobFinder database and subsequently scraped using the YourJobFinder's scraping tools. The raw HTML content of each posting was then converted into Markdown using the \textit{markdownify} library, ensuring that stylistic noise such as JavaScript, layout fragments, and boilerplate components were removed before the extraction phase.\\
 
-Figure~\ref{fig:jd_by_source} presents the distribution of job descriptions by source platform.
+\autoref{fig:jd_by_source} presents the distribution of job descriptions by source platform.
 
 \begin{figure}[h!]
     \centering
@@ -27,7 +27,7 @@ Figure~\ref{fig:jd_by_source} presents the distribution of job descriptions by s
 
 Approximately 95\% of all postings originate from large job portals, primarily Indeed and LinkedIn. The remaining postings stem from individual company career pages. \\
 
-Figure~\ref{fig:jd_by_industry} shows the sectoral distribution of the dataset. Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
+\autoref{fig:jd_by_industry} shows the sectoral distribution of the dataset. Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
 
 \begin{figure}[hb!]
     \centering
@@ -36,7 +36,7 @@ Figure~\ref{fig:jd_by_industry} shows the sectoral distribution of the dataset. 
     \label{fig:jd_by_industry}
 \end{figure}
 
-Beyond content distribution, the length of the job descriptions is an important characteristic for evaluating LLM behavior. Figure~\ref{fig:jd_character_comparasion} illustrates the distribution of character lengths. \\
+Beyond content distribution, the length of the job descriptions is an important characteristic for evaluating LLM behavior. \autoref{fig:jd_character_comparasion} illustrates the distribution of character lengths. \\
 
 \begin{figure}[h!]
 \centering
