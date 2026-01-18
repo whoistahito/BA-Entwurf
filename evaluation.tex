@@ -116,7 +116,7 @@ For downstream filtering systems, conservative extraction is typically preferred
 
 A further issue observed across multiple models is \textit{prompt overfitting}. When job descriptions contained little to no usable content, both Qwen3‑8B and Llama‑3.1‑8B repeatedly produced the same specific qualifications—most notably ``Bachelor’s degree in Computer Science’’ and ``PMP Certification.’’ These outputs closely resembled the few‑shot examples used in the system prompt.
 
-This behavior aligns with the definition of \textit{prompt leakage},which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage}.
+This behavior aligns with the definition of \textit{prompt leakage}, which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage}.
 Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
 
 \section{Case Study}
