@@ -110,7 +110,7 @@ A limitation of Transformer-based language models is their restricted context si
 There are different methods of chunking text data for LLM processing. It can be grouped into different categories. Following explains categories, that this work uses:
 \begin{itemize}
     \item \textbf{Fixed-size chunking} It involves splitting text into chunks based on a predetermined number of tokens, with the option to include overlapping sections to preserve semantic context \cite{tamingllms}. It is widely used because it is simple, computationally inexpensive, and does not require specialized tools \cite{tamingllms}.
-    \item \textbf{Structure-based chunking}: This method splits the text based on its structure and hierarchy \cite{pinecone}, In this newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
+    \item \textbf{Structure-based chunking}: This method splits the text based on its structure and hierarchy \cite{pinecone}, in this case newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
 \end{itemize}
 
 This work uses a hybrid approach that combines the semantic preservation of structure-based chunking with the operational safety of fixed-size chunking. The primary strategy involves splitting the job descriptions by Markdown headers to maintain the coherence of logical sections. To address the limitation of variable chunk sizes, a fixed-size slicing mechanism is employed as a fallback constraint, ensuring that no single chunk exceeds the context window regardless of its structural length.
