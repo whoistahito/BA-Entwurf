@@ -29,7 +29,7 @@ As outlined in the conception, the raw data consists of HTML documents. The prep
 The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document. Headings, lists, and paragraphs are retained, as these structural elements provide critical semantic cues for the extraction model. This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
 
 \subsection{Hybrid Chunking Strategy}
-To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \texttt{r'(\#\{1,6\}\textbackslash s+.*? \textbackslash n)'}). This ensures that logical sections—such as 'Responsibilities' or 'Requirements'—remain intact within a single context window.
+To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \verb|r'(#{1,6}\s+.*?\n)'|). This ensures that logical sections—such as 'Responsibilities' or 'Requirements'—remain intact within a single context window.
 
 A fallback mechanism is implemented for cases where a section exceeds the maximum token limit. If a semantic chunk exceeds the configured size (defaulting to approximately 12,000 tokens, estimated via character count), it is further divided based on a strict character limit to prevent memory overflows during inference.
 
