@@ -151,7 +151,7 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
         model=model,
         threshold=0.7,
     )
-    # additional metrics: Completeness, Precision, Structure Quality
+    # additional metrics: Completeness, Alignment , Readability
     return [correctness_metric, ...]
     \end{lstlisting}
 \end{center}

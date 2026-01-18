@@ -77,17 +77,16 @@ Each output is rated along the four criteria introduced in \autoref{metrics}, th
 \end{figure}
 
 Qwen3‑8B achieves the highest overall performance, followed by GLM‑4‑9B, Mistral‑7B‑Instruct, and finally Llama‑3.1‑8B‑Instruct.
-Qwen3‑8B also yields the highest scores in structure, correctness, and precision as can be seen in \autoref{tab:model_performance}.
-TODO: explain why the results for "Readability" look so high (or low) in your tables.
+Qwen3‑8B also yields the highest scores in structure, correctness, and Alignment as can be seen in \autoref{tab:model_performance}.
+TODO: explain why the results for "Readability" look so high (or low) in the table.
 Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
-TODO: rename Structure and Precision based on code and conception
 \begin{table}[h]
     \centering
     \caption{Model performance across G‑Eval metrics.}
     \label{tab:model_performance}
     \begin{tabular}{lccccc}
         \toprule
-        \textbf{Model} & \textbf{Overall} & \textbf{Structure} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Precision} \\
+        \textbf{Model} & \textbf{Overall} & \textbf{Readability} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Alignment} \\
         \midrule
         \textbf{Qwen 3 8B} & \textbf{0.50} & \textbf{0.61} & 0.45 & \textbf{0.45} & \textbf{0.50} \\
         GLM 4 9B           & 0.48 & 0.58 & \textbf{0.48} & 0.43 & 0.43 \\
