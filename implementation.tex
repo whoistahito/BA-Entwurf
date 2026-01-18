@@ -9,7 +9,7 @@ The system was implemented using the Python programming language (Version 3.10),
 	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
 	\item \textbf{Outlines}: To enforce structured JSON / Pydantic Object generation from the LLMs, ensuring deterministic output formats.
 	\item \textbf{FastAPI}: For serving the inference engine as a scalable web service.
-	\item \textbf{Sentence-Transformers}: For generating vector embeddings of job descriptions and user queries using Bi-Encoders and Cross-Encoders.
+	\item \textbf{Sentence-Transformers}: For generating vector embeddings of requirements and user profile.
 	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
 \end{itemize}
 All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. \autoref{fig:system_architecture} illustrates the high-level architecture of the implemented system.

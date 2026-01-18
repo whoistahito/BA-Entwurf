@@ -35,10 +35,8 @@ While fine-tuned models achieve strong performance, they require task-specific a
 
 \subsection{Embedding and Similarity Search in Job Matching}
 \label{introduction:similaritysearch}
-
+TODO: Add about maxsim in job matching
 Embedding-based similarity search has become a cornerstone of modern job recommendation systems. Domain-specific models such as CareerBERT \cite{careerbert} achieve strong performance by leveraging structured taxonomies. However, general-purpose models such as sentence-transformers (e.g., all-MiniLM-L6-v2) have also shown excellent retrieval performance without task‑specific training, as demonstrated by Kurek et al. \cite{kurek2024}.
-For tasks requiring higher precision in ranking, cross-encoder architectures are often preferred. As Singh notes, extensive evaluations show the superior performance of cross-encoders compared to traditional ranking methods \cite{cross-encoder-metric}. In line with these findings, this thesis employs a cross-encoder to jointly process job titles and extracted requirements, enabling more accurate and contextually aware similarity judgments.
-This thesis therefore focuses on leveraging the high accuracy of a cross-encoder architecture for its core matching task,
 by jointly processing the job title and its requirements so that the model can more effectively capture the relationships between them.
 
 \section{Research Gap} \label{sota:research_gap}
