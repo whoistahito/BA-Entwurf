@@ -166,7 +166,7 @@ The embedding functionality is implemented using the \texttt{sentence-transforme
 \subsection{MaxSim}
 The MaxSim algorithm described in \autoref{subsec:maxsim} is implemented in the \texttt{compute\_maxsim} function. The implementation directly follows the conceptual formulation: for each job requirement, find the maximum similarity to any user profile item, then average these maximum scores.
 \begin{center}
-    \begin{lstlisting}[language=python, caption={Implementation of MaxSim Logic}, label={code:compute_maxsim},float=h]
+    \begin{lstlisting}[language=python, caption={Implementation of MaxSim Logic}, label={code:compute_maxsim}]
 def compute_maxsim(user_items: List[str],
                    job_items: List[str],
                    model: SentenceTransformer) -> float:
