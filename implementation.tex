@@ -119,7 +119,7 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
 \subsection{Exception handling} \label{subsec:exception_handling}
 
 After the output is generated, the output structure is validated against the Pydantic model using the built-in \texttt{validate\_json()} method.
- While the outlines library is designed to ensure that the model output follows the schema shown in \autoref{lst:requirements_schema}, issues can still occur during generation. For example, if the model reaches its max_new_tokens limit, it may produce incomplete or invalid JSON that does not pass validation.
+ While the outlines library is designed to ensure that the model output follows the schema shown in \autoref{lst:requirements_schema}, issues can still occur during generation. For example, if the model reaches its \texttt{max\_new\_tokens} limit, it may produce incomplete or invalid JSON that does not pass validation.
 When this happens, the system handles the exception and returns a Requirements object in which the fields are empty lists.
 This approach allows the rest of the pipeline to run without failing, but it also means that there is no clear indication that the output was invalid, which makes troubleshooting more challenging.
 
