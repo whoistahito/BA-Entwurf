@@ -37,7 +37,7 @@ A fallback mechanism is implemented for cases where a section exceeds the maximu
 \section{Structured Requirements Extraction}
 The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process using Finite State Machine (FSM) logic.
 
-\subsection{Output Structur Definition}
+\subsection{Output Structure Definition}
 A strict Pydantic model defines the output schema. This ensures that every processed job description yields a consistent data structure, regardless of the underlying LLM used. The schema is defined as follows:
 \begin{center}
 	\begin{lstlisting}[language=python, caption={Pydantic Schema for Requirements Extraction}, label={lst:requirements_schema}]
