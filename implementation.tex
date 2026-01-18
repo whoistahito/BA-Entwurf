@@ -101,7 +101,7 @@ class LLMExtractor:
 \end{center}
 so it makes adding a new model or removing the ones exisiting easier by add 5 lines as dict to code:
 \begin{center}
-	\begin{lstlisting}[language=json, caption={llm-defintion}, label={lst:llm-defintion},float=h]
+	\begin{lstlisting}[language=json, caption={LLM Definition}, label={lst:llm-defintion},float=h]
 {
   "qwen3-8b": {
     "model_id": "Qwen/Qwen3-8B",
@@ -117,7 +117,12 @@ so it makes adding a new model or removing the ones exisiting easier by add 5 li
 \end{center}
 
 \subsection{Exception handling} \label{subsec:exception_handling}
-Outlines library makes sure that LLM output matches the json schema \autoref{lst:requirements_schema}. Although this is a good features but does not work always, as it can happen that the model does return an output that is not a valid json or missing a field, in that case it returns a Requirement Model where the fields have empty array.
+
+After the output is generated, the output structure is validated against the Pydantic model using the built-in \texttt{validate\_json()} method.
+ While the outlines library is designed to ensure that the model output follows the schema shown in \autoref{lst:requirements_schema}, issues can still occur during generation. For example, if the model reaches its max_new_tokens limit, it may produce incomplete or invalid JSON that does not pass validation.
+When this happens, the system handles the exception and returns a Requirements object in which the fields are empty lists.
+This approach allows the rest of the pipeline to run without failing, but it also means that there is no clear indication that the output was invalid, which makes troubleshooting more challenging.
+
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experience, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
 \subsection{G-Eval Metrics}
