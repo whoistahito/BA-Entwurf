@@ -7,7 +7,7 @@ This chapter details the technical realization of the concept presented in the p
 The system was implemented using the Python programming language (Version 3.10), chosen for its extensive ecosystem of data science and machine learning libraries. The core dependencies include:
 \begin{itemize}
 	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
-	\item \textbf{Outlines}: To enforce structured JSON / Pydantic Object generation from the LLMs, ensuring deterministic output formats.
+	\item \textbf{Outlines}: To enforce structured JSON / Pydantic Model generation from the LLMs, ensuring deterministic output formats.
 	\item \textbf{FastAPI}: For serving the inference engine as a scalable web service.
 	\item \textbf{Sentence-Transformers}: For generating vector embeddings of requirements and user profile.
 	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
