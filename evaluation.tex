@@ -76,7 +76,7 @@ Each output is rated along the four criteria introduced in \autoref{metrics}, th
     \label{fig:overall_model_ranking}
 \end{figure}
 
-Qwen3‑8B achieves the highest overall performance, followed by GLM‑4‑9B, Mistral‑7B‑Instruct, and finally Llama‑3.1‑8B‑Instruct.
+Qwen3‑8B achieves the highest overall performance, followed by GLM-4-9B-0414, Mistral-7B-Instruct-v0.3, and finally Llama-3.1-8B-Instruct.
 Qwen3‑8B also yields the highest scores in structure, correctness, and Alignment as can be seen in \autoref{tab:model_performance}.
 TODO: explain why the results for "Readability" look so high (or low) in the table.
 Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
@@ -88,17 +88,17 @@ Each value represents a mean score across the evaluation corpus, where 1.0 signi
         \toprule
         \textbf{Model} & \textbf{Overall} & \textbf{Readability} & \textbf{Completeness} & \textbf{Correctness} & \textbf{Alignment} \\
         \midrule
-        \textbf{Qwen 3 8B} & \textbf{0.50} & \textbf{0.61} & 0.45 & \textbf{0.45} & \textbf{0.50} \\
-        GLM 4 9B           & 0.48 & 0.58 & \textbf{0.48} & 0.43 & 0.43 \\
-        Mistral 7B         & 0.46 & 0.55 & 0.40 & 0.44 & 0.46 \\
-        Llama 3.1 8B       & 0.41 & 0.49 & 0.37 & 0.38 & 0.39 \\
+        \textbf{Qwen3-8B} & \textbf{0.50} & \textbf{0.61} & 0.45 & \textbf{0.45} & \textbf{0.50} \\
+        GLM-4-9B-0414           & 0.48 & 0.58 & \textbf{0.48} & 0.43 & 0.43 \\
+        Mistral-7B-Instruct-v0.3         & 0.46 & 0.55 & 0.40 & 0.44 & 0.46 \\
+        Llama‑3.1-8B-Instruct       & 0.41 & 0.49 & 0.37 & 0.38 & 0.39 \\
         \bottomrule
     \end{tabular}
     \vspace{0.2cm}
     \small{\\ \textit{Scores represent mean values over all 209 evaluated job descriptions.}}
 \end{table}
 
-GLM‑4‑9B achieves the strongest completeness score, while Mistral‑7B offers more balanced but lower overall performance. Llama‑3.1‑8B underperforms across all metrics, primarily due to hallucinated requirements and structural inconsistencies. \\
+GLM-4-9B-0414 achieves the strongest completeness score, while Mistral-7B-Instruct-v0.3 offers more balanced but lower overall performance. Llama-3.1-8B-Instruct underperforms across all metrics, primarily due to hallucinated requirements and structural inconsistencies. \\
 
 Beyond numerical results, a qualitative examination reveals distinctive behavioral patterns and recurrent error types that explain the relative ranking of the models.
 
@@ -106,14 +106,14 @@ Beyond numerical results, a qualitative examination reveals distinctive behavior
 
 \subsection{Precision–Recall Trade-Off Between Models}
 
-A clear trade‑off emerges between Qwen3‑8B and GLM‑4‑9B.
+A clear trade‑off emerges between Qwen3‑8B and GLM-4-9B-0414.
 Qwen3‑8B generally follows a conservative extraction pattern, rarely adding unsupported items and therefore achieving the highest precision. However, this sometimes results in missed implicit requirements, slightly lowering its completeness score.
-In contrast, GLM‑4‑9B adopts a more liberal extraction strategy, capturing a broader range of potential requirements—including many optional or contextually weakly supported items—boosting completeness at the expense of precision.
+In contrast, GLM-4-9B-0414 adopts a more liberal extraction strategy, capturing a broader range of potential requirements—including many optional or contextually weakly supported items—boosting completeness at the expense of precision.
 For downstream filtering systems, conservative extraction is typically preferred to avoid incorrectly rejecting qualified candidates.
 
 \subsection{Prompt Overfitting and Prompt Leakage}
 
-A further issue observed across multiple models is \textit{prompt overfitting}. When job descriptions contained little to no usable content, both Qwen3‑8B and Llama‑3.1‑8B repeatedly produced the same specific qualifications—most notably ``Bachelor’s degree in Computer Science’’ and ``PMP Certification.’’ These outputs closely resembled the few‑shot examples used in the system prompt.
+A further issue observed across multiple models is \textit{prompt overfitting}. When job descriptions contained little to no usable content, both Qwen3‑8B and Llama-3.1-8B-Instruct repeatedly produced the same specific qualifications—most notably ``Bachelor’s degree in Computer Science’’ and ``PMP Certification.’’ These outputs closely resembled the few‑shot examples used in the system prompt.
 
 This behavior aligns with the definition of \textit{prompt leakage}, which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage}.
 Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.

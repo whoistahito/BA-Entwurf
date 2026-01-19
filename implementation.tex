@@ -73,7 +73,7 @@ The prompt provided to the LLM consists of a system instruction defining the per
 
 
 \subsection{Inference Engine}
-The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama-3, Mistral, Qwen) by simply updating a configuration dictionary.
+The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama, Mistral, Qwen) by simply updating a configuration dictionary.
 
 The extractor initializes the model and tokenizer, and wraps them with the \texttt{outlines.Generator}. The generation process is constrained to strictly follow the \texttt{Requirements} schema defined above.
 \begin{center}
