@@ -63,7 +63,8 @@ class Requirements(BaseModel):
 \end{center}
 
 \subsection{Prompt Engineering}
-The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. The system prompt used is:
+The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. \autoref{fig:prompt} shows the system prompt, which requires the LLM to only extract must-have requirements, be concise, and only respond in the defined categories.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{images/prompt}
@@ -75,9 +76,9 @@ The prompt provided to the LLM consists of a system instruction defining the per
 \subsection{Inference Engine}
 The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama, Mistral, Qwen) by simply updating a configuration dictionary.
 
-The extractor initializes the model and tokenizer, and wraps them with the \texttt{outlines.Generator}. The generation process is constrained to strictly follow the \texttt{Requirements} schema defined above.
+The extractor initializes the model and tokenizer, and wraps them with the \texttt{outlines.Generator} class. The generation process is constrained to strictly follow the schema defined in \autoref{lst:requirements_schema}.
 \begin{center}
-	\begin{lstlisting}[language=python, caption={LLM Extractor Implementation}, label={code:api-implementation}]
+	\begin{lstlisting}[language=python, caption={LLM Extractor Implementation}, label={code:api-implementation},float=h]
 class LLMExtractor:
     def __init__(self, model_id, chunk_size, device_kwargs=None):
         self.model_id = model_id
@@ -99,7 +100,9 @@ class LLMExtractor:
         self.generator = Generator(outlines_model, Requirements)
     \end{lstlisting}
 \end{center}
-so it makes adding a new model or removing the ones exisiting easier by add 5 lines as dict to code:
+
+This design simplifies the process of managing models; adding a new model or removing an existing one only requires adding a JSON entry. For example, \autoref{lst:llm-definition} shows how to add the Qwen3-8B model.
+
 \begin{center}
 	\begin{lstlisting}[language=json, caption={LLM Definition}, label={lst:llm-defintion},float=h]
 {
