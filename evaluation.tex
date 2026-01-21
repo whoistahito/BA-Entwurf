@@ -17,7 +17,7 @@ The empirical evaluation is based on a corpus of $N=209$ real-world job descript
 
 The raw HTML content of each posting was subsequently converted into Markdown .
 
-\subsection{Source and Industry Distribution}
+\subsection{Source and Industry Distribution} \label{subsec:dataset-by-industry}
 
 \autoref{fig:jd_by_source} illustrates the distribution of job postings by source platform. The dataset is heavily dominated by major job aggregators, with Indeed ($n=158$) and LinkedIn ($n=40$) accounting for approximately 95\% of the corpus. The remaining postings originate from niche platforms or individual company career pages.
 
@@ -28,7 +28,9 @@ The raw HTML content of each posting was subsequently converted into Markdown .
     \label{fig:jd_by_source}
 \end{figure}
 
-In terms of sectoral distribution, \autoref{fig:jd_by_industry} shows that the dataset covers a diverse range of professional domains. While the technology sector is the largest single category (comprising roughly one-third of the dataset), there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
+In terms of sectoral distribution, \autoref{fig:jd_by_industry} shows that the dataset is imbalanced, as the technology sector is the largest single category (comprising roughly one-third of the dataset). However, there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
+
+Notably, the `Other' category in \autoref{fig:jd_by_industry} represents a specific edge case involving an expired job posting. While expired listings typically return an HTTP 404 status code, this specific page remained active, displaying a list of related job recommendations instead of the original description. Because the page still contained significant textual content, it bypassed the scraper's emptiness filters. Although unintentional, this instance serves as a valuable adversarial example, testing the extraction model's behavior when presented with valid HTML structure but semantically irrelevant content, which will be discussed in \autoref{subsec:copying-bias}.
 
 
 \begin{figure}[h!]
@@ -114,12 +116,11 @@ Qwen3‑8B generally follows a conservative extraction pattern, rarely adding un
 In contrast, GLM-4-9B-0414 adopts a more liberal extraction strategy, capturing a broader range of potential requirements—including many optional or contextually weakly supported items—boosting completeness at the expense of precision.
 For downstream filtering systems, conservative extraction is typically preferred to avoid incorrectly rejecting qualified candidates.
 
-\subsection{Prompt Overfitting and Prompt Leakage}
+\subsection{Copying Bias} \label{subsec:copying-bias}
 
-A further issue observed across multiple models is \textit{prompt overfitting}. When job descriptions contained little to no usable content, both Qwen3‑8B and Llama-3.1-8B-Instruct repeatedly produced the same specific qualifications—most notably ``Bachelor’s degree in Computer Science’’ and ``PMP Certification.’’ These outputs closely resembled the few‑shot examples used in the system prompt.
-
-This behavior aligns with the definition of \textit{prompt leakage}, which is defined as ``as the act of misaligning the original goal of a prompt to a new goal of printing part of or the whole original prompt instead'' \cite{prompt-leakage}.
-Such leakage poses a systematic risk in extraction pipelines, as models may inadvertently encode example‑specific artifacts into their predictions. This finding underscores the need for prompt designs that minimize unintended signal strength, potentially by reducing example specificity or employing schema‑only zero‑shot prompting.
+The Edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
+This behavior is best described as \textit{copying bias}, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
+Such behaviours pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false positives in the matching system.
 
 \section{Case Study}
 To address RQ2 (\autoref{itm:rq2}), the proposed semantic matching pipeline was compared against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on the information available in a user's profile (e.g., skills, experience, and inferred seniority). \\
