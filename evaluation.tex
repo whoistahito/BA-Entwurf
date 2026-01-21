@@ -119,7 +119,7 @@ For downstream filtering systems, conservative extraction is typically preferred
 
 The Edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
 This behavior is best described as \textit{copying bias}, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
-Such behaviours pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false positives in the matching system.
+Such behaviors pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false positives in the matching system.
 
 \section{Case Study}
 To address RQ2 (\autoref{itm:rq2}), the proposed semantic matching pipeline was compared against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on the information available in a user's profile (e.g., skills, experience, and inferred seniority). \\
