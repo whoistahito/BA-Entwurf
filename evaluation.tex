@@ -69,7 +69,7 @@ The distribution is strongly right-skewed, characterized by a significant dispar
 To systematically assess extraction quality as described in \autoref{conception:g-eval} using the DeepEval library, NVIDIA's hosted \texttt{gpt‑oss‑120b} model as an independent evaluator was employed.
 Each output is rated along the four criteria introduced in \autoref{metrics}, then model outputs are averaged across the entire dataset to compute final performance scores.
 
-\section{Performance Overview}
+\section{Performance Overview} \label{sec:llm-performance}
 
 \autoref{fig:overall_model_ranking} presents the aggregated model ranking derived from the evaluation metrics. Qwen3-8B achieves the highest overall performance, followed by GLM-4-9B-0414 and Mistral-7B-Instruct-v0.3, with Llama-3.1-8B-Instruct showing the lowest aggregated scores.
 
@@ -104,9 +104,8 @@ To understand the drivers behind these overall scores, \autoref{tab:model_perfor
 
 \subsection{Readability vs. Semantic Metrics}
 
-An important observation from \autoref{tab:model_performance} is the disparity between Readability scores and the purely semantic metrics (Correctness and Completeness). Across all models, Readability scores (ranging from 0.49 to 0.61) are consistently higher than semantic-based scores. This performance can be linked to the specific architectural design and error-handling strategy in the extraction pipeline, which are
-First, the use of the outlines library, which guarantees generating a valid JSON or deviate from the defined Pydantic schema. Second, the exception handling mechanism detailed in \autoref{subsec:exception_handling} that catches the exception during  inference.
-As a result of these two design choices, the evaluation pipeline never encounters malformed or unstructured output. Every single output passed to the judge is, by definition, syntactically valid JSON.
+An important observation from \autoref{tab:model_performance} is that the Readability metric, designed to assess whether the output is valid JSON, became effectively redundant due to the system's architectural design. By employing the outlines library and a strict exception handling mechanism, the pipeline guarantees that the output is always a valid JSON object, even if it is an empty one returned upon generation failure. Consequently, high Readability scores were a structural artifact of the engineering pipeline rather than a reflection of the model's capabilities. This suggests that for constrained generation pipelines, evaluation should focus exclusively on semantic metrics rather than syntactic validity.
+
 However, despite these architectural guarantees of structural validity, the Readability scores do not reach the maximum value of 1.0. This gap highlights a critical distinction captured by the G-Eval metric, which evaluates not only whether the output is structured, but also whether requirements are ``properly categorized into skills, experiences, and qualifications''.
 The failure to reach a perfect score indicates that while the models are forced to generate valid JSON, they still struggle with the semantic logic required to populate that structure correctly. The models frequently miscategorize requirements—for example, placing a formal degree under skills or a software tool under qualifications. Therefore, the Readability results lead to a clear conclusion: the problem of syntactic structure has been effectively solved through constraints (outlines and exception handling), leaving semantic reasoning and categorization as the primary bottleneck for open-source models.
 
