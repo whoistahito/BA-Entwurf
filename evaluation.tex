@@ -13,52 +13,54 @@ Together, these three components provide a comprehensive empirical foundation fo
 
 \section{Dataset}
 
-The evaluation is based on a corpus of 209 job descriptions. Links to the postings were retrieved from the YourJobFinder database and subsequently scraped using the YourJobFinder's scraping tools. The raw HTML content of each posting was then converted into Markdown using the \textit{markdownify} library, ensuring that stylistic noise such as JavaScript, layout fragments, and boilerplate components were removed before the extraction phase.\\
+The empirical evaluation is based on a corpus of $N=209$ real-world job descriptions. To ensure the dataset reflects the practical challenges of a live job aggregator, links to the postings were retrieved directly from the \textit{YourJobFinder} database and scraped using the platform's existing scraping tools.
 
-\autoref{fig:jd_by_source} presents the distribution of job descriptions by source platform.
+The raw HTML content of each posting was subsequently converted into Markdown .
+
+\subsection{Source and Industry Distribution}
+
+\autoref{fig:jd_by_source} illustrates the distribution of job postings by source platform. The dataset is heavily dominated by major job aggregators, with Indeed ($n=158$) and LinkedIn ($n=40$) accounting for approximately 95\% of the corpus. The remaining postings originate from niche platforms or individual company career pages.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_source}
-    \caption{Job Descriptions categorized by source}
+    \caption{Distribution of job postings by source platform}
     \label{fig:jd_by_source}
 \end{figure}
 
+In terms of sectoral distribution, \autoref{fig:jd_by_industry} shows that the dataset covers a diverse range of professional domains. While the technology sector is the largest single category (comprising roughly one-third of the dataset), there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
 
-Approximately 95\% of all postings originate from large job portals, primarily Indeed and LinkedIn. The remaining postings stem from individual company career pages. \\
 
-\autoref{fig:jd_by_industry} shows the sectoral distribution of the dataset. Roughly one third of all postings belong to the technology sector, with healthcare, business, and engineering also strongly represented. A small number of postings contain incomplete or minimal job descriptions, which provides an additional test for robustness in the extraction task. \\
-
-\begin{figure}[hb!]
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/job_descriptions_by_industry}
-    \caption{Job Descriptions categorized by industry}
+    \includegraphics[width=0.7\textwidth]{images/job_descriptions_by_industry}
+    \caption{Distribution of job postings by industry sector}
     \label{fig:jd_by_industry}
 \end{figure}
 
-Beyond content distribution, the length of the job descriptions is an important characteristic for evaluating LLM behavior. \autoref{fig:jd_distribution_characters} illustrates the distribution of character lengths. \\
+
+\subsection{Length and Characteristics}
+
+Beyond content distribution, the length of the job descriptions is a critical variable for evaluating LLM behavior, particularly regarding context window limitations. \autoref{fig:jd_distribution_characters} presents a histogram of character counts across the dataset.
 
 \begin{figure}[h!]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{images/distribution_job_description_lengths}
-  \captionof{figure}{Distribution of job description lengths}
-  \label{fig:jd_distribution_characters}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{images/character_count_by_source_violin}
-  \captionof{figure}{Character count by source}
-  \label{fig:jd_character_count_by_source}
-\end{minipage}
-    \label{fig:jd_character_comparasion}
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/distribution_job_description_lengths}
+    \caption{Histogram of job description lengths showing a right-skewed distribution}
+    \label{fig:jd_distribution_characters}
 \end{figure}
 
+The distribution is strongly right-skewed, characterized by a significant disparity between the median length (6,003 characters) and the mean length (8,147 characters). While the majority of postings fall within the 4,000 to 8,000 character range, the dataset contains extreme outliers, with the longest single posting reaching 34,192 characters. This extreme variance—where the maximum length is nearly six times the median—validates the necessity of the hybrid chunking strategy introduced in Section 4.2.2, as these outliers would otherwise exceed the context window of standard 8B-parameter models.
 
-Job postings typically range between 6,000 and 8,000 characters, though posting length varies significantly across platforms. LinkedIn postings are generally the longest—often more than twice the length of Indeed postings—while Indeed descriptions have a median length of 6,053 characters. Notably, one posting lacking a structured description nevertheless contained more than 18,000 characters of general web content, offering an extreme but valuable case for testing extraction resilience.\\
+\begin{figure}[htb!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/character_count_by_source_violin}
+    \caption{Violin plot comparing character count distributions by source}
+    \label{fig:jd_character_count_by_source}
+\end{figure}
 
-
+\autoref{fig:jd_character_count_by_source} further decomposes these statistics by source. A distinct structural difference is observable between platforms: Indeed postings exhibit a highly concentrated distribution with lower variance, suggesting a more standardized listing format. In contrast, LinkedIn postings display a much wider distribution with a significantly higher median length. This indicates that LinkedIn descriptions are not only more verbose but also less predictable in structure.
+\clearpage
 
 \section{Evaluation Framework}
 
@@ -153,11 +155,7 @@ The comparison followed three steps:
     \label{fig:simlarity_score_distribtution}
 \end{figure}
 
-TODO: revisit the explanation, check left sekewed is wrong or right.
-The distribution in \autoref{fig:simlarity_score_distribtution} is strongly left-skewed: 9 out of 23 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\). This indicates that, under the proposed semantic matching pipeline, the majority of LinkedIn recommendations constitute weak matches for the baseline profile, whereas only a small subset aligns strongly. However, some of the low similarity scores may also result from failures in the requirements extraction process, as discussed in \autoref{subsec:exception_handling}.
-
-
-This behavior is consistent with the implemented scoring function: similarity is computed as a weighted MaxSim across extracted \textit{skills}, \textit{experiences}, and \textit{qualifications} (weights 0.5/0.3/0.2). For each field, the system computes cosine similarities between sentence-transformer embeddings (\texttt{all-MiniLM-L6-v2}), takes the maximum similarity for each job-side item, and averages these maxima; consequently, postings with many requirements that only partially overlap with the profile are penalized even if a few key skills match.
+The distribution in \autoref{fig:simlarity_score_distribtution} is strongly right-skewed: 9 out of 23 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\). This indicates that, under the proposed semantic matching pipeline, the majority of LinkedIn recommendations constitute weak matches for the baseline profile, whereas only a small subset aligns strongly. However, some of the low similarity scores may also result from failures in the requirements extraction process, as discussed in \autoref{subsec:exception_handling}.
 
 Finally, the 0.0--0.1 bucket may also include cases where requirements extraction fails: if the LLM output cannot be parsed into the schema, an empty Requirements object is returned, which yields a similarity score close to zero. Therefore, low scores in this bucket reflect a mixture of genuine mismatch and occasional extraction/formatting failures.
 
