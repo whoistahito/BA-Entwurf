@@ -8,10 +8,10 @@ Regarding the second research question (RQ2), the comparison against LinkedIn’
 Ultimately, this work contributes a modular, cost-effective architecture for job matching. By relying exclusively on lightweight open-source components, it democratizes access to advanced recruitment technologies, though significant improvements in extraction fidelity are required before it can compete with industrial-grade systems.
 
 \section{Outlook}
-\begin{enumerate}
-\item Thinking models are not considered, Data Processing was not perfect (data imbalance),
-\item bigger models,
-\item  Readability metric for evaluation was not so effective, because the for exception handling it retuned an empty object, so there were no output that had syntax errors.
-    \item How fast the whole process is has not been measured.
-    \item add explaining ability of the system, that shows why a job is relevant to a user profile.
-\end{enumerate}
+
+While the proposed system demonstrates the efficacy of this approach, several limitations identified during implementation and evaluation point toward avenues for future research and optimization
+
+\subsection{Integration of Reasoning and ``Thinking'' Models}
+The current implementation relied on standard instruction-tuned models (e.g.,mistral-7B-instruct, Llama-3.1-8B-Instruct). It did not utilize Chain-of-Thought (CoT) prompting or emerging ``thinking'' models that dedicate compute time to reasoning before generation. Future work should investigate if these architectures can improve the Completeness and Alignment scores by allowing the model to better distinguish between mandatory requirements and optional ``nice-to-haves''.
+\subsection{Scaling to Larger Models}
+The experiments were constrained to models with 7B–9B parameters to ensure consumer hardware compatibility. Given that extraction performance was the primary bottleneck, future research should evaluate larger open-source models (e.g., 70B+ parameters). These larger models typically exhibit superior instruction-following and semantic reasoning capabilities, which could significantly reduce the false positives and hallucinations observed in this study.
