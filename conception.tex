@@ -10,7 +10,7 @@ and
 \end{itemize}
 
 
-The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. Section 3.1 defines the unified data structure to requirements extraction and user profiles. Sections 3.2 through 3.6 detail the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via Finite-State Machines, and evaluating extraction quality. Finally, Section 3.7 presents the embedding-driven similarity search strategy, including the adaptation of the MaxSim algorithm for weighted field aggregation.
+The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. \autoref{sec:data_structure} defines the unified data structure to requirements extraction and user profiles. \autoref{sec:handling-raw-data} through \autoref{sec:llm-evaluation} detail the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via Finite-State Machines, and evaluating extraction quality. Finally, \autoref{sec:conception-vector-embedding} presents the embedding-driven similarity search strategy, including the adaptation of the MaxSim algorithm for weighted field aggregation.
 
 
 \begin{figure}[h!]
@@ -40,7 +40,7 @@ These structured representations are encoded in a common Pydantic Model \cite{py
     \label{fig:data_structure}
 \end{figure}
 
-\section{Handling raw data}
+\section{Handling raw data} \label{sec:handling-raw-data}
 The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
 
@@ -121,7 +121,7 @@ There are different methods of chunking text data for LLM processing. It can be 
 
 This work uses a hybrid approach that combines the semantic preservation of structure-based chunking with the operational safety of fixed-size chunking. The primary strategy involves splitting the job descriptions by Markdown headers to maintain the coherence of logical sections. To address the limitation of variable chunk sizes, a fixed-size slicing mechanism is employed as a fallback constraint, ensuring that no single chunk exceeds the context window regardless of its structural length.
 
-\section{LLM Output Evaluation}
+\section{LLM Output Evaluation} \label{sec:llm-evaluation}
 Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example, `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management'. Even though the wording differs significantly. Relying on exact string matching would thus penalize valid extractions.
 
 To address this, the system employs an automated evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
@@ -154,7 +154,7 @@ The skills fields are weighted more because as studies show skills are more impo
 
 Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure and comparing them using MaxSim approach.
 
-\subsection{Vector Embedding}
+\subsection{Vector Embedding} \label{sec:conception-vector-embedding}
 An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
 
 \begin{figure}[h!]
