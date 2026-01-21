@@ -9,7 +9,9 @@ and
     \item an embedding‑driven similarity search module that identifies semantically relevant job postings.
 \end{itemize}
 
-(TODO: repeats the research gap promises, remove and replace by explaining what comes next) Together, these components form a lightweight, fully open‑source alternative to more resource‑intensive industrial systems, while still enabling meaningful semantic matching.
+
+The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. Section 3.1 defines the unified data structure to requirements extraction and user profiles. Sections 3.2 through 3.6 detail the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via Finite-State Machines, and evaluating extraction quality. Finally, Section 3.7 presents the embedding-driven similarity search strategy, including the adaptation of the MaxSim algorithm for weighted field aggregation.
+
 
 \begin{figure}[h!]
     \centering
