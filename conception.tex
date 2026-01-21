@@ -40,7 +40,7 @@ These structured representations are encoded in a common Pydantic Model \cite{py
     \label{fig:data_structure}
 \end{figure}
 
-\section{Handling raw data} \label{sec:handling-raw-data}
+\section{Handling Raw Data} \label{sec:handling-raw-data}
 The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
 
