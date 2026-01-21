@@ -84,8 +84,12 @@ A pushdown automaton extends a finite automaton with a stack, enabling it to rec
 In the context of this thesis, this mechanism guarantees that the extracted job requirements strictly adhere to the schema defined in \autoref{lst:requirements_schema}. By maintaining the stack configuration of the PDA, the system ensures that keys (e.g., ``experience'') are followed by valid values (e.g., arrays or strings) and that all braces and quotes are correctly closed. This eliminates the need for error-correction logic and ensures the extracted data is immediately machine-readable.
 
 \section{LLM Models}
-TODO: change this thesis  to (explain why multiple models are selected and they will be evaluated)
-The thesis evaluates several state‑of‑the‑art open‑source LLMs available as of October 2025. These models were selected based on their parameter size, availability, and suitability for constrained inference environments:
+
+A key design constraint of this system is that no fine‑tuning is used. This means the quality of the requirements extraction depends entirely on the pre‑trained, one‑shot abilities of the selected LLM. However, general‑purpose models differ significantly in how well they follow instructions, produce structured output, and handle schema‑guided generation. Choosing a model without evaluation would therefore risk weak or inconsistent extraction performance.
+
+
+Therefore, a comparison of multiple models is required to determine which open‑source LLM is best suited for this task. The models evaluated in this thesis represent state‑of‑the‑art open‑source architectures available as of October 2025. They were selected based on their parameter size, availability, and their compatibility with constrained inference.
+
 \begin{table}[h]
 	\caption{Model Parameter Sizes}
 	\label{tab:model_params}
