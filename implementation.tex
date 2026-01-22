@@ -12,7 +12,7 @@ The system was implemented using the Python programming language (Version 3.10),
 	\item \textbf{Sentence-Transformers}: For generating vector embeddings of requirements and user profile.
 	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
 \end{itemize}
-All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. \autoref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
+All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. \Autoref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
 
 \begin{figure}[h]
 	\centering
@@ -63,7 +63,7 @@ class Requirements(BaseModel):
 \end{center}
 
 \subsection{Prompt Engineering}
-The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. \autoref{fig:prompt} shows the system prompt, which requires the LLM to only extract must-have requirements, be concise, and only respond in the defined categories.
+The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. \Autoref{fig:prompt} shows the system prompt, which requires the LLM to only extract must-have requirements, be concise, and only respond in the defined categories.
 
 \begin{figure}[h]
 	\centering
@@ -128,7 +128,7 @@ This approach allows the rest of the pipeline to run without failing, but it als
 \subsection{Result Aggregation}
 Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experience, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
 \subsection{G-Eval Metrics}
-To integrate the evaluation strategy described in \autoref{conception:g-eval}, this work implements four metrics defined in \autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7. \autoref{code:geval-metrics} shows an example metric definition.
+To integrate the evaluation strategy described in \autoref{conception:g-eval}, this work implements four metrics defined in \autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7. \Autoref{code:geval-metrics} shows an example metric definition.
 
 \begin{center}
 	\begin{lstlisting}[language=python, caption={Implementation of a G-Eval metric}, label={code:geval-metrics}]

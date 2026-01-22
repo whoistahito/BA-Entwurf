@@ -23,7 +23,7 @@ The remainder of this chapter details the architectural design and theoretical f
 \section{Data Structure for Job Matching}
 \label{sec:data_structure}
 
-The core of the proposed system relies on a structured comparison between job requirements and user profiles. \autoref{fig:data_structure} illustrates the fundamental data model that enables semantic matching. Both job postings and user profiles are decomposed into three key dimensions:
+The core of the proposed system relies on a structured comparison between job requirements and user profiles. \Autoref{fig:data_structure} illustrates the fundamental data model that enables semantic matching. Both job postings and user profiles are decomposed into three key dimensions:
 
 \begin{itemize}
     \item \textbf{Skills} — technical and professional competencies
@@ -155,7 +155,7 @@ The skills fields are weighted more because as studies show skills are more impo
 Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using MaxSim approach.
 
 \subsection{Vector Embedding} \label{sec:conception-vector-embedding}
-An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
+An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
 
 \begin{figure}[h!]
     \centering
