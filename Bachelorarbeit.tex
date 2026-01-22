@@ -22,7 +22,14 @@
 % Spart manuelles auskommentieren von vielen include-Befehlen;
 % hat keine Auswirkung auf input-Befehle
 % \includeonly{introduction}
-   
+
+\providecommand*{\Autoref}[1]{%
+  \begingroup
+  \def\sectionautorefname{Section}%
+  \def\subsectionautorefname{Subsection}%
+  \autoref{#1}%
+  \endgroup
+}
 \begin{document}
 
 % TITELSEITE
