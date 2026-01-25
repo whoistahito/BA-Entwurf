@@ -12,9 +12,9 @@ The adoption of transformer models marked a major shift in this domain. Architec
 These developments highlight the steady shift toward embedding-based architectures capable of encoding job content beyond surface-level keywords. However, most domain-specific transformer models rely heavily on curated data sources or custom pretraining pipelines, which limits accessibility.
 
 
-\section{Industrial-Scale Recommender Architectures}
+\section{Industrial-Scale Job Matching Architectures}
 
-Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level recommender systems. CareerBuilder, for example, developed an embedding-based recommender system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
+Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level job Matching systems. CareerBuilder, for example, developed an embedding-based job matching system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
 LinkedIn's LinkSAGE framework represents a significant advancement in the field of network analysis, incorporating Graph Neural Networks (GNN) to model the intricate and interwoven relationships within its professional network \cite{linksage}. LinkSAGE is using GraphSAGE architecture, which is  ``a general inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data'' \cite{graphsage}. By conceptualizing members, employment opportunities, and competencies as nodes in a comprehensive graph, LinkSAGE is able to capture implicit signals and deliver highly relevant recommendations. Despite its effectiveness, this architecture poses significant barriers for broader adoption: it depends on massive proprietary datasets and requires extensive computational infrastructure, making it unsuitable for open, platform-aggregating systems such as the one developed in this thesis.
 Nevertheless, LinkSAGE demonstrates a key insight for the field: effective job matching requires modeling the detailed relationships between applicant skills and job requirements. This principle directly informs the methodology of the approach proposed in this thesis.
 
@@ -42,14 +42,14 @@ Embedding-based similarity search has become a cornerstone of modern job recomme
 
 The literature reviewed in this chapter demonstrates considerable
 progress in semantic job matching, domain‑specific transformer models,
-graph‑based recommender architectures, and data‑augmentation techniques.
+graph‑based architectures, and data‑augmentation techniques.
  Despite these advancements, several limitations persist:
 
 \begin{itemize}
     \item Domain‑specific models frequently depend on extensive
 preprocessing pipelines or proprietary datasets, which restricts their
 accessibility and reproducibility.
-    \item Industrial‑scale recommender systems require significant
+    \item Industrial‑scale job matching systems require significant
 computational infrastructure and rely on large, platform‑specific
 datasets, making them unsuitable for deployment by smaller organizations
  or independent aggregators.
