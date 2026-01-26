@@ -102,7 +102,7 @@ To understand the drivers behind these overall scores, \autoref{tab:model_perfor
 \small{\\ \textit{Scores represent mean values over all 209 evaluated job descriptions, rounded to two decimal places.}}
 \end{table}
 
-\subsection{Readability vs. Semantic Metrics}
+\subsection{Readability vs. Semantic Metrics} \label{subsec:evaluation_readability}
 
 An important observation from \autoref{tab:model_performance} is that the Readability metric, designed to assess whether the output is valid JSON, became effectively redundant due to the system's architectural design. By employing the outlines library and a strict exception handling mechanism, the pipeline guarantees that the output is always a valid JSON object, even if it is an empty one returned upon generation failure. Consequently, high Readability scores were a structural artifact of the engineering pipeline rather than a reflection of the model's capabilities. This suggests that for constrained generation pipelines, evaluation should focus exclusively on semantic metrics rather than syntactic validity.
 
