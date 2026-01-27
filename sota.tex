@@ -21,7 +21,7 @@ Nevertheless, LinkSAGE demonstrates a key insight for the field: effective job m
 
 \section{Addressing Data Challenges: Augmentation and Hard-Negative Mining} \label{sec:sota-confitv2}
 
-As semantic models grew more advanced, researchers increasingly focused on addressing data sparsity and imbalance—persistent challenges in recruitment datasets. The CONFIT V2 framework introduces a novel strategy to enrich training data by using LLMs to generate hypothetical reference resumes \cite{confitv2}. These synthetic examples are combined with Runner-Up Hard-Negative Mining, a technique that selects job–resume pairs which appear similar but are incorrect, forcing the model to learn subtle distinctions between suitable and unsuitable matches. This method significantly improves model robustness and highlights the growing role of LLMs in enhancing contrastive learning processes.
+As semantic models grew more advanced, researchers increasingly focused on addressing data sparsity and imbalance—persistent challenges in recruitment datasets. The CONFIT V2 framework introduces a novel strategy to enrich training data by using LLMs to generate hypothetical reference resumes (Hyre) \cite{confitv2}. These synthetic examples are combined with Runner-Up Hard-Negative Mining, a technique that selects job–resume pairs which appear similar but are incorrect, forcing the model to learn subtle distinctions between suitable and unsuitable matches. This method significantly improves model robustness and highlights the growing role of LLMs in enhancing contrastive learning processes.
 
 Although such methods push performance forward, they require substantial computational resources and specialized training pipelines. This dependency limits their applicability in lightweight, low-budget, or open-source contexts.
 
@@ -51,6 +51,10 @@ The literature reviewed in this chapter demonstrates considerable progress in se
 
 \subsubsection{LinkSAGE}
 LinkSAGE is based on GNN, the model architecture is defined as an ``encoder-decoder GNN model'', where the encoder utilizes the GraphSAGE algorithm to generate embeddings by aggregating neighbor information \cite{linksage}. Furthermore, model training is an essential component of LinkSAGE, this process is sequential: the system first employs ``inductive graph learning on a heterogeneous, evolving graph'' to train a GNN encoder, which is subsequently integrated into downstream ranking models via transfer learning \cite{linksage}. In terms of accessibility, LinkSAGE is a proprietary system and is not described as open source, as there is no link to a code repository for LinkSAGE provided in the paper.
+
+\subsubsection{CONFIT V2}
+As previously mentioned in \autoref{sec:sota-confitv2}, LLMs are an important component of CONFITV2. It uses  HYRE, a technique that uses an LLM ``to generate a hypothetical resume and augment the job post'' \cite{confitv2}. It also requires a distinct training phase centered on contrastive learning to optimize resume-job compatibility, where the encoder is trained using a specific loss function described as ``modified contrastive learning loss'' to distinguish between matching and non-matching pairs \cite{confitv2}. The training process is iterative, involving an initial training phase followed by a RUM step, as explained in \autoref{sec:sota-confitv2}. Regarding accessibility, the work is designated to be open source. As Yu et al. state, they ``will open-source our code and data (under license agreements) to provide a strong baseline for future research'' \cite{confitv2}.
+
 
 
 
@@ -86,13 +90,13 @@ To make these differences more explicit, \autoref{tab:model_comparison} contrast
         \cmark \\
         \hline
 
-        \multicolumn{2}{|l||}{ConfitV2} &
+        \multicolumn{2}{|l||}{CONFIT V2} &
         \cmark &
         \cmark &
         \cmark  \\
 
         \hline
-        \multicolumn{2}{|l||}{Approach of this thesis} &
+        \multicolumn{2}{|l||}{LLM-based requirements extraction + token-embedding-driven similarity search} &
         \cmark &
         \cmark &
         \xmark \\
