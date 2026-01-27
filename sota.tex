@@ -49,6 +49,12 @@ The literature reviewed in this chapter demonstrates considerable progress in se
 
 \end{itemize}
 
+\subsubsection{LinkSAGE}
+LinkSAGE is based on GNN, the model architecture is defined as an ``encoder-decoder GNN model'', where the encoder utilizes the GraphSAGE algorithm to generate embeddings by aggregating neighbor information \cite{linksage}. Furthermore, model training is an essential component of LinkSAGE, this process is sequential: the system first employs ``inductive graph learning on a heterogeneous, evolving graph'' to train a GNN encoder, which is subsequently integrated into downstream ranking models via transfer learning \cite{linksage}. In terms of accessibility, LinkSAGE is a proprietary system and is not described as open source, as there is no link to a code repository for LinkSAGE provided in the paper.
+
+
+
+
 To make these differences more explicit, \autoref{tab:model_comparison} contrasts commercial job portals, representative academic approaches, and the method proposed in this thesis. The comparison highlights how this work distinguishes itself through a combination of semantic capabilities, open‑source components, and the absence of fine‑tuning requirements.
 
 
@@ -68,7 +74,7 @@ To make these differences more explicit, \autoref{tab:model_comparison} contrast
         \hline
         \hline
 
-        \multicolumn{2}{|l||}{LinkSage} &
+        \multicolumn{2}{|l||}{LinkSAGE} &
         \xmark  &
         \xmark  &
         \cmark \\
