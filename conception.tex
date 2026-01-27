@@ -110,10 +110,10 @@ Therefore, a comparison of multiple models is required to determine which openâ€
 	\end{tabular}
 \end{table}
 
-\section{Managing Input Data}
+\section{Managing Input Data & Chunking Strategies}
 A limitation of Transformer-based language models is their restricted context size \cite{handson-llms-2024}, therefore to be able to process job descriptions independently of their length, the input text should be split into smaller chunks.
-\subsection{Chunking Strategies}
-There are different methods of chunking text data for LLM processing. It can be grouped into different categories. Following explains categories, that this work uses:
+There are different methods of chunking text data for LLM processing. It can be grouped into different categories. The following categories are used in this work:
+:
 \begin{itemize}
     \item \textbf{Fixed-size chunking} It involves splitting text into chunks based on a predetermined number of tokens, with the option to include overlapping sections to preserve semantic context \cite{tamingllms}. It is widely used because it is simple, computationally inexpensive, and does not require specialized tools \cite{tamingllms}.
     \item \textbf{Structure-based chunking}: This method splits the text based on its structure and hierarchy \cite{pinecone}, in this case newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
