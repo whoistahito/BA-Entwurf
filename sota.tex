@@ -40,29 +40,16 @@ Embedding-based similarity search has become a cornerstone of modern job recomme
 \section{Research Gap} \label{sota:research_gap}
 
 
-The literature reviewed in this chapter demonstrates considerable
-progress in semantic job matching, domain‑specific transformer models,
-graph‑based architectures, and data‑augmentation techniques.
- Despite these advancements, several limitations persist:
+The literature reviewed in this chapter demonstrates considerable progress in semantic job matching, domain‑specific transformer models, graph‑based architectures, and data‑augmentation techniques. Despite these advancements, several limitations persist:
 
 \begin{itemize}
-    \item Domain‑specific models frequently depend on extensive
-preprocessing pipelines or proprietary datasets, which restricts their
-accessibility and reproducibility.
-    \item Industrial‑scale job matching systems require significant
-computational infrastructure and rely on large, platform‑specific
-datasets, making them unsuitable for deployment by smaller organizations
- or independent aggregators.
-    \item Most of the state-of-the-art approaches rely on end-to-end embedding models that function as ``black boxes.'' While effective, these systems often obscure the specific rationale behind a match (e.g., whether a score is driven by skills, experience, or qualification), making it difficult to verify or explain recommendations.
+    \item Domain‑specific models frequently depend on extensive preprocessing pipelines or proprietary datasets, which restricts their accessibility and reproducibility.
+    \item Industrial‑scale job matching systems require significant computational infrastructure and rely on large, platform‑specific datasets, making them unsuitable for deployment by smaller organizations or independent aggregators.
+    \item Most of the state-of-the-art approaches rely on end-to-end embedding models that function as ``black boxes''. While effective, these systems often obscure the specific rationale behind a match (e.g., whether a score is driven by skills, experience, or qualification), making it difficult to verify or explain recommendations.
 
 \end{itemize}
 
-To make these differences more explicit,
-\autoref{tab:model_comparison} contrasts commercial job portals,
-representative academic approaches, and the method proposed in this
-thesis. The comparison highlights how this work distinguishes itself
-through a combination of semantic capabilities, open‑source components,
-and the absence of fine‑tuning requirements.
+To make these differences more explicit, \autoref{tab:model_comparison} contrasts commercial job portals, representative academic approaches, and the method proposed in this thesis. The comparison highlights how this work distinguishes itself through a combination of semantic capabilities, open‑source components, and the absence of fine‑tuning requirements.
 
 
 \begin{table}[h]
