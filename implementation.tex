@@ -34,7 +34,7 @@ To process job descriptions that exceed the context window of smaller LLMs, a hy
 A fallback mechanism is implemented for cases where a section exceeds the maximum token limit. If a semantic chunk exceeds the configured size (defaulting to approximately 12,000 tokens, estimated via character count), it is further divided based on a strict character limit to prevent memory overflows during inference.
 
 
-\section{Structured Requirements Extraction}
+\section{Requirements Extraction}
 The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process using Finite State Machine (FSM) logic.
 
 \subsection{Output Structure Definition}
@@ -73,7 +73,7 @@ The prompt provided to the LLM consists of a system instruction defining the per
 \end{figure}
 
 
-\subsection{Inference Engine}
+\subsection{Inference}
 The inference logic is encapsulated within a generic \texttt{LLMExtractor} class, designed to be model-agnostic. This allows for seamless switching between different open-source models (e.g., Llama, Mistral, Qwen) by simply updating a configuration dictionary.
 
 The extractor initializes the model and tokenizer, and wraps them with the \texttt{outlines.Generator} class. The generation process is constrained to strictly follow the schema defined in \autoref{lst:requirements_schema}.
