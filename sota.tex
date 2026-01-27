@@ -12,14 +12,14 @@ The adoption of transformer models marked a major shift in this domain. Architec
 These developments highlight the steady shift toward embedding-based architectures capable of encoding job content beyond surface-level keywords. However, most domain-specific transformer models rely heavily on curated data sources or custom pretraining pipelines, which limits accessibility.
 
 
-\section{Industrial-Scale Job Matching Architectures}
+\section{Industrial-Scale Job Matching Architectures} \label{sec:sota-linksage}
 
 Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level job Matching systems. CareerBuilder, for example, developed an embedding-based job matching system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
 LinkedIn's LinkSAGE framework represents a significant advancement in the field of network analysis, incorporating Graph Neural Networks (GNN) to model the intricate and interwoven relationships within its professional network \cite{linksage}. LinkSAGE is using GraphSAGE architecture, which is  ``a general inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data'' \cite{graphsage}. By conceptualizing members, employment opportunities, and competencies as nodes in a comprehensive graph, LinkSAGE is able to capture implicit signals and deliver highly relevant recommendations. Despite its effectiveness, this architecture poses significant barriers for broader adoption: it depends on massive proprietary datasets and requires extensive computational infrastructure, making it unsuitable for open, platform-aggregating systems such as the one developed in this thesis.
 Nevertheless, LinkSAGE demonstrates a key insight for the field: effective job matching requires modeling the detailed relationships between applicant skills and job requirements. This principle directly informs the methodology of the approach proposed in this thesis.
 
 
-\section{Addressing Data Challenges: Augmentation and Hard-Negative Mining}
+\section{Addressing Data Challenges: Augmentation and Hard-Negative Mining} \label{sec:sota-confitv2}
 
 As semantic models grew more advanced, researchers increasingly focused on addressing data sparsity and imbalance—persistent challenges in recruitment datasets. The CONFIT V2 framework introduces a novel strategy to enrich training data by using LLMs to generate hypothetical reference resumes \cite{confitv2}. These synthetic examples are combined with Runner-Up Hard-Negative Mining, a technique that selects job–resume pairs which appear similar but are incorrect, forcing the model to learn subtle distinctions between suitable and unsuitable matches. This method significantly improves model robustness and highlights the growing role of LLMs in enhancing contrastive learning processes.
 
