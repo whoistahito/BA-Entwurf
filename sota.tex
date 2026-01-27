@@ -14,7 +14,7 @@ These developments highlight the steady shift toward embedding-based architectur
 
 \section{Industrial-Scale Job Matching Architectures} \label{sec:sota-linksage}
 
-Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level job Matching systems. CareerBuilder, for example, developed an embedding-based job matching system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
+Parallel to academic research, large technology companies have integrated semantic embeddings into production‑level job Matching systems. CareerBuilder, a company, that`` operates the largest job posting board in the U.S.'', developed an embedding-based job matching system that constructs fused embeddings from text, semantic entities, and location data to handle matching at a massive scale \cite{zhao2021embeddingbasedrecommender}. Their two-stage process, involving approximate nearest neighbor search followed by a reranking model, led to significant gains in user engagement and match quality.
 LinkedIn's LinkSAGE framework represents a significant advancement in the field of network analysis, incorporating Graph Neural Networks (GNN) to model the intricate and interwoven relationships within its professional network \cite{linksage}. LinkSAGE is using GraphSAGE architecture, which is  ``a general inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data'' \cite{graphsage}. By conceptualizing members, employment opportunities, and competencies as nodes in a comprehensive graph, LinkSAGE is able to capture implicit signals and deliver highly relevant recommendations. Despite its effectiveness, this architecture poses significant barriers for broader adoption: it depends on massive proprietary datasets and requires extensive computational infrastructure, making it unsuitable for open, platform-aggregating systems such as the one developed in this thesis.
 Nevertheless, LinkSAGE demonstrates a key insight for the field: effective job matching requires modeling the detailed relationships between applicant skills and job requirements. This principle directly informs the methodology of the approach proposed in this thesis.
 
@@ -40,12 +40,13 @@ Embedding-based similarity search has become a cornerstone of modern job recomme
 \section{Research Gap} \label{sota:research_gap}
 
 
-The literature reviewed in this chapter demonstrates considerable progress in semantic job matching, domain‑specific transformer models, graph‑based architectures, and data‑augmentation techniques. Despite these advancements, several gap persist:
+The literature reviewed in this chapter demonstrates considerable progress in semantic job matching, domain‑specific transformer models, graph‑based architectures, and data‑augmentation techniques. Despite these advancements, several gaps persist:
 
 \begin{itemize}
-    \item Open-Source:
-    \item Training Required:
-    \item Using LLM:
+    \item \textbf{Open-Source:} Most high-performance matching architectures rely on proprietary architectures, datasets,limiting their transparency, reproducibility, and accessibility for further research.
+    \item \textbf{Training Required:} State‑of‑the‑art approaches typically depend on extensive supervised training,domain-specific pre-training, or fine-tuning. These methods require large annotated datasets and significant computational resources, which limits their applicability in lightweight or low-resource contexts where such resources are often unavailable.
+    \item \textbf{Utilization of LLMs:} Although recent studies demonstrate the effectiveness of LLMs for extracting structured requirements from unstructured job descriptions, existing job‑matching architectures rarely incorporate LLM‑based extraction as a central mechanism.
+
 
 \end{itemize}
 
@@ -59,15 +60,14 @@ As previously mentioned in \autoref{sec:sota-confitv2}, LLMs are an important co
 The framework proposed by CareerBuilder relies on specific training protocols rather than pre-trained, zero-shot inference. First, it trains ``an end-to-end Deep Learning Embedding Model (DLEM) on a supervised learning task'' utilizing ``job application data'' \cite{zhao2021embeddingbasedrecommender}. The system also employs a representation learning model for the job-skill information graph, which uses ``Bayesian personalized ranking and margin-based loss functions to learn the vector representation''\cite{zhao2021embeddingbasedrecommender}. The architecture does not employ LLMs. The system is described as a proprietary in-house solution that serves as the ``core technology and service platform in CareerBuilder'' \cite{zhao2021embeddingbasedrecommender}, therfore it is not open source.
 
 
-
-To make these differences more explicit, \autoref{tab:model_comparison} contrasts commercial job portals, representative academic approaches, and the method proposed in this thesis. The comparison highlights how this work distinguishes itself through a combination of semantic capabilities, open‑source components, and the absence of fine‑tuning requirements.
+To highlight how this work distinguishes itself, \autoref{tab:model_comparison} summarizes the gaps explained above by comparing the discussed approaches against the proposed LLM-based requirement extraction and token-embedding-driven similarity search.
 
 
 \begin{table}[h]
     \caption{Systematic Comparison of Job Matching Approaches}
     \label{tab:model_comparison}
     \centering
-    \begin{tabular*}{\textwidth}{| l@{\extracolsep\fill} r || c | c | c | c |} % Added extra column
+    \begin{tabular*}{\textwidth}{| l@{\extracolsep\fill} r || c | c | c |}
         \hline
 
         Tools &
@@ -95,13 +95,13 @@ To make these differences more explicit, \autoref{tab:model_comparison} contrast
         \cmark &
         \cmark &
         \cmark  \\
+        \hline
 
         \hline
-        \multicolumn{2}{|l||}{LLM-based requirements extraction + token-embedding-driven similarity search} &
+        \multicolumn{2}{|l||}{Approach of this thesis} &
         \cmark &
         \cmark &
         \xmark \\
-
         \hline
 
     \end{tabular*}
