@@ -85,7 +85,7 @@ In the context of this thesis, this mechanism guarantees that the extracted job 
 
 \section{LLM Models}
 
-A key design constraint of this system is that no fine‑tuning is used. This means the quality of the requirements extraction depends entirely on the pre‑trained, one‑shot abilities of the selected LLM. However, general‑purpose models differ significantly in how well they follow instructions, produce structured output, and handle schema‑guided generation. Choosing a model without evaluation would therefore risk weak or inconsistent extraction performance.
+A key design constraint of this system is that no fine‑tuning is used. This means the quality of the requirements extraction depends entirely on the pre‑trained, zero‑shot abilities of the selected LLM. However, general‑purpose models differ significantly in how well they follow instructions, produce structured output, and handle schema‑guided generation. Choosing a model without evaluation would therefore risk weak or inconsistent extraction performance.
 
 
 Therefore, a comparison of multiple models is required to determine which open‑source LLM is best suited for this task. The models evaluated in this thesis represent state‑of‑the‑art open‑source architectures available as of October 2025. They were selected based on their parameter size, availability, and their compatibility with constrained inference.
