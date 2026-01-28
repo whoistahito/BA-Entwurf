@@ -10,7 +10,7 @@ and
 \end{itemize}
 
 
-The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. \Autoref{sec:data_structure} defines the unified data structure to requirements extraction and user profiles. \Autoref{sec:handling-raw-data} through \autoref{sec:llm-evaluation} describe the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via Finite-State Machines, and evaluating extraction quality. Finally, \autoref{sec:conception-vector-embedding} presents the strategy based on token-embedding, including the adaptation of the MaxSim algorithm for weighted field aggregation.
+The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. \Autoref{sec:data_structure} defines the unified data structure to requirements extraction and user profiles. \Autoref{sec:handling-raw-data} through \autoref{sec:llm-evaluation} describe the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via finite state machine (FSM), and evaluating extraction quality. Finally, \autoref{sec:conception-vector-embedding} presents the strategy based on token-embedding, including the adaptation of the MaxSim algorithm for weighted field aggregation.
 
 
 \begin{figure}[h!]
@@ -41,7 +41,7 @@ These structured representations are encoded in a common Pydantic Model \cite{py
 \end{figure}
 
 \section{Handling Raw Data} \label{sec:handling-raw-data}
-The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the \textit{markdownify} library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
+The pipeline begins with raw HTML job postings retrieved by the YourJobFinder crawler. In their original form, these documents often contain large amounts of non‑informative content, such as JavaScript, CSS, advertisements, and unrelated boilerplate text. To create a structured and semantically meaningful input for the LLM, the HTML is converted into Markdown using the markdownify library \cite{python-markdownify}. This preprocessing step ensures that only the textual content relevant to the job description is retained, thereby reducing noise and improving extraction quality.
 
 
 \section{Schema-Guided LLM Output}
@@ -49,10 +49,10 @@ The pipeline begins with raw HTML job postings retrieved by the YourJobFinder cr
 
 The requirements extraction module must produce output that conforms to the predefined Pydantic schema described in \autoref{sec:data_structure}. However, LLMs may produce syntactically malformed JSON, ignore required fields, or include extraneous content that violates the schema \cite{llm-not-good-json}. To address this challenge, the system employs guided generation, a technique that constrains the LLM's output at inference time to ensure conformance with a formal specification.
 
-The theoretical foundation for this approach is provided by Willard and Louf \cite{willard2023outlines}, who reformulate the problem of constrained text generation in terms of finite-state machines (FSMs). Their insight is that regular expressions and context-free grammars (CFGs) can be used to construct an index over the language model's vocabulary, enabling efficient determination of valid next tokens at each generation step.
+The theoretical foundation for this approach is provided by Willard and Louf \cite{willard2023outlines}, who reformulate the problem of constrained text generation in terms of FSMs. Their insight is that regular expressions and context-free grammars (CFGs) can be used to construct an index over the language model's vocabulary, enabling efficient determination of valid next tokens at each generation step.
 
 \subsection{Finite-State Machine Formulation}
-The approach relies on fundamental concepts from automata theory. A finite automaton (FA) is formally defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta: Q \times \Sigma \to Q$ is the transition function, $q_0 \in Q$ is the start state, and $F \subseteq Q$ is the set of accept states \cite{sipser}. Regular expressions, which describe patterns such as digit sequences or identifiers, can be converted into equivalent finite automata that recognize exactly the strings matching the pattern \cite{willard2023outlines}.
+The approach relies on fundamental concepts from automata theory. A finite automaton (FA) is formally defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta: Q \times \Sigma \to Q$ is the transition function, $q_0 \in Q$ is the start state, and $F \subseteq Q$ is the set of accept states \cite{sipser}. Regular expressions, which describe patterns such as digit sequences or identifiers, can be converted into equivalent FA that recognize exactly the strings matching the pattern \cite{willard2023outlines}.
 
 In standard LLM inference, the model produces a probability distribution over the entire vocabulary for each token position. Guided generation modifies this process by applying a boolean mask $m$ that restricts the support of the distribution to only those tokens that are valid according to the constraints:
 
@@ -77,7 +77,7 @@ The efficiency of this approach stems from pre-computing an index $\sigma: Q \to
 
 
 \subsection{Extension to Context-Free Grammars}
-While finite automata suffice for regular languages, structured data formats such as JSON require the expressive power of context-free grammars (CFGs). CFGs can describe nested structures with arbitrary depth, such as arrays containing objects that themselves contain arrays. To recognize such languages, Willard and Louf extend their approach using pushdown automata (PDAs).
+While finite automata suffice for regular languages, structured data formats such as JSON require the expressive power of context-free grammars (CFGs). CFGs can describe nested structures with arbitrary depth, such as arrays containing objects that themselves contain arrays. To recognize such languages, Willard and Louf extend their approach using pushdown automata (PDAs) \cite{willard2023outlines}.
 
 A pushdown automaton extends a finite automaton with a stack, enabling it to recognize context-free languages. Formally, a PDA is defined as a 6-tuple $(Q, \Sigma, \Gamma, \delta, q_0, F)$, where $\Gamma$ is the stack alphabet and the transition function $\delta: Q \times \Sigma_\epsilon \times \Gamma_\epsilon \to \mathcal{P}(Q \times \Gamma_\epsilon)$ additionally reads from and writes to the stack \cite{sipser}. The stack allows the automaton to remember an unbounded amount of information, which is essential for matching nested brackets and enforcing hierarchical structure. \\
 
@@ -88,7 +88,7 @@ In the context of this thesis, this mechanism guarantees that the extracted job 
 A key design constraint of this system is that no fine‑tuning is used. This means the quality of the requirements extraction depends entirely on the pre‑trained, zero‑shot abilities of the selected LLM. However, general‑purpose models differ significantly in how well they follow instructions, produce structured output, and handle schema‑guided generation. Choosing a model without evaluation would therefore risk weak or inconsistent extraction performance.
 
 
-Therefore, a comparison of multiple models is required to determine which open‑source LLM is best suited for this task. The models evaluated in this thesis represent state‑of‑the‑art open‑source architectures available as of October 2025. They were selected based on their parameter size, availability, and their compatibility with constrained inference.
+Therefore, a comparison of multiple models is required to determine which open‑source LLM is best suited for this task. \autoref{tab:model_params} presents the LLMs that this thesis evaluates. These are lightweight, state-of-the-art open-source architectures available as of October 2025.
 
 \begin{table}[h]
 	\caption{Model Parameter Sizes}
@@ -110,25 +110,25 @@ Therefore, a comparison of multiple models is required to determine which open�
 	\end{tabular}
 \end{table}
 
-\section{Managing Input Data & Chunking Strategies}
-A limitation of Transformer-based language models is their restricted context size \cite{handson-llms-2024}, therefore to be able to process job descriptions independently of their length, the input text should be split into smaller chunks.
+\section{Managing Input Data \& Chunking Strategies}
+A limitation of transformer-based language models is their restricted context size \cite{handson-llms-2024}, therefore to be able to process job descriptions independently of their length, the input text should be split into smaller chunks.
 There are different methods of chunking text data for LLM processing and can be grouped into different categories. The following categories are used in this work:
 \begin{itemize}
-    \item \textbf{Fixed-size chunking} It involves splitting text into chunks based on a predetermined number of tokens, with the option to include overlapping sections to preserve semantic context \cite{tamingllms}. It is widely used because it is simple, computationally inexpensive, and does not require specialized tools \cite{tamingllms}.
-    \item \textbf{Structure-based chunking}: This method splits the text based on its structure and hierarchy \cite{pinecone}, in this case newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
+    \item \textbf{Fixed-size chunking:} It involves splitting text into chunks based on a predetermined number of tokens, with the option to include overlapping sections to preserve semantic context \cite{tamingllms}. It is widely used because it is simple, computationally inexpensive, and does not require specialized tools \cite{tamingllms}.
+    \item \textbf{Structure-based chunking:} This method splits the text based on its structure and hierarchy \cite{pinecone}, in this case newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
 \end{itemize}
 
 This work uses a hybrid approach that combines the semantic preservation of structure-based chunking with the operational safety of fixed-size chunking. The primary strategy involves splitting the job descriptions by Markdown headers to maintain the coherence of logical sections. To address the limitation of variable chunk sizes, a fixed-size slicing mechanism is employed as a fallback constraint, ensuring that no single chunk exceeds the context window regardless of its structural length.
 
 \section{LLM Output Evaluation} \label{sec:llm-evaluation}
-Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example, `Proven ability to manage projects simultaneously' could be correctly summarized as `Project management'. Even though the wording differs significantly. Relying on exact string matching would thus penalize valid extractions.
+Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example,``Proven ability to manage projects simultaneously'' could be correctly summarized as ``Project management'',Even though the wording differs significantly. Relying on exact string matching would thus penalize valid extractions.
 
-To address this, the system employs an automated evaluation strategy based on the 'LLM-as-a-judge' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
+To address this, the system employs an automated evaluation strategy based on the ``LLM-as-a-judge'' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
 description. As Huyen mentions, ``AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}. The evaluation framework used in this thesis is implemented with DeepEval \cite{deepeval}.
 
 \subsection{LLM-as-a-Judge}
 ``The approach of using AI to evaluate AI is called AI as a judge or LLM as a judge'' \cite{ai-engineering-book}.
-Evaluations may produce numeric scores or qualitative assessments \cite{blackbox-llmasjudge}. Using LLM-as-a-Judge is not just cost-effective, `` Studies have shown that certain AI judges are strongly correlated to human evaluators.'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
+Evaluations may produce numeric scores or qualitative assessments \cite{blackbox-llmasjudge}. Using LLM-as-a-judge is not just cost-effective, ``Studies have shown that certain AI judges are strongly correlated to human evaluators'' \cite{ai-engineering-book}. Zheng et al. found in their work that LLM judges and humans can achieve 85\% agreement, while the agreement among human evaluators was 81\% \cite{llm-as-a-judge}.
 
 
 \subsection{G-Eval} \label{conception:g-eval}
@@ -140,21 +140,21 @@ Four criteria adapted from Yuan et al. \cite{evaluation-mertric} guide the evalu
 \begin{itemize}
     \item \textbf{Correctness} — assesses whether extracted requirements are accurate and present in the input text.
     \item \textbf{Completeness} — evaluates whether all mandatory requirements have been captured.
-    \item \textbf{Alignment} — measures whether the model avoids including `preferred', `bonus', or nice-to-have requirements.
-    \item \textbf{Readability} — examines whether the output adheres to the defined schema, is syntactically valid, and correctly categorizes extracted items into the appropriate fields (skills, experience, or qualifications)
+    \item \textbf{Alignment} — measures whether the model avoids including ``preferred'', ``bonus'', or nice-to-have requirements.
+    \item \textbf{Readability} — examines whether the output adheres to the defined schema, is syntactically valid, and correctly categorizes extracted items into the appropriate fields (skills, experience, or qualifications).
 
 \end{itemize}
 These metrics collectively ensure that extraction quality is judged not only by semantic fidelity but also by structural reliability.
 
 \section{Embedding and Similarity Search}
 Once the job requirements have been extracted and validated, the second component of the system performs semantic similarity matching. Both the structured job postings and the user query are encoded as vector
-representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer model. As discussed in \autoref{introduction:similaritysearch}, this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
-The skills fields are weighted more because as studies show skills are more important in job application context. A study by Bone et al., which analysed online job postings from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles.'' \cite{skills-or-degree}.
+representations using the all‑MiniLM‑L6‑v2 sentence transformer model. As discussed in \autoref{introduction:similaritysearch}, this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
+The skills fields are weighted more because, as studies show skills are more important in job application context. A study by Bone et al., which analysed online job postings from 2018 to 2024, shows ``that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles'' \cite{skills-or-degree}.
 
 The task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using MaxSim approach.
 
 \subsection{Vector Embedding} \label{sec:conception-vector-embedding}
-An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as an effective method to translate human language into computer language. \cite{handson-llms-2024}
+An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as an effective method to translate human language into computer language \cite{handson-llms-2024}.
 
 \begin{figure}[h!]
     \centering
@@ -163,7 +163,7 @@ An embedding effectively maps discrete objects, like words or documents, to poin
     \label{fig:embeddings-process}
 \end{figure}
 
-Embeddings are fixed in size, with their values representing various properties that collectively capture the meaning of a word in a way that is interpretable by a computer \cite{handson-llms-2024}. A key advantage of using embeddings is the ability to measure semantic similarity. By calculating distance metrics in the vector space, it is possible to determine how closely related two words are; words sharing similar meanings tend to be clustered closer together \cite{handson-llms-2024}, \autoref{fig:embeddings-distances} illustrates how words with similar meaning tend to be closer to each other, if it was possible to compress the embeddings into a two-dimensional representation \cite{handson-llms-2024}.
+Embeddings are fixed in size, with their values representing various properties that collectively capture the meaning of a word in a way that is interpretable by a computer \cite{handson-llms-2024}. A key advantage of using embeddings is the ability to measure semantic similarity. By calculating distance metrics in the vector space, it is possible to determine how closely related two words are; words sharing similar meanings tend to be clustered closer together \cite{handson-llms-2024}. \autoref{fig:embeddings-distances} illustrates how words with similar meaning tend to be closer to each other, if it was possible to compress the embeddings into a two-dimensional representation \cite{handson-llms-2024}.
 
 \begin{figure}[h!]
     \centering
@@ -210,7 +210,7 @@ The final score for this section would be the average of these maximums: $(1.0 +
 This approach ensures that every job requirement is evaluated against the user's best matching attribute, effectively measuring how much of the job description is ``covered'' by the user's profile.
 
 \subsection{Weighted Field Aggregation}
-Recognizing that not all data categories hold equal value in recruitment, the system segments the comparison into three dimensions: \textit{Skills}, \textit{Experiences}, and \textit{Qualifications}. The final semantic match score is a weighted linear combination of these field scores:
+Recognizing that not all data categories hold equal value in recruitment, the system segments the comparison into three dimensions: Skills, Experiences, and Qualifications. The final semantic match score is a weighted linear combination of these field scores:
 
 \begin{equation}
     Score_{total} = w_{skills} \cdot Score_{skills} + w_{exp} \cdot Score_{exp} + w_{qual} \cdot Score_{qual}

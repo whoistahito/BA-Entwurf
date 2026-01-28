@@ -35,7 +35,7 @@ A fallback mechanism is implemented for cases where a section exceeds the maximu
 
 
 \section{Requirements Extraction}
-The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the \texttt{outlines} library is employed to constrain the generation process using Finite State Machine (FSM) logic.
+The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the outlines library is employed to constrain the generation process using FSM logic.
 
 \subsection{Output Structure Definition}
 A strict Pydantic model defines the output schema. This ensures that every processed job description yields a consistent data structure, regardless of the underlying LLM used. The schema is defined as follows:
@@ -163,7 +163,7 @@ The evaluation pipeline first loads all JSON outputs from the requirements extra
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
 \subsection{Vector Embedding}
-The embedding functionality is implemented using the \texttt{sentence-transformers} library, which provides pre-trained transformer models optimized for semantic similarity tasks.\cite{sentence-bert} The model \textit{all-MiniLM-L6-v2} is loaded once as a singleton to avoid repeated initialization overhead during inference.
+The embedding functionality is implemented using the \texttt{sentence-transformers} library, which provides pre-trained transformer models optimized for semantic similarity tasks.\cite{sentence-bert} The model all-MiniLM-L6-v2 is loaded once as a singleton to avoid repeated initialization overhead during inference.
 
 \subsection{MaxSim}
 The MaxSim algorithm described in \autoref{subsec:maxsim} is implemented in the \texttt{compute\_maxsim} function. The implementation directly follows the conceptual formulation: for each job requirement, find the maximum similarity to any user profile item, then average these maximum scores.

@@ -30,7 +30,7 @@ The raw HTML content of each posting was subsequently converted into Markdown.
 
 In terms of sectoral distribution, \autoref{fig:jd_by_industry} shows that the dataset is imbalanced, as the technology sector is the largest single category (comprising roughly one-third of the dataset). However, there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
 
-Notably, the `Other' category in \autoref{fig:jd_by_industry} represents a specific edge case involving an expired job posting. While expired listings typically return an HTTP 404 status code, this specific page remained active, displaying a list of related job recommendations instead of the original description. Because the page still contained significant textual content, it bypassed the scraper's emptiness filters. Although unintentional, this instance serves as a valuable adversarial example, testing the extraction model's behavior when presented with valid HTML structure but semantically irrelevant content, which will be discussed in \autoref{subsec:copying-bias}.
+Notably, the ``Other'' category in \autoref{fig:jd_by_industry} represents a specific edge case involving an expired job posting. While expired listings typically return an HTTP 404 status code, this specific page remained active, displaying a list of related job recommendations instead of the original description. Because the page still contained significant textual content, it bypassed the scraper's emptiness filters. Although unintentional, this instance serves as a valuable adversarial example, testing the extraction model's behavior when presented with valid HTML structure but semantically irrelevant content, which will be discussed in \autoref{subsec:copying-bias}.
 
 
 \begin{figure}[h!]
@@ -118,7 +118,7 @@ For downstream filtering systems, conservative extraction is typically preferred
 \subsection{Copying Bias} \label{subsec:copying-bias}
 
 The Edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
-This behavior is best described as \textit{copying bias}, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
+This behavior is best described as copying bias, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
 Such behaviors pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false negatives in the matching system.
 
 \section{Case Study}
