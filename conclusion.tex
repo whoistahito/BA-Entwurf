@@ -1,13 +1,26 @@
 \chapter{Conclusion}
 
-This thesis presented a novel, open-source approach to job matching that addresses the semantic limitations of traditional keyword-based search engines and the opacity of industrial recommendation systems. By integrating LRE and TSS, the proposed system demonstrates a viable path toward more transparent and semantically grounded job retrieval.
+In this Chapter goes through research questions that were set in the \autoref{sec:research-questions}, by summerizing what has been explained in Evaluation Chapter. Then \autoref{sec:discussion} recaps the approach of building the system and reflects the results. Finally \autoref{sec:outlook} provides an outlook for future works.
 
 Regarding the first research question (RQ1), the evaluation confirmed that open-source LLMs can effectively extract structured job requirements from unstructured text without the need for task-specific fine-tuning. Integration of the outlines library successfully solved the challenge of syntactic validity, ensuring machine-readable output. However, the results indicate that the system is not yet at a production-ready level. While Qwen3-8B emerged as the best-performing model, it only achieved an aggregated overall score of 0.50 out of 1.0. Furthermore, critical semantic metrics such as Completeness and Alignment remained below 0.50 (0.45 and 0.50 respectively). This highlights a significant gap: while lightweight open-source models can be constrained to produce valid JSON structure, they still struggle with the semantic reasoning required to capture all mandatory requirements accurately without missing context or miscategorizing terms.
 
-Regarding the second research question (RQ2), the comparison against LinkedIn’s recommendation engine showed that the proposed approach offers a more transparent and quantifiable matching logic. However, the system did not reach high similarity scores for the analyzed job postings. This low scoring can be linked to the weak requirement extraction process. As observed in the \autoref{sec:llm-performance}, the models frequently hallucinated requirements or included artifacts from the prompt instructions. These false negatives in the extracted data created a mismatch against the user profile, artificially lowering the similarity scores even for relevant job postings. Consequently, while the architecture provides a solid theoretical foundation, the current extraction quality introduces noise that lowers the reliability of the matching score.
+Regarding the second research question (RQ2), the comparison against LinkedIn’s recommendation engine showed that the proposed approach offers a more transparent and quantifiable matching logic. However, the system did not reach high similarity scores for the job postings. This low scoring can be linked to the weak requirement extraction process. As observed in the \autoref{sec:llm-performance}, the models frequently hallucinated requirements or included artifacts from the prompt instructions. These false negatives in the extracted data created a mismatch against the user profile, artificially lowering the similarity scores even for relevant job postings. Consequently, while the architecture provides a solid theoretical foundation, the current extraction quality introduces noise that lowers the reliability of the matching score.
 Ultimately, this work contributes a modular, cost-effective architecture for job matching. By relying exclusively on lightweight open-source components, it democratizes access to advanced recruitment technologies, though significant improvements in extraction fidelity are required before it can compete with industrial-grade systems.
 
-\section{Outlook}
+\section{Discussion} \label{sec:discussion}
+The goal of this thesis was, to present a novel, open-source approach for job matching that addresses the semantic limitations of traditional keyword-based search engines. By integrating LRE and TSS, the proposed system demonstrates a viable path toward more transparent and semantically grounded job matching.
+
+\subsection{Lightweight Open-Source LLMs}
+A central design decision was the integration of the outlines library to enforce valid JSON output.
+As shown in the \autoref{sec:llm-performance}, this approach successfully solved the syntactic reliability issues often associated with LLMs. However, the evaluation highlights a critical distinction between syntactically valid and semantically correct. While the models were forced to produce the correct data structure, they frequently failed to populate it with accurate content. The decision to prioritize fully open‑source accessibility over the enhanced reasoning capabilities of proprietary frontier models introduced a performance trade‑off.
+
+\subsection{Assessment of the Evaluation Framework}
+
+
+\subsection{Prompting Strategies and Model Behavior}
+
+
+\section{Outlook} \label{sec:outlook}
 
 While the proposed system demonstrates the efficacy of this approach, several limitations identified during implementation and evaluation point toward avenues for future research and optimization
 
