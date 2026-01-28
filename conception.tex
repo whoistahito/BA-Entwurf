@@ -6,7 +6,7 @@ This chapter presents the conceptual design of the proposed job‑matching syste
 \begin{itemize}
     \item a requirements extraction module based on open‑source LLMs,
 and
-    \item an token-embedding‑driven similarity search module that identifies semantically relevant job postings.
+    \item a TSS module that identifies semantically relevant job postings.
 \end{itemize}
 
 
@@ -112,8 +112,7 @@ Therefore, a comparison of multiple models is required to determine which open�
 
 \section{Managing Input Data & Chunking Strategies}
 A limitation of Transformer-based language models is their restricted context size \cite{handson-llms-2024}, therefore to be able to process job descriptions independently of their length, the input text should be split into smaller chunks.
-There are different methods of chunking text data for LLM processing. It can be grouped into different categories. The following categories are used in this work:
-:
+There are different methods of chunking text data for LLM processing and can be grouped into different categories. The following categories are used in this work:
 \begin{itemize}
     \item \textbf{Fixed-size chunking} It involves splitting text into chunks based on a predetermined number of tokens, with the option to include overlapping sections to preserve semantic context \cite{tamingllms}. It is widely used because it is simple, computationally inexpensive, and does not require specialized tools \cite{tamingllms}.
     \item \textbf{Structure-based chunking}: This method splits the text based on its structure and hierarchy \cite{pinecone}, in this case newlines, paragraphs, or Markdown headers. This method also aims to preserve the semantic integrity of the content \cite{pinecone}.
@@ -152,10 +151,10 @@ Once the job requirements have been extracted and validated, the second componen
 representations using the \textit{all‑MiniLM‑L6‑v2} sentence transformer model. As discussed in \autoref{introduction:similaritysearch}, this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
 The skills fields are weighted more because as studies show skills are more important in job application context. A study by Bone et al., which analysed online job postings from 2018 to 2024, points out ``We show that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles.'' \cite{skills-or-degree}.
 
-Task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using MaxSim approach.
+The task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using MaxSim approach.
 
 \subsection{Vector Embedding} \label{sec:conception-vector-embedding}
-An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as a good way to translate human language into computer language. \cite{handson-llms-2024}
+An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as an effective method to translate human language into computer language. \cite{handson-llms-2024}
 
 \begin{figure}[h!]
     \centering
