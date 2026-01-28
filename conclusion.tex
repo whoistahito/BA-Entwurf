@@ -19,6 +19,9 @@ To assess the LLMs performance, the LLM-as-a-Judge paradigm was employed using D
 While the LLM-as-a-Judge framework allowed for a scalable assessment of semantic alignment, the inclusion of the ``Readability'' metric proved to be methodologically redundant, since the inference pipeline mathematically guaranteed valid
 JSON output as explained in \autoref{subsec:exception_handling}.
 
+\subsection{Impact of Extraction Quality on Similarity Search}
+The decision to employ the MaxSim algorithm with weighted field aggregation was intended to provide a granular semantic comparison. However, the performance of this module was heavily compromised by the GiGo principle, as explained in \autoref{subsec:evaluation-similarity-distribution}. The evaluation revealed that the similarity search yielded high false-negative rates, not because the embedding strategy was flawed, but because the extraction module failed to identify key skills. Consequently, the vector comparisons were often performed on empty or incomplete data sets. This demonstrates that, maximizing the completeness of extracted requirements is more critical than maintaining strict precision.
+
 \subsection{Prompting Strategies and Model Behavior}
 The LER relied on a zero-shot prompting strategy to maintain generality and avoid the need for task-specific examples. However, the resulting performance scores suggest that zero-shot inference may be too demanding for models in the 7B-9B parameter range, which often struggle to follow complex extraction rules without concrete examples to guide their output. Additionally, the evaluation uncovered a systematic ``copying bias'', as explained in \autoref{subsec:copying-bias}. While the precise cause of this behavior requires further investigation, it highlights a susceptibility of smaller models to overfit to the prompt instructions rather than the input data.
 
