@@ -12,10 +12,12 @@ The goal of this thesis was, to present a novel, open-source approach for job ma
 
 \subsection{Lightweight Open-Source LLMs}
 A central design decision was the integration of the outlines library to enforce valid JSON output.
-As shown in the \autoref{sec:llm-performance}, this approach successfully solved the syntactic reliability issues often associated with LLMs. However, the evaluation highlights a critical distinction between syntactically valid and semantically correct. While the models were forced to produce the correct data structure, they frequently failed to populate it with accurate content. The decision to prioritize fully open‑source accessibility over the enhanced reasoning capabilities of proprietary frontier models introduced a performance trade‑off.
+As shown in the \autoref{sec:llm-performance}, this approach successfully solved the syntactic reliability issues often associated with LLMs. However, the evaluation highlights a critical distinction between syntactically valid and semantically correct. While the models were forced to produce the correct data structure, they frequently failed to populate it with accurate content. The decision to prioritize fully open‑source accessibility over the enhanced reasoning capabilities of proprietary frontier models introduced a performance trade‑off. While this choice ensured transparency, reproducibility, and ease of deployment on consumer‑grade hardware, it also constrained the system’s ability to reliably interpret and structure complex, unstandardized job descriptions. As a result the overall architecture remains reliable but its effectiveness is currently limited by the underlying model's capacity to process complex, unstructured text.
 
 \subsection{Assessment of the Evaluation Framework}
-
+To assess the LLMs performance, the LLM-as-a-Judge paradigm was employed using DeepEval Library. This methodological choice was driven by two key constraints. First, establishing a manual ground truth for the entire dataset would have been time-consuming and difficult to scale. Second, traditional evaluation methods based on exact keyword matching were considered insufficient, as they penalize valid extractions that are semantically equivalent but lexically different.
+While the LLM-as-a-Judge framework allowed for a scalable assessment of semantic alignment, the inclusion of the ``Readability'' metric proved to be methodologically redundant, since the inference pipeline mathematically guaranteed valid
+JSON output as explained in \autoref{subsec:exception_handling}.
 
 \subsection{Prompting Strategies and Model Behavior}
 
