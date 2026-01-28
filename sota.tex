@@ -60,7 +60,7 @@ As previously mentioned in \autoref{sec:sota-confitv2}, LLMs are an important co
 The framework proposed by CareerBuilder relies on specific training protocols rather than pre-trained, zero-shot inference. First, it trains ``an end-to-end Deep Learning Embedding Model (DLEM) on a supervised learning task'' utilizing ``job application data'' \cite{zhao2021embeddingbasedrecommender}. The system also employs a representation learning model for the job-skill information graph, which uses ``Bayesian personalized ranking and margin-based loss functions to learn the vector representation''\cite{zhao2021embeddingbasedrecommender}. The architecture does not employ LLMs. The system is described as a proprietary in-house solution that serves as the ``core technology and service platform in CareerBuilder'' \cite{zhao2021embeddingbasedrecommender}, therfore it is not open source.
 
 
-To highlight how this work distinguishes itself, \autoref{tab:model_comparison} summarizes the gaps explained above by comparing the discussed approaches against the proposed LLM-based requirement extraction and token-embedding-driven similarity search.
+To highlight how this work distinguishes itself, \autoref{tab:model_comparison} summarizes the gaps explained above by comparing the discussed approaches against the proposed LRE and TSS.
 
 
 \begin{table}[h]
@@ -98,7 +98,7 @@ To highlight how this work distinguishes itself, \autoref{tab:model_comparison} 
         \hline
 
         \hline
-        \multicolumn{2}{|l||}{Approach of this thesis} &
+        \multicolumn{2}{|l||}{LRE + TSS} &
         \cmark &
         \cmark &
         \xmark \\

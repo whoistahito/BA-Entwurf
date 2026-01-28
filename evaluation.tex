@@ -122,7 +122,7 @@ This behavior is best described as \textit{copying bias}, where LLMs ``copy answ
 Such behaviors pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false negatives in the matching system.
 
 \section{Case Study}
-Based on \autoref{sec:llm-performance}, to address RQ2 (\autoref{itm:rq2}), Qwen3-8B was chosen for LLM-based requirement extraction and token-embedding-driven similarity search to compare job matching performance against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on activity on LinkedIn and the information available in a user's profile (e.g., skills, experience) \cite{linkedin_docs_job_recommendation}. \\
+Based on \autoref{sec:llm-performance}, to address RQ2 (\autoref{itm:rq2}), Qwen3-8B was chosen for LRE and TSS to compare job matching performance against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on activity on LinkedIn and the information available in a user's profile (e.g., skills, experience) \cite{linkedin_docs_job_recommendation}. \\
 A dedicated LinkedIn account was created to approximate a recent graduate seeking a full-time position after completing a bachelor's degree. The profile contained the following information:
 \begin{itemize}
     \item \textbf{Skills:} Machine Learning, Domain-Driven Design (DDD), Data Science, Spring Boot, Java, Python, Hibernate, PostgreSQL, R, Project Management
