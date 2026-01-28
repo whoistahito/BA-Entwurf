@@ -20,7 +20,7 @@ While the LLM-as-a-Judge framework allowed for a scalable assessment of semantic
 JSON output as explained in \autoref{subsec:exception_handling}.
 
 \subsection{Prompting Strategies and Model Behavior}
-
+The LER relied on a zero-shot prompting strategy to maintain generality and avoid the need for task-specific examples. However, the resulting performance scores suggest that zero-shot inference may be too demanding for models in the 7B-9B parameter range, which often struggle to follow complex extraction rules without concrete examples to guide their output. Additionally, the evaluation uncovered a systematic ``copying bias'', as explained in \autoref{subsec:copying-bias}. While the precise cause of this behavior requires further investigation, it highlights a susceptibility of smaller models to overfit to the prompt instructions rather than the input data.
 
 \section{Outlook} \label{sec:outlook}
 
