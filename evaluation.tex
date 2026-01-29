@@ -155,8 +155,8 @@ The comparison followed three steps:
     \label{fig:simlarity_score_distribtution}
 \end{figure}
 
-The distribution in \autoref{fig:simlarity_score_distribtution} is strongly right-skewed: 9 out of 22 postings (39.1\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.0\%) achieve a score of \(\ge 0.4\).
-Given that a similarity score of 1.0 indicates full alignment of requirements with the user profile and 0 indicates no semantic overlap, these results suggest that, the majority of LinkedIn's recommendations constitute weak matches for the hypothetical profile. However, as detailed in \autoref{subsec:evaluation_readability}, the 0.0–0.1 bucket likely includes cases where requirements extraction failed, resulting in empty extracted requirements and consequently near-zero similarity scores. Therefore, values in this range reflect a combination of genuine semantic mismatches and extraction failures.
+The distribution in \autoref{fig:simlarity_score_distribtution} is strongly right-skewed: 8 out of 22 postings (38.4\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.6\%) achieve a score higher than 0.4.
+Given that a similarity score of 1.0 indicates full alignment of requirements with the user profile and 0 indicates no semantic overlap, these results suggest that the majority of LinkedIn's recommendations are interpreted by this job matching system as weak matches for the hypothetical profile. However, as detailed in \autoref{subsec:evaluation_readability}, the 0.0–0.1 bucket likely includes cases where requirements extraction failed, resulting in empty extracted requirements and consequently near-zero similarity scores. Therefore, values in this range reflect a combination of genuine semantic mismatches and extraction failures.
 
 
 \begin{figure}[h!]
