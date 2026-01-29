@@ -4,7 +4,7 @@ This chapter presents the empirical evaluation of the system developed in this t
 
 First, this chapter analyzes the characteristics of the dataset used for evaluation. This includes an examination of the distribution of job postings across sources, industries, and description lengths, providing the necessary context for understanding model behavior and extraction performance.
 
-Secondly, it evaluates how effectively open‑source LLMs extract structured job requirements from unstructured job descriptions (RQ1). This is assessed through a quantitative analysis using G‑Eval metrics within an automated ``LLM‑as‑a‑Judge’’ framework, complemented by a qualitative error analysis that identifies systematic strengths and weaknesses of the tested models.
+Secondly, it evaluates how effectively open‑source LLMs extract structured job requirements from unstructured job descriptions (RQ1). This is assessed through a quantitative analysis using G‑Eval metrics within an automated LLM‑as‑a‑judge framework, complemented by a qualitative error analysis that identifies systematic strengths and weaknesses of the tested models.
 
 Third, the chapter examines how the proposed job‑matching approach compares to conventional job search engines in terms of relevance and accuracy of retrieved postings (RQ2). This includes an evaluation of the similarity search pipeline and a comparison against traditional title‑based retrieval strategies.
 
@@ -66,7 +66,7 @@ The distribution is strongly right-skewed, characterized by a significant dispar
 
 \section{Evaluation Framework}
 
-To systematically assess extraction quality as described in \autoref{conception:g-eval} using the DeepEval library, NVIDIA's hosted \texttt{gpt‑oss‑120b} model as an independent evaluator was employed.
+To systematically assess extraction quality as described in \autoref{conception:g-eval} using the DeepEval library, NVIDIA's hosted gpt‑oss‑120B model as an independent evaluator was employed.
 Each output is rated along the four criteria introduced in \autoref{metrics}, then model outputs are averaged across the entire dataset to compute final performance scores.
 
 \section{Performance Overview} \label{sec:llm-performance}
@@ -106,7 +106,7 @@ To understand the drivers behind these overall scores, \autoref{tab:model_perfor
 
 An important observation from \autoref{tab:model_performance} is that the Readability metric, designed to assess whether the output is valid JSON, became effectively redundant due to the system's architectural design. By employing the outlines library and a strict exception handling mechanism, the pipeline guarantees that the output is always a valid JSON object, even if it is an empty one returned upon generation failure. Consequently, high Readability scores were a structural artifact of the engineering pipeline rather than a reflection of the model's capabilities. This suggests that for constrained generation pipelines, evaluation should focus exclusively on semantic metrics rather than syntactic validity.
 
-However, despite these architectural guarantees of structural validity, the Readability scores do not reach the maximum value of 1.0. This gap highlights a critical distinction captured by the G-Eval metric, which evaluates not only whether the output is structured, but also whether requirements are ``properly categorized into skills, experiences, and qualifications''.
+However, despite these architectural guarantees of structural validity, the Readability scores do not reach the maximum value of 1.0. This gap highlights a critical distinction captured by the G-Eval metric, which evaluates not only whether the output is structured, but also whether requirements are ``correctly categorizes extracted items into the appropriate fields (skills, experience, or qualifications)'' (see \autoref{metrics}).
 The failure to reach a perfect score indicates that while the models are forced to generate valid JSON, they still struggle with the semantic logic required to populate that structure correctly. The models frequently miscategorize requirements—for example, placing a formal degree under skills or a software tool under qualifications. Therefore, the Readability results lead to a clear conclusion: the problem of syntactic structure has been effectively solved through constraints (outlines and exception handling), leaving semantic reasoning and categorization as the primary bottleneck for open-source models.
 
 \subsection{Precision vs. Completeness Trade-offs}
@@ -117,7 +117,7 @@ For downstream filtering systems, conservative extraction is typically preferred
 
 \subsection{Copying Bias} \label{subsec:copying-bias}
 
-The Edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
+The edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
 This behavior is best described as copying bias, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
 Such behaviors pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false negatives in the matching system.
 
