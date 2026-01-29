@@ -63,7 +63,7 @@ class Requirements(BaseModel):
 \end{center}
 
 \subsection{Prompt Engineering}
-The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. \Autoref{fig:prompt} shows the system prompt, which requires the LLM to only extract must-have requirements, be concise, and only respond in the defined categories.
+The prompt provided to the LLM consists of a system instruction defining the persona and the task, followed by the specific job description chunk. For effective job matching, the system focuses exclusively on must-have requirements, as these are the essential prerequisites a candidate needs to apply for the job. \Autoref{fig:prompt} shows the system prompt, which requires the LLM to strictly adhere to this constraint, be concise, and only respond in the defined categories.
 
 \begin{figure}[h]
 	\centering
