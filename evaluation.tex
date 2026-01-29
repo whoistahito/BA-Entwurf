@@ -1,6 +1,6 @@
 \chapter{Evaluation}
 
-This chapter presents the empirical evaluation of the system developed in this thesis and directly addresses the two research questions introduced in \autoref{ch:introduction}. The evaluation is structured into three components that build upon one another.
+This chapter presents the empirical evaluation of the system developed in this thesis and directly addresses the two research questions introduced in \Autoref{ch:introduction}. The evaluation is structured into three components that build upon one another.
 
 First, this chapter analyzes the characteristics of the dataset used for evaluation. This includes an examination of the distribution of job postings across sources, industries, and description lengths, providing the necessary context for understanding model behavior and extraction performance.
 
@@ -8,7 +8,7 @@ Secondly, it evaluates how effectively open‑source LLMs extract structured job
 
 Third, the chapter examines how the proposed job‑matching approach compares to conventional job search engines in terms of relevance and accuracy of retrieved postings (RQ2). This includes an evaluation of the similarity search pipeline and a comparison against traditional title‑based retrieval strategies.
 
-Together, these three components provide a comprehensive empirical foundation for assessing the system’s performance, its practical utility, and its limitations, thereby preparing the ground for discussion in \autoref{ch:conclusion}.
+Together, these three components provide a comprehensive empirical foundation for assessing the system’s performance, its practical utility, and its limitations, thereby preparing the ground for discussion in \Autoref{ch:conclusion}.
 
 
 \section{Dataset}
@@ -19,7 +19,7 @@ The raw HTML content of each posting was subsequently converted into Markdown.
 
 \subsection{Source and Industry Distribution} \label{subsec:dataset-by-industry}
 
-\autoref{fig:jd_by_source} illustrates the distribution of job postings by source platform. The dataset is heavily dominated by major job aggregators, with Indeed ($n=158$) and LinkedIn ($n=40$) accounting for approximately 95\% of the corpus. The remaining postings originate from niche platforms or individual company career pages.
+\Autoref{fig:jd_by_source} illustrates the distribution of job postings by source platform. The dataset is heavily dominated by major job aggregators, with Indeed ($n=158$) and LinkedIn ($n=40$) accounting for approximately 95\% of the corpus. The remaining postings originate from niche platforms or individual company career pages.
 
 \begin{figure}[h!]
     \centering
@@ -28,9 +28,9 @@ The raw HTML content of each posting was subsequently converted into Markdown.
     \label{fig:jd_by_source}
 \end{figure}
 
-In terms of sectoral distribution, \autoref{fig:jd_by_industry} shows that the dataset is imbalanced, as the technology sector is the largest single category (comprising roughly one-third of the dataset). However, there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
+In terms of sectoral distribution, \Autoref{fig:jd_by_industry} shows that the dataset is imbalanced, as the technology sector is the largest single category (comprising roughly one-third of the dataset). However, there is significant representation from healthcare, business, and engineering. This diversity is essential for evaluating the model's generalization capabilities, ensuring that the extraction logic is not overfitted to the specific terminology or formatting conventions of the tech industry.
 
-Notably, the ``Other'' category in \autoref{fig:jd_by_industry} represents a specific edge case involving an expired job posting. While expired listings typically return an HTTP 404 status code, this specific page remained active, displaying a list of related job recommendations instead of the original description. Because the page still contained significant textual content, it bypassed the scraper's emptiness filters. Although unintentional, this instance serves as a valuable adversarial example, testing the extraction model's behavior when presented with valid HTML structure but semantically irrelevant content, which will be discussed in \autoref{subsec:copying-bias}.
+Notably, the ``Other'' category in \Autoref{fig:jd_by_industry} represents a specific edge case involving an expired job posting. While expired listings typically return an HTTP 404 status code, this specific page remained active, displaying a list of related job recommendations instead of the original description. Because the page still contained significant textual content, it bypassed the scraper's emptiness filters. Although unintentional, this instance serves as a valuable adversarial example, testing the extraction model's behavior when presented with valid HTML structure but semantically irrelevant content, which will be discussed in \Autoref{subsec:copying-bias}.
 
 
 \begin{figure}[h!]
@@ -52,7 +52,7 @@ Beyond content distribution, the length of the job descriptions is a critical va
     \label{fig:jd_distribution_characters}
 \end{figure}
 
-The distribution is strongly right-skewed, characterized by a significant disparity between the median length (6,380 characters) and the mean length (8,147 characters). While the majority of postings fall within the 4,000 to 8,000 character range, the dataset contains extreme outliers, with the longest single posting reaching 34,192 characters. This extreme variance—where the maximum length is nearly six times the median—validates the necessity of the hybrid chunking strategy introduced in \autoref{subsec:impl-chunking}.
+The distribution is strongly right-skewed, characterized by a significant disparity between the median length (6,380 characters) and the mean length (8,147 characters). While the majority of postings fall within the 4,000 to 8,000 character range, the dataset contains extreme outliers, with the longest single posting reaching 34,192 characters. This extreme variance—where the maximum length is nearly six times the median—validates the necessity of the hybrid chunking strategy introduced in \Autoref{subsec:impl-chunking}.
 
 \begin{figure}[htb!]
     \centering
@@ -61,17 +61,17 @@ The distribution is strongly right-skewed, characterized by a significant dispar
     \label{fig:jd_character_count_by_source}
 \end{figure}
 
-\autoref{fig:jd_character_count_by_source} further decomposes these statistics by source. A distinct structural difference is observable between platforms: Indeed postings exhibit a highly concentrated distribution with lower variance, suggesting a more standardized listing format. In contrast, LinkedIn postings display a much wider distribution with a significantly higher median length. This indicates that LinkedIn descriptions are not only more verbose but also less predictable in structure.\\
+\Autoref{fig:jd_character_count_by_source} further decomposes these statistics by source. A distinct structural difference is observable between platforms: Indeed postings exhibit a highly concentrated distribution with lower variance, suggesting a more standardized listing format. In contrast, LinkedIn postings display a much wider distribution with a significantly higher median length. This indicates that LinkedIn descriptions are not only more verbose but also less predictable in structure.\\
 \clearpage
 
 \section{Evaluation Framework}
 
-To systematically assess extraction quality as described in \autoref{conception:g-eval} using the DeepEval library, NVIDIA's hosted gpt‑oss‑120B model as an independent evaluator was employed.
-Each output is rated along the four criteria introduced in \autoref{metrics}, then model outputs are averaged across the entire dataset to compute final performance scores.
+To systematically assess extraction quality as described in \Autoref{conception:g-eval} using the DeepEval library, NVIDIA's hosted gpt‑oss‑120B model as an independent evaluator was employed.
+Each output is rated along the four criteria introduced in \Autoref{metrics}, then model outputs are averaged across the entire dataset to compute final performance scores.
 
 \section{Performance Overview} \label{sec:llm-performance}
 
-\autoref{fig:overall_model_ranking} presents the aggregated model ranking derived from the evaluation metrics. Qwen3-8B achieves the highest overall performance, followed by GLM-4-9B-0414 and Mistral-7B-Instruct-v0.3, with Llama-3.1-8B-Instruct showing the lowest aggregated scores.
+\Autoref{fig:overall_model_ranking} presents the aggregated model ranking derived from the evaluation metrics. Qwen3-8B achieves the highest overall performance, followed by GLM-4-9B-0414 and Mistral-7B-Instruct-v0.3, with Llama-3.1-8B-Instruct showing the lowest aggregated scores.
 
 \begin{figure}[h]
     \centering
@@ -81,7 +81,7 @@ Each output is rated along the four criteria introduced in \autoref{metrics}, th
 \end{figure}
 
 
-To understand the drivers behind these overall scores, \autoref{tab:model_performance} details the breakdown across the specific G-Eval metrics. Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
+To understand the drivers behind these overall scores, \Autoref{tab:model_performance} details the breakdown across the specific G-Eval metrics. Each value represents a mean score across the evaluation corpus, where 1.0 signifies perfect compliance with the metric.
 
 \begin{table}[h]
     \centering
@@ -104,9 +104,9 @@ To understand the drivers behind these overall scores, \autoref{tab:model_perfor
 
 \subsection{Readability vs. Semantic Metrics} \label{subsec:evaluation_readability}
 
-An important observation from \autoref{tab:model_performance} is that the Readability metric, designed to assess whether the output is valid JSON, became effectively redundant due to the system's architectural design. By employing the outlines library and a strict exception handling mechanism, the pipeline guarantees that the output is always a valid JSON object, even if it is an empty one returned upon generation failure. Consequently, high Readability scores were a structural artifact of the engineering pipeline rather than a reflection of the model's capabilities. This suggests that for constrained generation pipelines, evaluation should focus exclusively on semantic metrics rather than syntactic validity.
+An important observation from \Autoref{tab:model_performance} is that the Readability metric, designed to assess whether the output is valid JSON, became effectively redundant due to the system's architectural design. By employing the outlines library and a strict exception handling mechanism, the pipeline guarantees that the output is always a valid JSON object, even if it is an empty one returned upon generation failure. Consequently, high Readability scores were a structural artifact of the engineering pipeline rather than a reflection of the model's capabilities. This suggests that for constrained generation pipelines, evaluation should focus exclusively on semantic metrics rather than syntactic validity.
 
-However, despite these architectural guarantees of structural validity, the Readability scores do not reach the maximum value of 1.0. This gap highlights a critical distinction captured by the G-Eval metric, which evaluates not only whether the output is structured, but also whether requirements are ``correctly categorizes extracted items into the appropriate fields (skills, experience, or qualifications)'' (see \autoref{metrics}).
+However, despite these architectural guarantees of structural validity, the Readability scores do not reach the maximum value of 1.0. This gap highlights a critical distinction captured by the G-Eval metric, which evaluates not only whether the output is structured, but also whether requirements are ``correctly categorizes extracted items into the appropriate fields (skills, experience, or qualifications)'' (see \Autoref{metrics}).
 The failure to reach a perfect score indicates that while the models are forced to generate valid JSON, they still struggle with the semantic logic required to populate that structure correctly. The models frequently miscategorize requirements—for example, placing a formal degree under skills or a software tool under qualifications. Therefore, the Readability results lead to a clear conclusion: the problem of syntactic structure has been effectively solved through constraints (outlines and exception handling), leaving semantic reasoning and categorization as the primary bottleneck for open-source models.
 
 \subsection{Precision vs. Completeness Trade-offs}
@@ -117,12 +117,12 @@ For downstream filtering systems, conservative extraction is typically preferred
 
 \subsection{Copying Bias} \label{subsec:copying-bias}
 
-The edge case mentioned in \autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
+The edge case mentioned in \Autoref{subsec:dataset-by-industry} caused an interesting behavior, where models such as Qwen3-8B and Llama-3.1-8B frequently hallucinated requirements that were not present in the input. Notably, the extracted requirements, such as ``Bachelor’s degree in Computer Science'' and ``PMP Certification'', were identical to the examples provided in the system prompt’s instructions.
 This behavior is best described as copying bias, where LLMs ``copy answers from provided examples instead of learning the underlying patterns'' \cite{copying-bias}.
 Such behaviors pose a systematic risk in extraction pipelines, as models are prone to outputting artifacts from the prompt itself, leading to false negatives in the matching system.
 
 \section{Case Study}
-Based on \autoref{sec:llm-performance}, to address RQ2 (\autoref{itm:rq2}), Qwen3-8B was chosen for LRE and TSS to compare job matching performance against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on activity on LinkedIn and the information available in a user's profile (e.g., skills, experience) \cite{linkedin_docs_job_recommendation}. \\
+Based on \Autoref{sec:llm-performance}, to address RQ2 (\Autoref{itm:rq2}), Qwen3-8B was chosen for LRE and TSS to compare job matching performance against LinkedIn's built-in job recommendation feature. LinkedIn serves as a practical baseline, as it suggests postings based on activity on LinkedIn and the information available in a user's profile (e.g., skills, experience) \cite{linkedin_docs_job_recommendation}. \\
 A dedicated LinkedIn account was created to approximate a recent graduate seeking a full-time position after completing a bachelor's degree. The profile contained the following information:
 \begin{itemize}
     \item \textbf{Skills:} Machine Learning, Domain-Driven Design (DDD), Data Science, Spring Boot, Java, Python, Hibernate, PostgreSQL, R, Project Management
@@ -130,7 +130,7 @@ A dedicated LinkedIn account was created to approximate a recent graduate seekin
     \item \textbf{Experience:} 4 years of software development
 \end{itemize}
 
-LinkedIn's recommended jobs for this profile are illustrated in \autoref{fig:linkedin_screenshot}.
+LinkedIn's recommended jobs for this profile are illustrated in \Autoref{fig:linkedin_screenshot}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/Linkedin-screenshot}
@@ -147,7 +147,7 @@ The comparison followed three steps:
 \end{enumerate}
 
 \subsection{Similarity Score Distribution} \label{subsec:evaluation-similarity-distribution}
-\autoref{fig:simlarity_score_distribtution} shows the bucketed similarity score distribution for the 22 LinkedIn-recommended jobs when using Qwen3-8B as the extraction model.
+\Autoref{fig:simlarity_score_distribtution} shows the bucketed similarity score distribution for the 22 LinkedIn-recommended jobs when using Qwen3-8B as the extraction model.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/bucketed_similarity_scores_qwen3-8b}
@@ -155,8 +155,8 @@ The comparison followed three steps:
     \label{fig:simlarity_score_distribtution}
 \end{figure}
 
-The distribution in \autoref{fig:simlarity_score_distribtution} is strongly right-skewed: 8 out of 22 postings (38.4\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.6\%) achieve a score higher than 0.4.
-Given that a similarity score of 1.0 indicates full alignment of requirements with the user profile and 0 indicates no semantic overlap, these results suggest that the majority of LinkedIn's recommendations are interpreted by this job matching system as weak matches for the hypothetical profile. However, as detailed in \autoref{subsec:evaluation_readability}, the 0.0–0.1 bucket likely includes cases where requirements extraction failed, resulting in empty extracted requirements and consequently near-zero similarity scores. Therefore, values in this range reflect a combination of genuine semantic mismatches and extraction failures.
+The distribution in \Autoref{fig:simlarity_score_distribtution} is strongly right-skewed: 8 out of 22 postings (38.4\%) fall into the 0.0--0.1 bucket, while only 3 postings (13.6\%) achieve a score higher than 0.4.
+Given that a similarity score of 1.0 indicates full alignment of requirements with the user profile and 0 indicates no semantic overlap, these results suggest that the majority of LinkedIn's recommendations are interpreted by this job matching system as weak matches for the hypothetical profile. However, as detailed in \Autoref{subsec:evaluation_readability}, the 0.0–0.1 bucket likely includes cases where requirements extraction failed, resulting in empty extracted requirements and consequently near-zero similarity scores. Therefore, values in this range reflect a combination of genuine semantic mismatches and extraction failures.
 
 
 \begin{figure}[h!]
@@ -166,11 +166,11 @@ Given that a similarity score of 1.0 indicates full alignment of requirements wi
     \label{fig:similarity_score_per_job_scatter}
 \end{figure}
 
-As illustrated in \autoref{fig:similarity_score_per_job_scatter} only 6 of the 22 LinkedIn-recommended jobs were manually marked as suitable in the ground truth. Among these six, only a single posting \texttt{job6} obtained a comparatively high similarity score (\approx 0.43).
+As illustrated in \Autoref{fig:similarity_score_per_job_scatter} only 6 of the 22 LinkedIn-recommended jobs were manually marked as suitable in the ground truth. Among these six, only a single posting \texttt{job6} obtained a comparatively high similarity score (\approx 0.43).
 
 
 This leads to a critical consideration regarding the implementation of a fixed acceptance threshold as a filtering mechanism.
-If a strict threshold of 0.7 (implying a 70\% semantic overlap) were applied, the results in \autoref{fig:similarity_score_per_job_scatter} demonstrate that no job postings would be retrieved. Even if the threshold were lowered to 0.4, only three postings would qualify: \texttt{job6}, \texttt{job8}, and \texttt{job15}.
+If a strict threshold of 0.7 (implying a 70\% semantic overlap) were applied, the results in \Autoref{fig:similarity_score_per_job_scatter} demonstrate that no job postings would be retrieved. Even if the threshold were lowered to 0.4, only three postings would qualify: \texttt{job6}, \texttt{job8}, and \texttt{job15}.
 While \texttt{job6} represents a valid match, the other two postings (\texttt{job8} and \texttt{job15}) are incorrectly identified as matches. Although their requirements overlap with the hypothetical user's profile, both were marked as unsuitable in the ground truth because their employment types (Ausbildung and Werkstudent) do not align with what the hypothetical user is looking for. Therefore, although the system interprets them as semantically relevant, they do not constitute valid recommendations for this specific user profile.\\
 
-Because the similarity search concentrates on skills and experience matching without explicitly filtering for employment type (e.g., full-time vs. internship), these false positives are an expected limitation. More concerning, however, is that five other job postings identified as suitable in the ground truth failed to reach the 0.4 threshold. This indicates a high rate of false negatives, suggesting that the system currently underestimates the relevance of certain valid job postings. This can be linked to Garbage-in-Garbage-out (GiGo) principle, which states that ``good inputs generally result in good outputs, and bad inputs, barring design intervention, generally result in bad outputs'' \cite{universal-principles-design}. In context of similarity search, the incomplete or incorrect extraction of requirements results a ``bad input'',  leading to an artificially low similarity score. GiGo combined with lack of granularity in the user profile, which reflects the real-world challenge of users providing incomplete or non-exhaustive data, caused the false negatives. This emphasizes the prioritizing completeness over precision in requirement extraction, to ensure the similarity search has sufficient data to operate effectively.
+Because the similarity search concentrates on skills and experience matching without explicitly filtering for employment type (e.g., full-time vs. internship), these false positives are an expected limitation. More concerning, however, is that five other job postings identified as suitable in the ground truth failed to reach the 0.4 threshold. This indicates a high rate of false negatives, suggesting that the system currently underestimates the relevance of certain valid job postings. This can be linked to Garbage-in-Garbage-out (GIGO) principle, which states that ``good inputs generally result in good outputs, and bad inputs, barring design intervention, generally result in bad outputs'' \cite{universal-principles-design}. In context of similarity search, the incomplete or incorrect extraction of requirements results a ``bad input'',  leading to an artificially low similarity score. GiGo combined with lack of granularity in the user profile, which reflects the real-world challenge of users providing incomplete or non-exhaustive data, caused the false negatives. This emphasizes the prioritizing completeness over precision in requirement extraction, to ensure the similarity search has sufficient data to operate effectively.
