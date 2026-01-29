@@ -35,7 +35,7 @@ While fine-tuned models achieve strong performance, they require task-specific a
 
 \subsection{Embedding and Similarity Search in Job Matching}
 \label{introduction:similaritysearch}
-Embedding-based similarity search has become a cornerstone of modern job recommendation systems. Domain-specific models such as CareerBERT achieve strong performance by leveraging structured taxonomies \cite{careerbert}. However, general-purpose models such as sentence-transformers (e.g., all-MiniLM-L6-v2) have also shown excellent retrieval performance without task‑specific training, as demonstrated by Kurek et al. \cite{kurek2024}. Building on this foundation, this thesis employs the model to process extracted requirements, enabling the system to capture semantic relationships effectively.
+Embedding-based similarity search has become a cornerstone of modern job recommendation systems. Domain-specific models such as CareerBERT achieve strong performance by leveraging structured taxonomies \cite{careerbert}. However, a study shown that general-purpose models such as sentence-transformers have also shown excellent retrieval performance in job matching without task‑specific training \cite{kurek2024}. Kurek et al. notes ``the all-MiniLM-L6-v2 model with a chunk length of 768 exhibited outstanding performance,[...] establishing it as a highly effective tool for recruitment processes'' \cite{kurek2024}. Building on this foundation, this thesis employs the model to process extracted requirements, enabling the system to capture semantic relationships effectively.
 
 \section{Research Gap} \label{sota:research_gap}
 

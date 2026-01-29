@@ -165,7 +165,7 @@ The evaluation pipeline first loads all JSON outputs from the requirements extra
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
 \subsection{Vector Embedding}
-The embedding functionality is implemented using the \texttt{sentence-transformers} library, which provides pre-trained transformer models optimized for semantic similarity tasks.\cite{sentence-bert} The model all-MiniLM-L6-v2 is loaded once as a singleton to avoid repeated initialization overhead during inference.
+The embedding functionality is implemented using the \texttt{sentence-transformers} library, which provides pre-trained transformer models optimized for semantic similarity tasks \cite{sentence-bert}. The model all-MiniLM-L6-v2 is loaded once as a singleton to avoid repeated initialization overhead during inference.
 
 \subsection{MaxSim}
 The MaxSim algorithm described in \autoref{subsec:maxsim} is implemented in the \texttt{compute\_maxsim} function. The implementation directly follows the conceptual formulation: for each job requirement, find the maximum similarity to any user profile item, then average these maximum scores.
