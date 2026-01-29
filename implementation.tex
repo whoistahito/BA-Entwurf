@@ -26,7 +26,7 @@ All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB 
 As outlined in the conception, the raw data consists of HTML documents. The preprocessing pipeline transforms this unstructured input into clean, chunked text suitable for LLM processing.
 
 \subsection{HTML to Markdown Conversion}
-The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document. Headings, lists, and paragraphs are retained, as these structural elements provide critical semantic cues for the extraction model. This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
+The markdownify library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document. Headings, lists, and paragraphs are retained, as these structural elements provide critical semantic cues for the extraction model. This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
 
 \subsection{Hybrid Chunking Strategy} \label{subsec:impl-chunking}
 To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \verb|r'(#{1,6}\s+.*?\n)'|). This ensures that logical sections, such as Responsibilities or Requirements, remain intact within a single context window.
