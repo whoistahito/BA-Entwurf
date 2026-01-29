@@ -1,9 +1,9 @@
 \chapter{Implementation}
 \label{ch:implementation}
 
-This chapter details the technical realization of the concept presented in the previous chapter. It describes the development environment, the data processing pipeline, the implementation of the requirements extraction using LLMs, the evaluation methodology, and the realization of the similarity search algorithms.
+This chapter details the technical implementation of the concept presented in the previous chapter. It begins by describing the development environment. Following this, \autoref{sec:impl-data-processing} explains the data preprocessing pipeline. \autoref{sec:impl-lre} presents the implementation of LRE and the evaluation framework using LLM-as-a-judge. Finally, \autoref{sec:impl-tss} details the implementation of TSS.
 
-\section{Development Environment}
+\section{Development Environment} \label{sec:impl-dev-env}
 The system was implemented using the Python programming language (Version 3.10), chosen for its extensive ecosystem of data science and machine learning libraries. The core dependencies include:
 \begin{itemize}
 	\item \textbf{Markdownify}: For converting raw HTML content into structured Markdown text.
@@ -22,7 +22,7 @@ All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB 
 \end{figure}
 
 
-\section{Data Preprocessing}
+\section{Data Preprocessing} \label{sec:impl-data-processing}
 As outlined in the conception, the raw data consists of HTML documents. The preprocessing pipeline transforms this unstructured input into clean, chunked text suitable for LLM processing.
 
 \subsection{HTML to Markdown Conversion}
@@ -34,7 +34,7 @@ To process job descriptions that exceed the context window of smaller LLMs, a hy
 A fallback mechanism is implemented for cases where a section exceeds the maximum token limit. If a semantic chunk exceeds the configured size (defaulting to approximately 12,000 tokens, estimated via character count), it is further divided based on a strict character limit to prevent memory overflows during inference.
 
 
-\section{Requirements Extraction}
+\section{Requirements Extraction} \label{sec:impl-lre}
 The core component of the system is the extraction of structured data. To address the non-deterministic nature of LLMs, the outlines library is employed to constrain the generation process using FSM logic.
 
 \subsection{Output Structure Definition}
@@ -160,7 +160,7 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
 
 The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally the system utilizes DeepEval's \texttt{evaluate} function and a judge model with external api to execute these metrics asynchronously over all test cases, collecting the resulting scores.
 
-\section{Embedding and Similarity Search}
+\section{Embedding and Similarity Search} \label{sec:impl-tss}
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
 \subsection{Vector Embedding}
