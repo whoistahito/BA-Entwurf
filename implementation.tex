@@ -127,7 +127,7 @@ When this happens, the system handles the exception and returns a \texttt{Requir
 This approach allows the rest of the pipeline to run without failing, but it also means that there is no clear indication that the output was invalid, which makes troubleshooting more challenging.
 
 \subsection{Result Aggregation}
-Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict(set)} is utilized to collect skills, experience, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
+Since job descriptions are processed in chunks, a single job posting may yield multiple \texttt{Requirements} objects. An aggregation step is implemented to merge these partial results. A \texttt{defaultdict} of sets is utilized to collect skills, experience, and qualifications across all chunks. The use of sets automatically handles deduplication, ensuring that if a skill is mentioned in multiple sections, it appears only once in the final output.
 \subsection{G-Eval Metrics}
 To integrate the evaluation strategy described in \Autoref{conception:g-eval}, this work implements four metrics defined in \Autoref{metrics}. Each metric specifies a natural-language description of the goal, a sequence of evaluation steps, the relevant test case fields (job description and/or extracted requirements), and a fixed success threshold of 0.7. \Autoref{code:geval-metrics} shows an example metric definition.
 
@@ -159,7 +159,7 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
     \end{lstlisting}
 \end{center}
 
-The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally the system utilizes DeepEval's \texttt{evaluate} function and a judge model with external api to execute these metrics asynchronously over all test cases, collecting the resulting scores.
+The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally, the system utilizes DeepEval's \texttt{evaluate} function and a judge model with external api to execute these metrics asynchronously over all test cases, collecting the resulting scores.
 
 \section{Embedding and Similarity Search} \label{sec:impl-tss}
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.

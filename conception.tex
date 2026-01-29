@@ -121,7 +121,7 @@ There are different methods of chunking text data for LLM processing and can be 
 This work uses a hybrid approach that combines the semantic preservation of structure-based chunking with the operational safety of fixed-size chunking. The primary strategy involves splitting the job descriptions by Markdown headers to maintain the coherence of logical sections. To address the limitation of variable chunk sizes, a fixed-size slicing mechanism is employed as a fallback constraint, ensuring that no single chunk exceeds the context window regardless of its structural length.
 
 \section{LLM Output Evaluation} \label{sec:llm-evaluation}
-Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example,``Proven ability to manage projects simultaneously'' could be correctly summarized as ``Project management'',Even though the wording differs significantly. Relying on exact string matching would thus penalize valid extractions.
+Evaluating the correctness of extracted requirements poses a unique methodological challenge, as semantically equivalent requirements may be expressed in lexically diverse forms. For example,``Proven ability to manage projects simultaneously'' could be correctly summarized as ``Project management'', even though the wording differs significantly. Relying on exact string matching would thus penalize valid extractions.
 
 To address this, the system employs an automated evaluation strategy based on the ``LLM-as-a-judge'' paradigm \cite{llm-as-a-judge}. This approach uses an independent, more capable LLM to assess the faithfulness of extracted JSON fields relative to the original job
 description. As Huyen mentions, ``AI judges are fast, easy to use, and relatively cheap compared to human evaluators. They can also work without reference data'' \cite{ai-engineering-book}. The evaluation framework used in this thesis is implemented with DeepEval \cite{deepeval}.
@@ -151,7 +151,7 @@ Once the job requirements have been extracted and validated, the second componen
 representations using the all-MiniLM-L6-v2 model \cite{miniLm,MiniLMv2}. As discussed in \Autoref{introduction:similaritysearch}, this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
 The skills fields are weighted more because, as studies show skills are more important in job application context. A study by Bone et al., which analysed online job postings from 2018 to 2024, shows ``that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles'' \cite{skills-or-degree}.
 
-The task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using MaxSim approach.
+The task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using the MaxSim approach.
 
 \subsection{Vector Embedding} \label{sec:conception-vector-embedding}
 An embedding effectively maps discrete objects, like words or documents, to points in a continuous vector space \cite{llm-from-scratch}. \Autoref{fig:embeddings-process} illustrates this transformation from raw input to a vector representation, which serves as an effective method to translate human language into computer language \cite{handson-llms-2024}.
@@ -159,7 +159,7 @@ An embedding effectively maps discrete objects, like words or documents, to poin
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/embeddings-process}
-    \caption{the process of converting raw data into a three-dimensional numerical vector (Source: \cite{llm-from-scratch}).}
+    \caption{The process of converting raw data into a three-dimensional numerical vector (Source: \cite{llm-from-scratch}).}
     \label{fig:embeddings-process}
 \end{figure}
 
