@@ -10,7 +10,7 @@ The system was implemented using the Python programming language (Version 3.10),
 	\item \textbf{Outlines}: To enforce structured JSON / Pydantic Model generation from the LLMs, ensuring deterministic output formats.
 	\item \textbf{FastAPI}: For serving the inference engine as a scalable web service.
 	\item \textbf{Sentence-Transformers}: For generating vector embeddings of requirements and user profile.
-	\item \textbf{DeepEval}: For the automated ``LLM-as-a-judge'' evaluation pipeline.
+	\item \textbf{DeepEval}: For the automated LLM-as-a-judge evaluation.
 \end{itemize}
 All experiments and inference tasks were conducted on a dual GPU setup (2x 12GB NVIDIA RTX 3080), ensuring consistent performance benchmarks across all tested models. \Autoref{fig:system_architecture} illustrates the high-level architecture of the implemented system.
 
@@ -29,7 +29,7 @@ As outlined in the conception, the raw data consists of HTML documents. The prep
 The \texttt{markdownify} library is configured to strip unnecessary tags (such as scripts, styles, and images) while preserving the structural hierarchy of the document. Headings, lists, and paragraphs are retained, as these structural elements provide critical semantic cues for the extraction model. This reduction significantly lowers the token count while maintaining the semantic structure of the job posting.
 
 \subsection{Hybrid Chunking Strategy} \label{subsec:impl-chunking}
-To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \verb|r'(#{1,6}\s+.*?\n)'|). This ensures that logical sections—such as 'Responsibilities' or 'Requirements'—remain intact within a single context window.
+To process job descriptions that exceed the context window of smaller LLMs, a hybrid chunking strategy is implemented. The text is primarily split based on Markdown headers (using the regex \verb|r'(#{1,6}\s+.*?\n)'|). This ensures that logical sections, such as Responsibilities or Requirements, remain intact within a single context window.
 
 A fallback mechanism is implemented for cases where a section exceeds the maximum token limit. If a semantic chunk exceeds the configured size (defaulting to approximately 12,000 tokens, estimated via character count), it is further divided based on a strict character limit to prevent memory overflows during inference.
 
@@ -122,7 +122,7 @@ This design simplifies the process of managing models; adding a new model or rem
 
 After the output is generated, the output structure is validated against the Pydantic model using the built-in \texttt{validate\_json()} method.
  While the outlines library is designed to ensure that the model output follows the schema shown in \autoref{lst:requirements_schema}, issues can still occur during generation. For example, if the model reaches its \texttt{max\_new\_tokens} limit, it may produce incomplete or invalid JSON that does not pass validation.
-When this happens, the system handles the exception and returns a Requirements object in which the fields are empty lists.
+When this happens, the system handles the exception and returns a \texttt{Requirements} object in which the fields are empty lists.
 This approach allows the rest of the pipeline to run without failing, but it also means that there is no clear indication that the output was invalid, which makes troubleshooting more challenging.
 
 \subsection{Result Aggregation}
@@ -158,7 +158,8 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
     \end{lstlisting}
 \end{center}
 
-The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Using DeepEval's \texttt{evaluate} function together with an external judge model, these metrics are executed asynchronously over all test cases, and the resulting scores, rationales are collected.
+The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally the system utilizes DeepEval's \texttt{evaluate} function and a judge model with external api to execute these metrics asynchronously over all test cases, collecting the resulting scores.
+
 \section{Embedding and Similarity Search}
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
 
