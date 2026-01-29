@@ -194,7 +194,7 @@ def compute_maxsim(user_items: List[str],
 The \texttt{util.cos\_sim} function from \texttt{sentence-transformers} computes the full similarity matrix $C$ between all job and user embeddings. The \texttt{torch.max} operation along dimension 1 extracts the maximum similarity for each job requirement (row), and \texttt{mean()} computes the final field score as defined in \autoref{eq:maxsim_coverage}.
 
 \subsection{Weighted Aggregation}
-The final similarity score combines the MaxSim scores from all three fields using configurable weights. By default, skills receive a weight of 0.5, experiences 0.3, and qualifications 0.2, reflecting the prioritization of skills-based matching discussed in \autoref{sub:conception-weighted-field}.
+\Autoref{lst:weighted-agg} shows how final similarity score combines the MaxSim scores from all three fields using configurable weights. By default, skills receive a weight of 0.5, experiences 0.3, and qualifications 0.2, reflecting the prioritization of skills-based matching discussed in \autoref{sub:conception-weighted-field}.
 
 \begin{center}
 	\begin{lstlisting}[language=python, caption={Weighted score aggregation}, label={lst:weighted-agg}]
