@@ -159,7 +159,7 @@ def create_evaluation_metrics(model: DeepEvalBaseLLM) -> List[GEval]:
     \end{lstlisting}
 \end{center}
 
-The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally, the system utilizes DeepEval's \texttt{evaluate} function and a judge model with external api to execute these metrics asynchronously over all test cases, collecting the resulting scores.
+The evaluation pipeline first loads all JSON outputs from the requirements extraction stage and converts them into \texttt{LLMTestCase} objects, where the original job description serves as the input and the serialized \texttt{Requirements} object is used as \texttt{actual\_output}. Finally, the system utilizes DeepEval's \texttt{evaluate} function and a judge model with an external API to execute these metrics asynchronously over all test cases, collecting the resulting scores.
 
 \section{Embedding and Similarity Search} \label{sec:impl-tss}
 This section describes the implementation of the similarity matching component introduced in the conception. The goal is to compute a semantic similarity score between extracted job requirements and a user profile.
