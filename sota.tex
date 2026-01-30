@@ -27,11 +27,13 @@ Although such methods push performance forward, they require substantial computa
 
 
 \section{Related Work}
-Following the broader developments in job matching, this section examines research directly related to the two core techniques used in this thesis: (1) LLM‑based requirements extraction and (2) embedding-driven similarity search.
+Following the broader developments in job matching, this section examines research directly related to the two core techniques used in this thesis: (1) LRE and (2) TSS.
 
 \subsection{Requirements Extraction using LLMs}
 LLMs have demonstrated strong capabilities in transforming unstructured job descriptions into structured information. Howison et al. demonstrated the use of LLM to extract structured labor market data, such as education requirements and job types, from real-world job ads with statistically reliable results \cite{howison2024}. Similarly, Herandi et al. proposed Skill-LLM, a fine-tuned LLM optimized for skill extraction, significantly outperforming standard Named Entity Recognition (NER) baselines in identifying hard skills \cite{herandiskilllm}.
-While fine-tuned models achieve strong performance, they require task-specific annotations and training. In contrast, methods such as those explored by Nguyen et al. demonstrate that general-purpose LLMs can achieve competitive results through few-shot prompting, particularly when dealing with syntactically complex skill mentions \cite{nguyen2024rethinkingskillextractionjob}. This reinforces the choice of this thesis to rely on general-purpose, open-source LLMs without any fine-tuning, thereby increasing accessibility and adaptability.
+While fine-tuned models achieve strong performance, they require task-specific annotations and training. In contrast, methods such as few-shot prompting explored by Nguyen et al. demonstrate that general-purpose LLMs ``despite not being on par with traditional supervised models in terms of performance, can better handle syntactically complex skill mentions in skill
+extraction tasks'' \cite{nguyen2024rethinkingskillextractionjob}. Motivated by these findings, this thesis explores methods to use small open-source LLMs to extract requirements.
+
 
 \subsection{Embedding and Similarity Search in Job Matching}
 \label{introduction:similaritysearch}
