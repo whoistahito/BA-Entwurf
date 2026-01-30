@@ -4,7 +4,7 @@ This chapter presents the conceptual design of the proposed job‑matching syste
 \Autoref{fig:yourjobfinder_architecture} illustrates the overall workflow. The YourJobFinder crawler provides raw HTML content, after which the job matching system developed in this thesis is applied. This system consists of two central components:
 
 \begin{itemize}
-    \item preprocessing step and LRE based on open-source LLMs, and
+    \item a preprocessing step and LRE based on open-source LLMs, and
     \item a TSS module.
 \end{itemize}
 
@@ -149,7 +149,7 @@ These metrics collectively ensure that extraction quality is judged not only by 
 \section{Embedding and Similarity Search}
 Once the job requirements have been extracted and validated, the second component of the system performs semantic similarity matching. Both the structured job postings and the user query are encoded as vector
 representations using the all-MiniLM-L6-v2 model \cite{miniLm,MiniLMv2}. As discussed in \Autoref{introduction:similaritysearch}, this model offers strong zero‑shot performance for retrieval‑based tasks in job matching.\\
-The skills fields are weighted more because, as studies show skills are more important in job application context. A study by Bone et al., which analysed online job postings from 2018 to 2024, shows ``that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles'' \cite{skills-or-degree}.
+The skills fields are weighted more because, as studies show skills are more important in job application context. A study by Bone et al., which analyzed online job postings from 2018 to 2024, shows ``that individual skills, rather than formal education requirements, have become increasingly important features of job advertisements for AI roles'' \cite{skills-or-degree}.
 
 The task of similarity search is to give a similarity score by embedding the extracted requirements and user profile, which have the same structure, and comparing them using the MaxSim approach.
 
