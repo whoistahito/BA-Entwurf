@@ -4,13 +4,13 @@ This chapter presents the conceptual design of the proposed job‑matching syste
 \Autoref{fig:yourjobfinder_architecture} illustrates the overall workflow. The YourJobFinder crawler provides raw HTML content, after which the job matching system developed in this thesis is applied. This system consists of two central components:
 
 \begin{itemize}
-    \item a requirements extraction module based on open‑source LLMs,
-and
-    \item a TSS module that identifies semantically relevant job postings.
+    \item preprocessing step and LRE based on open-source LLMs, and
+    \item a TSS module.
 \end{itemize}
 
+Although preprocessing the raw data is technically an essential step, it is treated as an part of the LRE pipeline in this work. Consequently, references to LRE hereafter implicitly encompass the necessary preprocessing of HTML content.
 
-The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. \Autoref{sec:data_structure} defines the unified data structure to requirements extraction and user profiles. \Autoref{sec:handling-raw-data} through \Autoref{sec:llm-evaluation} describe the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via finite state machine (FSM), and evaluating extraction quality. Finally, \Autoref{sec:conception-vector-embedding} presents the strategy based on token-embedding, including the adaptation of the MaxSim algorithm for weighted field aggregation.
+The remainder of this chapter details the architectural design and theoretical foundations of the proposed system. \Autoref{sec:data_structure} defines the unified data structure for requirements extraction and user profiles. \Autoref{sec:handling-raw-data} through \Autoref{sec:llm-evaluation} describe the requirements extraction pipeline, focusing on handling raw data, constraining LLM outputs via finite state machine (FSM), and evaluating extraction quality. Finally, \Autoref{sec:conception-vector-embedding} presents the strategy based on token-embedding, including the adaptation of the MaxSim algorithm for weighted field aggregation.
 
 
 \begin{figure}[h!]
