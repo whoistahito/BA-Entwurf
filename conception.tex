@@ -190,10 +190,9 @@ The similarity score for a specific data field (e.g., Skills) is defined as the 
 \begin{equation} \label{eq:maxsim_coverage}
     Score_{field} = \frac{1}{|J|} \sum_{i=1}^{|J|} \max_{k} (C_{ik})
 \end{equation}
-TODO: edit score
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/maxsim-matrix}
+    \includegraphics[width=0.8\textwidth]{images/maxsim-matrix2}
     \caption{Visualization of the similarity matrix. The system identifies strong semantic alignment (green cells) between user skills and job requirements, even when exact wording differs.}
     \label{fig:maxsim_matrix}
 \end{figure}
@@ -201,10 +200,10 @@ TODO: edit score
 In the context of \Autoref{fig:maxsim_matrix}, the calculation would proceed as follows:
 \begin{itemize}
     \item Requirement \textit{Python}: Max match is 1.0 (from User: Python).
-    \item Requirement \textit{Java}: Max match is 0.4 (from User: Python).
-    \item Requirement \textit{Teamwork}: Max match is 0.8 (from User: Team player).
+    \item Requirement \textit{Java}: Max match is 0.5 (from User: Python).
+    \item Requirement \textit{Teamwork}: Max match is 0.6 (from User: Team player).
 \end{itemize}
-The final score for this section would be the average of these maximums: $(1.0 + 0.4 + 0.8) / 3 \approx 0.73$.
+The final score for this section would be the average of these maximums: $(1.0 + 0.5 + 0.6) / 3 = 0.7$.
 
 
 This approach ensures that every job requirement is evaluated against the user's best matching attribute, effectively measuring how much of the job description is ``covered'' by the user's profile.
